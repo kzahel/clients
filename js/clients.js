@@ -39,8 +39,8 @@ var Client = Backbone.Model.extend({
     on_pair_response: function(evt) {
         console.log('postmessage on window',evt.origin, evt.data);
         if (evt.data.key) {
-            var d = this.get('data')
-            d.key = evt.data.key
+            var d = this.get('data');
+            d.key = evt.data.key;
             d.type = 'local';
             this.set('data', d);
             clients.add(this);
@@ -61,9 +61,11 @@ var Client = Backbone.Model.extend({
     },
     invalidate_session: function() {
         if (this.get('data').type == 'local') {
-            this.destroy()
+            console.error('local pairing key expired/invalid');
+            this.destroy();
         } else {
-            debugger;
+            console.error('remote session expired');
+            this.destroy();
         }
     },
     start_updating: function() {
@@ -89,7 +91,7 @@ var Client = Backbone.Model.extend({
                             // token not valid
                             _this.invalidate_session();
                         } else {
-                            _this.on_update(data)
+                            _this.on_update(data);
                         }
                     },
                     error: function(xhr, status, text) {
@@ -102,7 +104,11 @@ var Client = Backbone.Model.extend({
                                   {},
                                   _.bind(this.on_update, this),
                                   function(xhr, status, text) {
-                                      debugger;
+                                      if (text && text.error && text.error.code == 401) {
+                                          _this.invalidate_session();
+                                      } else {
+                                          debugger;
+                                      }
                                   }
                                 );
             }
@@ -354,8 +360,12 @@ var ClientView = Backbone.View.extend({
                     }
                 },
                 function(xhr, status, text) {
-                    debugger;
                     _this.$('.status').text('off');
+                    if (text && text.error && text.code == 401) {
+                        _this.model.invalidate_session();
+                    } else {
+                        debugger;
+                    }
                 }
             );
         }
