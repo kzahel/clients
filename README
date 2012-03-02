@@ -1,0 +1,7 @@
+requirements: (clone them into this directory)
+
+github.com/pwmckenna/btapp
+github.com/kzahel/falcon-api
+
+usage:
+load up index.html
