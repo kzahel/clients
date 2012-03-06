@@ -1,0 +1,73 @@
+<!DOCTYPE html>  
+<!--[if lt IE 7 ]><html lang="en" class="ie ie6"><![endif]-->
+<!--[if IE 7 ]><html lang="en" class="ie ie7"><![endif]-->
+<!--[if IE 8 ]><html lang="en" class="ie ie8"><![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--> <html lang="en"><!--<![endif]-->
+<head>
+<link rel="stylesheet" href="css/style_robv.css">
+<script src="js/config.js"></script>
+</head>
+
+<script type="text/template" id="client_template">
+  <div class="remove_computer">Remove</div>
+  <div class="remote_computer">uTorrent Remote</div>
+  <div class="computer_name">
+    Local
+  </div>
+</script>
+
+<body>
+
+<!-- show the torrent view stuff by default first -->
+<div id="page_wrapper">
+
+
+
+
+  <!-- Torrent List -->
+
+  <div id="torrent_container" class="absolute bt_torrent_container board_container">
+
+    <div class="ut_icon">
+      <a class="ut_icon_link" href="https://remote.utorrent.com">
+	<span style="visibility:hidden">&mu;</span>
+      </a>
+    </div>
+
+
+    <div id="computerselect">
+
+      <div class="remove_computer">Remove</div>
+      <div class="remote_computer">uTorrent Remote</div>
+      <div class="computer_name">
+	Local
+      </div>
+
+    </div>
+
+
+  </div>
+
+
+</div>
+
+
+<script src="lib/jsload.js"></script>
+<script src="tags.js"></script>
+<script>
+(new JSLoad(tags)).load( ["client"], function() {
+
+/*
+  jQuery(document).ready( function() {
+
+  });
+*/
+});
+</script>
+<script src="lib/BrowserCompApi.js"></script>
+<script src="lib/ToolbarApi.js"></script>
+
+
+
+</body>
+</html>

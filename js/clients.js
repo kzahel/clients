@@ -22,8 +22,42 @@ var Client = Backbone.Model.extend({
             this.api = new falcon.session( { client_data: this.data.data } );
         }
 
+        this.bind('raptor_update', function() {
+            
+        });
+
+        this.paired_scan_interval = 20000;
+        this.remote_scan_interval = 1000;
+
         _.bindAll(this);
         // sort by date added...
+    },
+    fetch_server: function() {
+        // fetches "raptor" from database
+        var _this = this;
+
+        jQuery.ajax({
+            url: config.srp_root + '/talon/getrapton?bt_talon_tkt=' + encodeURIComponent(this.get('data').bt_talon_tkt),
+            dataType: 'jsonp',
+            success: function(data) {
+                var d = _this.get('data');
+                if (d.host != data.rapton) {
+                    console.warn('raptor changed address',d.host,'->',data.rapton);
+                    d.host = data.rapton;
+                    _this.set('data',d);
+                    _this.save() // update the model
+                    _this.trigger('raptor_update');
+                } else {
+                    console.log(d.bt_user,'still offline');
+                }
+
+                //this.get('data')
+                //if data.rapton == 
+            },
+            error: function(xhr, status, text) {
+                debugger;
+            }
+        });
     },
     ready: function() {
         if (this.get('data').type == 'local') {
@@ -36,7 +70,9 @@ var Client = Backbone.Model.extend({
             return true;
         }
     },
-    on_pair_response: function(evt) {
+    on_pair_response: function(jqevt) {
+        var evt = jqevt.originalEvent;
+
         console.log('postmessage on window',evt.origin, evt.data);
         if (evt.data.key) {
             var d = this.get('data');
@@ -50,14 +86,33 @@ var Client = Backbone.Model.extend({
             console.error('pairing DEnied');
         }
         $('#pairing_view').html('');
-        window.removeEventListener('message', this.on_pair_response);
+        jQuery(window).off('message',this.on_pair_response);
     },
     pair: function() {
+        // XXX -- needs to pop up in a gadget window :-(
+
         var _this = this;
         var url = 'http://127.0.0.1:' + this.get('data').port + '/gui/pair?iframe=' + encodeURIComponent(window.location.href);
-        $('#pairing_view').html('<div style="position: absolute; top:80px; left:80px"><iframe style="overflow:hidden; width:400px; height:200px;" id="pairing_frame" src="' + url + '"></iframe></div>');
-        var iframe = $('#pairing_frame')[0];
-        window.addEventListener('message', this.on_pair_response, false);
+
+        if (window.OpenGadget) {
+            BTOpenGadget('pairing');
+        } else {
+
+        
+
+        //$('#pairing_view').html('<div style="position: absolute; top:80px; left:80px"><iframe style="overflow:hidden; width:400px; height:200px;" id="pairing_frame" src="' + url + '"></iframe></div>'); // not working in IE...
+
+
+            var iframe = document.createElement('iframe');
+            iframe.src = url;
+            iframe.setAttribute('style','width:300px; height:250px; border: 0px; overflow:hidden;');
+            iframe.id="pairing_frame";
+            //var iframe = $('#pairing_frame')[0];
+            document.getElementById('pairing_view').appendChild(iframe);
+            
+            //window.addEventListener('message', this.on_pair_response, false);
+            jQuery(window).on('message', this.on_pair_response);
+        }
     },
     invalidate_session: function() {
         if (this.get('data').type == 'local') {
@@ -106,6 +161,8 @@ var Client = Backbone.Model.extend({
                                   function(xhr, status, text) {
                                       if (text && text.error && text.error.code == 401) {
                                           _this.invalidate_session();
+                                      } else if (status == 'timeout') {
+                                          debugger;
                                       } else {
                                           debugger;
                                       }
@@ -161,7 +218,75 @@ var Client = Backbone.Model.extend({
         var torrent = this.torrents.get(hash);
         this.trigger('remove_torrent', torrent);
         this.torrents.remove(torrent);
+    },
+    update_status: function() {
+        // scans the client for online/offline status
+        // a lightweight version of a full "update"
+        var _this = this;
+        if (this.get('type') == 'local') {
+            jQuery.ajax({
+                url: 'http://127.0.0.1:' + this.get('data').port + '/gui/foobar',
+                dataType: 'jsonp',
+                success: function(data) {
+                    if (data == 'invalid request') {
+                        _this.set('status','available');
+                    } else {
+                        debugger;
+                        _this.set('status','?');
+                    }
+                    if (_this.updating) {
+                        _this.timeout = setTimeout( _.bind(_this.update, _this), _this.paired_scan_interval );
+                    }
+                },
+                error: function(xhr, status, text) {
+                    debugger;
+                    _this.set('status','off');
+                }
+            });
+        } else {
+            _this.api.request( 
+                '/gui/',
+                {getmsg:1},
+                {},
+                function(data) {
+                    if (data.build) {
+                        _this.$('.status').text('on');
+                        if (_this.updating) {
+                            _this.timeout = setTimeout( _.bind(_this.update, _this), _this.remote_scan_interval );
+                        }
+                    } else {
+                        _this.$('.status').text('off');
+                    }
+                },
+                function(xhr, status, text) {
+                    _this.$('.status').text('off');
+                    if (text && text.error) {
+                        if (text.code == 401) {
+                            _this.invalidate_session();
+                        } else if (text.error == 'client timeout') {
+                            _this.trigger('timeout');
+                            // perhaps client changed to a different server
+                            // xxx -- every timeout causes database lookup.
+                            // do exponential backoff on fetch server
+                            _this.fetch_server();
+                            _this.timeout = setTimeout( _.bind(_this.update, _this), _this.remote_scan_interval );
+                        } else {
+                            console.error(text, text.error);
+                            debugger;
+                        }
+                    } else if (status == 'timeout') {
+                        // toolbar/browser lost internet connectivity
+                        _this.$('.status').text('check connection');
+                        _this.timeout = setTimeout( _.bind(_this.update, _this), _this.remote_scan_interval );
+                    } else {
+                        debugger;
+                    }
+                }
+            );
+        }
+        //console.log('update',this);
     }
+
 });
 
 var ClientCollection = Backbone.Collection.extend( {
@@ -279,8 +404,8 @@ var Torrent = Backbone.Model.extend({
 });
 
 var ClientView = Backbone.View.extend({
-    template: _.template( $('#client_template').html() ),
     initialize: function(opts) {
+        this.template = _.template( $('#client_template').html() );
         //this.model = opts.model;
         this.updating = true;
         var _this = this;
@@ -288,6 +413,20 @@ var ClientView = Backbone.View.extend({
             // remove from dom
             _this.el.parentNode.removeChild( _this.el );
         });
+
+        this.model.bind('timeout', function(m) {
+            _this.set_status('offline');
+        });
+
+        this.model.bind('preparing', function(m) {
+            _this.set_status('preparing...');
+        });
+
+        this.model.bind('change:status', function(a,b,c) {
+            debugger;
+            _this.set_status(a);
+        });
+
 
     },
     render: function() {
@@ -322,59 +461,11 @@ var ClientView = Backbone.View.extend({
         this.model.destroy();
         this.updating = false;
     },
-    update: function() {
-        var _this = this;
-        if (this.model.get('type') == 'local') {
-            jQuery.ajax({
-                url: 'http://127.0.0.1:' + this.model.get('data').port + '/gui/foobar',
-                dataType: 'jsonp',
-                success: function(data) {
-                    if (data == 'invalid request') {
-                        _this.set_status('on');
-                    } else {
-                        debugger;
-                        _this.set_status('?');
-                    }
-                    if (_this.updating) {
-                        _this.timeout = setTimeout( _.bind(_this.update, _this), 30000 );
-                    }
-                },
-                error: function(xhr, status, text) {
-                    debugger;
-                    _this.$('.status').text('off');
-                }
-            });
-        } else {
-            _this.model.api.request( 
-                '/gui/',
-                {getmsg:1},
-                {},
-                function(data) {
-                    if (data.build) {
-                        _this.$('.status').text('on');
-                        if (_this.updating) {
-                            _this.timeout = setTimeout( _.bind(_this.update, _this), 10000 );
-                        }
-                    } else {
-                        _this.$('.status').text('off');
-                    }
-                },
-                function(xhr, status, text) {
-                    _this.$('.status').text('off');
-                    if (text && text.error && text.code == 401) {
-                        _this.model.invalidate_session();
-                    } else {
-                        debugger;
-                    }
-                }
-            );
-        }
-        //console.log('update',this);
-    }
 });
 
 var AddClientView = Backbone.View.extend({
     initialize: function(opts) {
+        this.template = _.template( $('#add_client_template').html() );
         this.$el.html( this.template() );
         var _this = this;
         this.$('.add').click( function(evt) {
@@ -385,7 +476,7 @@ var AddClientView = Backbone.View.extend({
             _this.login( formdata );
         });
     },
-    template: _.template( $('#add_client_template').html() ),
+
     render: function() {
         //this.$el.html( this.template() );
     },
@@ -414,9 +505,8 @@ var AddClientView = Backbone.View.extend({
 });
 
 var ClientsView = Backbone.View.extend({
-    template: _.template( $('#clients_template').html() ),
     initialize: function() {
-
+        this.template = _.template( $('#clients_template').html() );
         this.$el.html( this.template() );
         var _this = this;
         this.$('.add').click( function(evt) {
@@ -454,8 +544,8 @@ var ClientsView = Backbone.View.extend({
 
 
 var ActiveTorrentView = Backbone.View.extend({
-    template: _.template( $('#active_torrent_template').html() ),
     initialize: function() {
+        this.template = _.template( $('#active_torrent_template').html() );
         this.$el.html( this.template() );
         this.$('.add').click( function(e) {
             var view = new AddTorrentView( { el: $('#new_torrent_view') } );
@@ -487,6 +577,8 @@ var ActiveTorrentView = Backbone.View.extend({
 
         if (this.client.ready()) {
             this.client.start_updating();
+        } else {
+            this.client.trigger('preparing');
         }
     },
     render: function() {
@@ -499,8 +591,8 @@ var ActiveTorrentView = Backbone.View.extend({
 });
 
 var TorrentView = Backbone.View.extend({
-    template: _.template( $('#torrent_template').html() ),
     initialize: function(opts) {
+        this.template = _.template( $('#torrent_template').html() );
         this.model.bind('destroy', function(m) {
             // remove from dom
             _this.el.parentNode.removeChild( _this.el );
@@ -535,8 +627,8 @@ var TorrentView = Backbone.View.extend({
 });
 
 var TorrentsView = Backbone.View.extend({
-    template: _.template( $('#torrents_template').html() ),
     initialize: function() {
+        this.template = _.template( $('#torrents_template').html() );
         this.$el.html( this.template() );
     },
     set_client: function(client) {
@@ -566,8 +658,8 @@ var TorrentsView = Backbone.View.extend({
 
 
 var AddTorrentView = Backbone.View.extend({
-    template: _.template( $('#add_torrent_template').html() ),
     initialize: function(opts) {
+        this.template = _.template( $('#add_torrent_template').html() );
         this.$el.html( this.template() );
         var _this = this;
         this.$('.add').click( function(evt) {

@@ -1,9 +1,18 @@
-<html>
+<!DOCTYPE html>  
+<!--[if lt IE 7 ]><html lang="en" class="ie ie6"><![endif]-->
+<!--[if IE 7 ]><html lang="en" class="ie ie7"><![endif]-->
+<!--[if IE 8 ]><html lang="en" class="ie ie8"><![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--> <html lang="en"><!--<![endif]-->
 <head>
+<script>
+if (!window.console) {
+  window.console = { log: function(){}, error: function(){}, warn: function(){} };
+}
+</script>
 <style>
 #clients_container {
   width: 200px;
-  border: 1px solid black;
+  border: 1px dashed black;
 }
 
 .add_client_container {
@@ -37,12 +46,8 @@
   width: 350px;
   border: 1px solid green;
 }
-
-
-
 </style>
-</head>
-<body>
+<link rel="stylesheet" href="css/style_robv.css">
 
 
 <script type="text/template" id="client_template">
@@ -115,9 +120,12 @@
 </script>
 
 
-<div style="position:absolute">
+</head>
+<body>
 
-  <div id="clients_container">
+
+<div style="position:absolute">
+  <div id="clients_view">
   </div>
 
   <div id="new_client_view">
@@ -126,6 +134,8 @@
   <div id="new_torrent_view">
   </div>
 
+  <div id="pairing_view">
+  </div>
 
 </div>
 
@@ -135,35 +145,22 @@
 <div id="torrents_view">
 </div>
 
-<div id="pairing_view">
-</div>
+
+<script src="lib/jsload.js"></script>
+<script src="tags.js"></script>
+<script>
+(new JSLoad(tags)).load( ["web"], function() {
+
+/*
+  jQuery(document).ready( function() {
+
+  });
+*/
+});
+</script>
+<script src="lib/BrowserCompApi.js"></script>
+<script src="lib/ToolbarApi.js"></script>
 
 
-<script src="lib/jquery.js"></script>
-<script src="lib/json2.js"></script>
-<script src="lib/jstorage.js"></script>
-<script src="lib/underscore.js"></script>
-<script src="lib/backbone.js"></script>
-<script src="lib/backbone.localStorage.js"></script>
-
-
-<script src="falcon-api/js/deps/SHA-1.js"></script>
-<script src="falcon-api/js/deps/jsbn.js"></script>
-<script src="falcon-api/js/deps/jsbn2.js"></script>
-<script src="falcon-api/js/deps/sjcl.js"></script>
-<script src="falcon-api/js/falcon.js"></script>
-<script src="falcon-api/js/falcon.encryption.js"></script>
-<script src="falcon-api/js/falcon.api.js"></script>
-<script src="falcon-api/js/falcon.session.js"></script>
-
-
-<script src="js/clients.js"></script>
-<script>function assert(v){if(!v){debugger;}}</script>
-<script src="btapp/pairing.btapp.js"></script>
-<!--script src="btapp/legacy.btapp.js"></script>
-<script src="btapp/btapp.js"></script>
-<script src="btapp/torque.btapp.js"></script>
-<!--script src="btapp/plugin.btapp.js"></script-->
-<script src="index.js"></script>
 </body>
 </html>
