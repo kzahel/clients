@@ -49,15 +49,51 @@ var AddTorrentView = Backbone.View.extend({
     }
 });
 
+/*
+$(document).on('click','.bt_button_x', function(evt) {
+    var data = $(evt.currentTarget).data();
+    console.log('remove torrent', evt, data);
+});
+*/
 
 
 var TorrentView = Backbone.View.extend({
     initialize: function(opts) {
         this.template = _.template( $('#torrent_template').html() );
         this.$el.html( this.template() );
-        this.model.bind('destroy', function(m) {
+        this.$el.data( {id:this.model.id} );
+        this.model.bind('removed', function(m) {
             // remove from dom
             _this.el.parentNode.removeChild( _this.el );
+        });
+
+        this.model.bind('change', function(m) {
+            console.log('torrent change',_this.model.get('name'),_this.model.changedAttributes());
+            _this.render();
+        });
+
+        var _this = this;
+
+        this.$('.bt_button_x').click( function(evt) {
+            console.log('remove torrent',_this.model);
+            _this.model.doreq('remove');
+        });
+
+        this.$('.bt_button_play').click( function(evt) {
+            console.log('play torrent',_this.model);
+            _this.model.doreq('start');
+        });
+
+        this.$('.bt_button_pause').click( function(evt) {
+            console.log('pause torrent',_this.model);
+            _this.model.doreq('stop');
+        });
+
+        this.$('.torrent_name').click( function(evt) {
+            console.log('select torrent',_this.model);
+            _this.model.collection.client.set('active_hash',_this.model.get('hash'));
+            _this.model.collection.client.save();
+            // set this as selected torrent on the client model
         });
     },
     render: function() {
@@ -76,9 +112,7 @@ var TorrentView = Backbone.View.extend({
         } else {
             this.$('.bt_button_pause').css('display','none');
             this.$('.bt_button_play').css('display','block');
-
         }
-
         if (this.model.started()) {
             if (this.model.isCompleted()) {
                 this.$('.torrent_dl_color').css('background-color','#86c440');
@@ -90,13 +124,12 @@ var TorrentView = Backbone.View.extend({
         }
         return this.$el;
     }
-
 });
 
 var TorrentsView = Backbone.View.extend({
     initialize: function() {
         var _this = this;
-        this.model.bind('update', function() {
+        this.model.bind('firstupdate', function() {
             _this.render();
         });
     },
@@ -110,6 +143,7 @@ var TorrentsView = Backbone.View.extend({
                     t.view = new TorrentView( { model: t } );
                 }
                 // losing click events :-(
+                //t.view.render().appendTo( _this.$el );
                 _this.$el.append( t.view.render() );
             });
         }
@@ -123,7 +157,7 @@ var ActiveTorrentView = TorrentView.extend({
 
         var _this = this;
         this.model.bind('change', function(model,opts) {
-            console.log('torrent changed!',model.changedAttributes());
+            //console.log('torrent changed!',model.changedAttributes());
             _this.render();
         });
 

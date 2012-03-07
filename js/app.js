@@ -82,6 +82,12 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
             
             if (msg.command == 'switch_client') {
                 var client = clients.get_by_id(msg.id);
+                if (! client) {
+                    clients.reset();
+                    clients.fetch();
+                    client = clients.get_by_id(msg.id);
+                }
+                assert(client);
                 clients.set_active(client);
 /*
                 var client = new Client( msg.data );
@@ -112,6 +118,7 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                 clients.reset(); // does this cancel updating?
                 clients.fetch();
                 var client = clients.get_by_id(msg.id);
+                assert(client);
                 var torrent = client.get_selected_torrent();
                 if (torrent) {
                     window.torrentview = new ActiveTorrentView( { el: $('#torrent_template_container'), model: torrent } );
@@ -144,6 +151,9 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
         var msg = { 'command': 'open_gadget', 'name': name };
         BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
     },
+    pair: function(client) {
+        debugger;
+    },
     add_client: function(client) {
         var msg = { 'command': 'add_client', 'data': client.attributes };
         BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
@@ -157,7 +167,6 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
         // tell the main app to reset state..
         var msg = { 'command': 'reset' }
         BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
-        
     }
     
 });

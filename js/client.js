@@ -31,11 +31,17 @@ var Client = Backbone.Model.extend({
     },
     get_selected_torrent: function() {
         if (this.torrents.models.length > 0) {
+            var hash = this.get('active_hash');
+            if (hash) {
+                var torrent = this.torrents.get( hash );
+                if (torrent) {
+                    return torrent;
+                }
+            }
             return this.torrents.models[0];
         }
     },
     remove: function() {
-        // this.trigger('selected',null);
         this.destroy();
         app.trigger('reset'); // model was destroyed from collection. tell other frames to reset
     },
@@ -105,7 +111,8 @@ var Client = Backbone.Model.extend({
         var url = 'http://127.0.0.1:' + this.get('data').port + '/gui/pair?iframe=' + encodeURIComponent(window.location.href);
 
         if (window.OpenGadget) {
-            BTOpenGadget('pairing');
+            app.pair(this);
+            //BTOpenGadget('pairing');
         } else {
 
         
@@ -349,7 +356,7 @@ var ClientCollection = Backbone.Collection.extend( {
             }
         }
     },
-    set_active: function(client) {
+    set_active: function(client, opts) {
         var found = false;
         for (var i=0; i<this.models.length;i++) {
             if (this.models[i].id == client.id) {
@@ -362,7 +369,11 @@ var ClientCollection = Backbone.Collection.extend( {
                 this.models[i].save();
             }
         }
-        app.switch_to_client(found);
+        this.selected = found;
+        if (opts && opts.silent) {
+        } else {
+            app.switch_to_client(found);
+        }
     },
     init_post_fetch: function() {
         if (this.models.length == 0) {
@@ -373,7 +384,7 @@ var ClientCollection = Backbone.Collection.extend( {
             // set selected client if one has selected attribute
             for (var i=0; i<this.models.length; i++) {
                 if (this.models[i].get('selected')) {
-                    this.selected = this.models[i];
+                    this.set_active(this.models[i], { silent: true });
                     console.log('restored selected client',this.selected);
                     break;
                 }
@@ -387,7 +398,9 @@ var ClientCollection = Backbone.Collection.extend( {
             opts.attempt_authorization = false;
             var client = new Client( { type: 'local', data: opts } );
 
-            //client.pair();
+            client.pair();
+            
+
             _this.add( client );
 
             if (_this.models.length == 1) {

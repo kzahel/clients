@@ -34,11 +34,13 @@ var Torrent = Backbone.Model.extend({
     get_status: function() {
         var _this = this;
         var status = [];
-        _.map( this.meta[2].bits, function(value, index) {
-            if ( Math.pow(2, index) & _this.status ) {
+
+        _.map( this.meta[1].bits, function(value, index) {
+            if ( Math.pow(2, index) & _this.get('status') ) {
                 status.push( value );
             }
         });
+
         return status;
     },
     started: function() {
@@ -79,6 +81,23 @@ var Torrent = Backbone.Model.extend({
             d[key] = arr[i];
         }
         this.set( d );
+        this.status_array = this.get_status();
+    },
+    doreq: function(type) {
+        var client = this.collection.client;
+        if (client.get('type') == 'local') {
+            debugger;
+        } else {
+            client.api.request( '/gui/',
+                              {},
+                              { action: type, hash: this.get('hash') },
+                              function(data, status, xhr) {
+                                  console.log('doreq success',type);
+                              },
+                              function(xhr, status, text) {
+                                  console.log('doreq error',type);
+                              });
+        }
     }
 });
 
@@ -89,6 +108,9 @@ var TorrentCollection = Backbone.Collection.extend({
         this.client = opts.client;
         this.bind('selected', function(torrent) {
             _this.client.set('active_torrent', torrent);
+        });
+        this.bind('remove', function(torrent) {
+            torrent.trigger('removed');
         });
     },
     comparator: function(t) { return - t.attributes['added_on']; }

@@ -1,7 +1,5 @@
 jQuery(document).ready( function() {
-
     //ChangeWidth(config.torrent_pane_width);
-
     window.clients = new ClientCollection;
     
     window.app = new App( { type: 'torrents' } );
