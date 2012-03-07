@@ -1,0 +1,498 @@
+@import "ut_foundation.css";
+
+@mixin col_half($position:left) {
+	width: 460px;
+	@if $position == left {
+		float: left;
+	} @else if $position == right {
+		float: right;
+	}
+}
+
+@mixin clearfix() {
+    *display: inline-block;
+    &:after {
+        content: " ";
+        display: block;
+        height: 0;
+        clear: both;
+        visibility: hidden;
+    }
+}
+
+@mixin border_radius($topleft:8px,$topright:8px,$bottomright:8px,$bottomleft:8px) {
+    -webkit-border-radius: $topleft $topright $bottomright $bottomleft;
+    -moz-border-radius: $topleft $topright $bottomright $bottomleft;
+    border-radius: $topleft $topright $bottomright $bottomleft;
+}
+
+html, body {
+	background: transparent;
+	color: #333;
+}
+* {
+	&:focus {
+		outline: none !important;
+	}
+}
+
+#page_wrapper {
+	height: 26px;
+	overflow: hidden;
+}
+
+.dialog_head {
+	background-color: #333;
+	color: #fff;
+	padding: 10px;
+	h2 {
+		color: #fff;
+		font-size: 14px;
+		font-weight: bold;
+		margin: 0;
+		padding: 0;
+	}
+}
+
+.dialog_container {
+	padding: 20px;
+}
+
+.form_row {
+	label {
+		display: block;
+		float: left;
+		width: 70px;
+		padding: 4px 0 0;
+	}
+	.bt_input {
+		border: 1px solid #ccc;
+		background: #fff;
+		padding: 4px 6px;
+		float: left;
+		width: 203px;
+	}
+	.button_upload {
+		padding: 5px 7px;
+		border: 0;
+		background: #333;
+		color: #fff;
+		margin-left: 10px;
+		@include border_radius();
+		&:focus {
+			background: #000;
+		}
+		&:hover {
+			background: #000;
+		}
+	}
+}
+
+.link_grp {
+	.button {
+		position: absolute;
+		display: block;
+		padding: 5px 7px;
+		border: 0;
+		background: #00843E;
+		color: #fff;
+		@include border_radius();
+		text-align: center;
+		width: 70px;
+	}
+	p {
+		padding-left: 100px;
+		font-size: 11px;
+	}
+}
+
+.radio_wrap {
+	width: 40%;
+	height: 50px;
+	float: left;
+	label {
+		padding: 0 10px;
+	}
+}
+
+.help_row {
+	width: 20px;
+	height: 20px;
+	overflow: hidden;
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	a {
+		display: block;
+		position: absolute;
+		width: 20px;
+		height: 20px;
+		overflow: hidden;
+		text-indent: -99999px;
+		background: url('images/toolbar/help.png') no-repeat 0 0;
+	}
+}
+
+.computer_selection_wrapper {
+	position: relative;
+	background: #f0f0f0;
+	color: #222;
+	.indie_computer_wrapper {
+		position: relative;
+	}
+	.computer_name {
+		padding: 5px 30px 5px 8px;
+		font-weight: bold;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				-o-text-overflow: ellipsis;
+		em {
+			color: #ccc;
+			font-size: 10px;
+			font-style: normal;
+		}
+	}
+	.remove_computer {
+		position: absolute;
+		top: 7px;
+		right: 5px;
+		width: 16px;
+		height: 16px;
+		overflow: hidden;
+		text-indent: -9999px;
+		background: url('images/toolbar/action_sprite.png') no-repeat 0 -64px;
+		&:hover {
+			background: url('images/toolbar/action_sprite.png') no-repeat -64px -64px;
+		}
+	}
+	.remote_computer {
+		position: absolute;
+		top: 7px;
+		right: 27px;
+		width: 16px;
+		height: 16px;
+		overflow: hidden;
+		text-indent: -9999px;
+		background: url('images/toolbar/action_sprite.png') no-repeat 0 -203px;
+		&:hover {
+			background: url('images/toolbar/action_sprite.png') no-repeat -64px -203px;
+		}
+	}
+}
+
+#computerselect {
+	position: absolute;
+	left: 26px;
+	top: 0;
+	z-index: 9999;
+	width: 150px;
+	color: #fff;
+	background: #999 url('images/toolbar/action_sprite.png') no-repeat 128px -240px;
+	&:hover {
+		background-color: #000;
+	}
+	.computer_name {
+		padding: 0 30px 0 8px;
+		font-weight: bold;
+		text-align: left;
+		strong {
+			display: block;
+			float: left;
+			width: 68px;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				-o-text-overflow: ellipsis;
+		}
+		em {
+			color: #ccc;
+			font-size: 10px;
+			font-style: normal;
+		}
+	}
+	.remove_computer {
+		display: none;
+		position: absolute;
+		top: 5px;
+		right: 5px;
+		width: 16px;
+		height: 16px;
+		overflow: hidden;
+		text-indent: -9999px;
+		background: url('images/toolbar/action_sprite.png') no-repeat 0 -64px;
+		&:hover {
+			background: url('images/toolbar/action_sprite.png') no-repeat -64px -64px;
+		}
+	}
+	.remote_computer {
+		display: none;
+		position: absolute;
+		top: 5px;
+		right: 27px;
+		width: 16px;
+		height: 16px;
+		overflow: hidden;
+		text-indent: -9999px;
+		background: url('images/toolbar/action_sprite.png') no-repeat 0 -203px;
+		&:hover {
+			background: url('images/toolbar/action_sprite.png') no-repeat -64px -203px;
+		}
+	}
+}
+
+.board_container {
+	text-align: center;
+	height: 26px;
+	overflow: hidden;
+	line-height: 26px;
+	//background: #e1e1e1 url('images/toolbar/toolbar_logo.png') no-repeat 2px 2px;
+	color: #fff;
+	position: relative;
+	padding: 0 !important;
+	&.greenie {
+		background-color: #00853F;
+		color: #fff;
+	}
+	a.main {
+		display: block;
+			background: #999 url('images/toolbar/toolbar_logo.png') no-repeat 2px 2px;
+			color: #fff;
+			font-weight: bold;
+			font-size: 12px;
+			line-height: 26px;
+		&:link, &:active, &:visited {
+			background: #999 url('images/toolbar/toolbar_logo.png') no-repeat 2px 2px;
+			color: #fff;
+			font-weight: bold;
+			font-size: 12px;
+			line-height: 26px;
+		}
+		&:hover {
+			background-color: #000;
+			color: #fff;
+		}
+	}
+	input {
+		border: 0;
+		padding: 2px 6px;
+		margin: 0 0 0 5px;
+		height: 20px;
+		&.first_field {
+			margin-left: 10px !important;
+		}
+		&.bt_input {
+			background: #339D65;
+			width: 110px;
+			margin-left: 5px;
+			color: #fff;
+			height: 20px;
+			&::-webkit-input-placeholder {
+				color: #B1DAC4;
+			}
+			&:-moz-placeholder {
+				color: #B1DAC4;
+			}
+			&:focus {
+				outline: 0;
+			}
+		}
+		&.bt_submit {
+			background: #fff;
+			color: #00853F;
+			font-weight: bold;
+			padding: 2px 12px;
+			&:hover {
+				background: #000;
+				color: #fff;
+			}
+			&:focus {
+				background: #000;
+				color: #fff;
+				outline: 0;
+			}
+		}
+	}
+	.ut_icon {
+		width: 26px;
+		height: 26px;
+		position: absolute;
+		left: 0;
+		margin: 0;
+		top: 0;
+		.ie7 & {
+			left: -10px;
+		}
+		.ie6 & {
+			left: -10px;
+		}
+		a {
+			display: block;
+			position: absolute;
+			width: 26px;
+			height: 26px;
+			background: #777 url('images/toolbar/toolbar_logo.png') no-repeat 2px 2px;
+		}
+	}
+	.button_add-torrent { // Add button
+		display: block;
+		position: absolute;
+		width: 16px;
+		height: 16px;
+		right: 30px;
+		top: 5px;
+		text-indent: -9999px;
+		background: url('images/toolbar/action_sprite.png') no-repeat 0 -96px;
+		overflow: hidden;
+		&:hover {
+			background: url('images/toolbar/action_sprite.png') no-repeat -64px -96px;
+		}
+	}
+	.button_pairing { // settings button
+		display: block;
+		position: absolute;
+		width: 16px;
+		height: 16px;
+		right: 10px;
+		top: 5px;
+		text-indent: -9999px;
+		background: url('images/toolbar/action_sprite.png') no-repeat 0 -128px;
+		overflow: hidden;
+		&:hover {
+			background: url('images/toolbar/action_sprite.png') no-repeat -64px -128px;
+		}
+	}
+	.button_open { // torrent list button
+		display: block;
+		position: absolute;
+		width: 26px;
+		height: 26px;
+		right: 55px;
+		top: 0;
+		text-indent: -9999px;
+		background: #f0f0f0 url('images/toolbar/action_sprite.png') no-repeat 4px -157px;
+		overflow: hidden;
+		&:hover {
+			background: #000 url('images/toolbar/action_sprite.png') no-repeat -60px -157px;
+		}
+	}
+	&.torrent_list_dd {
+		overflow: visible;
+		.bt_torrent_list {
+			margin: 0 !important;
+			border-bottom: 1px solid #fff;
+			.torrent_item_container {
+				.torrent_name {
+					&.ie {
+					}
+				}
+			}
+		}
+	}
+	.bt_torrent_list { // actual torrent list item
+		background: #f0f0f0;
+		margin: 0 0px 0 0px;
+		color: #666;
+		position: relative;
+		height: 26px;
+		overflow: hidden;
+		.torrent_color_container {
+			position: absolute;
+			height: 4px;
+			left: 10px;
+			right: 70px;
+			bottom: 4px;
+			background: #ccc;
+			overflow: hidden;
+			@include border_radius(2px, 2px, 2px, 2px);
+			.torrent_color_bg {
+				background: url('images/toolbar/loading_bg.gif');
+				opacity: .5;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				position: absolute;
+				@include border_radius(2px, 2px, 2px, 2px);
+			}
+			.color_calc {
+				height: 4px;
+				position: relative;
+				@include border_radius(2px, 2px, 2px, 2px);
+			}
+		}
+		.torrent_item_container {
+			position: relative;
+			.flt_lft {
+				position: absolute;
+			}
+			.torrent_name {
+				position: absolute;
+				left: 0;
+				right: 0;
+				top: 4px;
+				margin-right: 120px;
+				text-align: left;
+				padding-left: 10px;
+				font-size: 11px;
+				line-height: 11px;
+				white-space: nowrap;
+				height: 15px;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				-o-text-overflow: ellipsis;
+			}
+			.bt_button_pause { // stop button
+				display: block;
+				position: absolute;
+				width: 16px;
+				height: 16px;
+				text-indent: -9999px;
+				top: 5px;
+				right: 30px;
+				background: url('images/toolbar/action_sprite.png') no-repeat 0 0;
+				overflow: hidden;
+				&:hover {
+					background: url('images/toolbar/action_sprite.png') no-repeat -64px 0;
+				}
+			}
+			.bt_button_play { // play button
+				display: block;
+				position: absolute;
+				width: 16px;
+				height: 16px;
+				text-indent: -9999px;
+				top: 5px;
+				right: 30px;
+				background: url('images/toolbar/action_sprite.png') no-repeat 0 -32px;
+				overflow: hidden;
+				&:hover {
+					background: url('images/toolbar/action_sprite.png') no-repeat -64px -32px;
+				}
+			}
+			.bt_button_x { // remove button
+				display: block;
+				position: absolute;
+				width: 16px;
+				height: 16px;
+				text-indent: -9999px;
+				top: 5px;
+				right: 10px;
+				background: url('images/toolbar/action_sprite.png') no-repeat 0 -64px;
+				overflow: hidden;
+				&:hover {
+					background: url('images/toolbar/action_sprite.png') no-repeat -64px -64px;
+				}
+			}
+			.bt_info_container {
+				position: absolute;
+				right: 70px;
+				top: 4px;
+				line-height: 10px;
+				font-size: 10px;
+				color: #888;
+				.bt_state_container {
+					display: none;
+				}
+			}
+		}
+	}
+}
