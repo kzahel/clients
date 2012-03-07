@@ -29,6 +29,14 @@ var Client = Backbone.Model.extend({
         _.bindAll(this);
         // sort by date added...
     },
+    remove: function() {
+        this.destroy();
+    },
+    select: function() {
+        this.set('selected',true);
+        this.save();
+        this.trigger('selected', this); // to tell the collection a new selection is enabled
+    },
     fetch_server: function() {
         // fetches "raptor" from database
         var _this = this;
@@ -42,7 +50,7 @@ var Client = Backbone.Model.extend({
                     console.warn('raptor changed address',d.host,'->',data.rapton);
                     d.host = data.rapton;
                     _this.set('data',d);
-                    _this.save() // update the model
+                    _this.save(); // update the model
                     _this.trigger('raptor_update');
                 } else {
                     console.log(d.bt_user,'still offline');
@@ -118,6 +126,13 @@ var Client = Backbone.Model.extend({
         } else {
             console.error('remote session expired');
             this.destroy();
+        }
+    },
+    get_name: function() {
+        if (this.get('type') == 'local') {
+            return escape(this.get('data').name)+ ' (local)';
+        } else {
+            return escape(this.get('data').bt_user)+ ' (remote)';
         }
     },
     start_updating: function() {
@@ -294,34 +309,81 @@ var ClientCollection = Backbone.Collection.extend( {
 
         var _this = this;
 
-        this.bind('selected', function(client) {
-            _this.selected = client;
-            if (window.torrentsview) { // combined web view...
-                torrentsview.set_client(client);
-                activetorrentview.set_client(client);
-            } else {
-                // send a toolbar message to other gadgets that client selection changed...
-                app.switch_to_client( client );
-            }
+        // XXX! don't even try to bind on change, it's totally broken for collections
+        this.bind('selected', function(client) { 
+            _this.on_selection_change(client);
         });
 
         this.bind('add', function(client) {
             if (! _this.selected) {
-                client.trigger('selected',client);
+                client.select();
             }
         });
+
+    },
+    on_selection_change: function(client) {
+        for (var i=0; i<this.models.length;i++) {
+            if (this.models[i].get('selected') && this.models[i] != client) {
+                this.models[i].set({'selected':false}, {silent:true}); // unselect everybody else
+                this.models[i].save();
+            }
+        }
+        this.selected = client;
+        if (window.torrentsview) { // combined web view...
+            torrentsview.set_client(client);
+            activetorrentview.set_client(client);
+        } else {
+            // send a toolbar message to other gadgets that client selection changed...
+            app.switch_to_client( client );
+        }
+    },
+    set_active: function(client) {
+        // debugger;
+        if (client) {
+            var found = false
+            for (var i=0; i<this.models.length; i++) {
+                if (this.models[i].id == client.id) {
+                    found = this.models[i];
+                    break
+                }
+            }
+            if (found) {
+                found.set('selected',true);
+                this.trigger('selected',found);
+            } else {
+                if (this.selected) {
+                    this.selected.set('selected',false);
+                }
+                this.add(client);
+                client.set('selected',true);
+                this.trigger('selected',client);
+            }
+        } else {
+            this.selected = null;
+            this.trigger('selected',null);
+        }
     },
     init_post_fetch: function() {
         if (this.models.length == 0) {
             this.find_local_clients( function(clients) {
                 //console.log('found clients',clients);
             });
+        } else {
+            // set selected client if one has selected attribute
+            for (var i=0; i<this.models.length; i++) {
+                if (this.models[i].get('selected')) {
+                    this.selected = this.models[i];
+                    console.log('restored selected client',this.selected);
+                    break;
+                }
+            }
         }
     },
     find_local_clients: function(callback) {
         var pairing = new Pairing();
         var _this = this;
         pairing.bind('pairing:found', function(opts) {
+            debugger;
             opts.attempt_authorization = false;
             var client = new Client( { type: 'local', data: opts } );
 

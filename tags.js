@@ -59,6 +59,7 @@ var tags = [
     { name: "torrent", requires: ["conduit_deps"] },
     { name: "torrents", requires: ["conduit_deps"] },
 
-    { name: "add", requires: ["conduit_deps"] } // add torrent gadget
+    { name: "add", requires: ["conduit_deps"] }, // add torrent gadget
+    { name: "login", requires: ["conduit_deps"] } // add torrent gadget
 
 ];

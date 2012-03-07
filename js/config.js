@@ -10,7 +10,8 @@
         conduit_toolbar_message_key_slave: 'ut_toolbar_gadget',
 
         torrent_pane_width: 178,
-        client_pane_width: 370
+        client_pane_width: 370,
+        cache_bust: true
     };
 
     if (! window.config) {

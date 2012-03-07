@@ -5,8 +5,15 @@ var ClientsView = Backbone.View.extend({
         this.$el.html( this.template() );
         var _this = this;
         this.$('.add').click( function(evt) {
-            var view = new AddClientView( { el: $('#new_client_view'), clientsview: _this } );
-            view.render();
+            if (window.OpenGadget) {
+                // toolbar mode
+                app.open_gadget('login');
+
+            } else {
+                // web page mode
+                var view = new AddClientView( { el: $('#new_client_view'), clientsview: _this } );
+                view.render();
+            }
         });
 
         this.model.bind('reset', function(a,b,c) {
@@ -82,7 +89,7 @@ var ClientView = Backbone.View.extend({
     initialize: function(opts) {
         this.template = _.template( $('#client_template').html() );
         //this.model = opts.model;
-        this.updating = true;
+
         var _this = this;
         this.model.bind('destroy', function(m) {
             // remove from dom
@@ -106,16 +113,14 @@ var ClientView = Backbone.View.extend({
         this.trigger('view_active', this);
 
         this.$('.computer_name').click( function(evt) {
-            debugger;
-            console.log('switch to client', _this);
-            _this.model.trigger('selected', _this.model);
-
+            //console.log('switch to client', _this);
+            console.log('saving selected attribute on client');
+            _this.model.select();
         });
 
         this.$('.remove_computer').click( function(evt) {
             console.log('remove client', _this);
             // remove computer
-            debugger;
             _this.remove();
         });
 
@@ -124,24 +129,19 @@ var ClientView = Backbone.View.extend({
             debugger;
         });
 
-
+        this.render();
     },
     render: function() {
-        if (this.model.get('type') == 'local') {
-            this.$('.name').html(escape(this.model.get('data').name)+ ' (local)');
-        } else {
-            this.$('.name').html(escape(this.model.get('data').bt_user)+ ' (remote)');
-        }
+        this.$('.computer_name').html(this.model.get_name());
     },
     set_status: function(state) {
         this.$('.status').text(state);
     },
     remove: function() {
+        this.model.remove();
         if (this.timeout) {
             clearTimeout(this.timeout);
         }
-        this.model.destroy();
-        this.updating = false;
     },
 });
 
