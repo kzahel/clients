@@ -30,11 +30,14 @@ var App = Backbone.Model.extend( {
     initialize: function(opts) {
         this.__name__ = 'App';
 
+        this.listen_key = config.conduit_toolbar_message_key;
+/*
         if (this.get('type') == 'client') {
             this.listen_key = config.conduit_toolbar_message_key;
         } else {
-            this.listen_key = config.conduit_toolbar_message_key_slave;
+v            this.listen_key = config.conduit_toolbar_message_key_slave;
         }
+*/
 
         if (navigator.userAgent.match(/chrome/i) || navigator.userAgent.match(/chromium/i)) {
             // chrome gets all messages without even needing to
@@ -42,10 +45,14 @@ var App = Backbone.Model.extend( {
             // duplicate messages.
 
         } else {
-
             RegisterForMessaging(this.listen_key);
         }
         var _this = this;
+
+        this.bind('reset', function() {
+            // called when a client is removed!
+            //clients.fetch();
+        });
 
         if (window.EBMessageReceived) { myconsole.error('message received already defined!'); debugger; }
 
@@ -64,38 +71,72 @@ var App = Backbone.Model.extend( {
         }
     },
     handle_message: function(k,msg) {
-        console.log('app',this.get('type'),'handling toolbarapi message',k,msg);
-        if (msg.command == 'switch_client') {
-            var client = new Client( msg.data );
-            clients.set_active(client);
-        } else if (msg.command == 'add_client') {
-            var client = new Client( msg.data );
-            clients.add( client );
-            clients.set_active(client);
-        } else if (msg.command == 'remove_client') {
-            var client = new Client( msg.data );
-            debugger;
-            clients.remove( client );
 
-            clients.set_active(null);
-        } else if (msg.command == 'open_gadget') {
-            if (msg.name == 'login') {
-                BTOpenGadget('login.html', 286, 200, { openposition: 'offset:(0;30)' });
-            } else {
-                console.error('unrecognized gadget');
+        if (msg.command == 'reset') {
+            //clients.models = [];
+            clients.reset();
+            return;
+        }
+        console.log('app',this.get('type'),'handling toolbarapi message',k,msg);
+        if (this.get('type') == 'client') {
+            
+            if (msg.command == 'switch_client') {
+                var client = clients.get_by_id(msg.id);
+                clients.set_active(client);
+/*
+                var client = new Client( msg.data );
+                clients.set_active(client);
+*/
+            } else if (msg.command == 'add_client') {
+                var client = new Client( msg.data );
+                clients.add( client );
+                clients.set_active(client);
+            } else if (msg.command == 'remove_client') {
+                var client = new Client( msg.data );
                 debugger;
-            } 
-        } else {
-            console.error('unhandled message',msg);
+                clients.remove( client );
+                clients.set_active(null);
+            } else if (msg.command == 'open_gadget') {
+                if (msg.name == 'login') {
+                    BTOpenGadget('login.html', 286, 200, { openposition: 'offset:(0;30)' });
+                } else {
+                    console.error('unrecognized gadget');
+                    debugger;
+                } 
+            } else {
+                console.error('unhandled message',msg);
+            }
+        } else if (this.get('type') == 'torrent') {
+            if (msg.command == 'switch_client') {
+                clients.stop_all();
+                clients.reset(); // does this cancel updating?
+                clients.fetch();
+                var client = clients.get_by_id(msg.id);
+                var torrent = client.get_selected_torrent();
+                if (torrent) {
+                    window.torrentview = new ActiveTorrentView( { el: $('#torrent_template_container'), model: torrent } );
+                } else {
+                    $('#torrent_template_container').text('loading...');
+                    if (! client.updating) {
+                        client.bind('firstupdate', function(arg) {
+                            var torrent = client.get_selected_torrent();
+                            window.torrentview = new ActiveTorrentView( { el: $('#torrent_template_container'), model: torrent } );
+                        });
+                        client.start_updating();
+                    }
+                }
+
+            }
         }
     },
     switch_to_client: function(client) {
         if (this.get('type') == 'client') { // MAIN APP
-            $('.computer_name').text( client.get_name() );
+            window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
+            // $('.computer_name').text( client.get_name() );
         } else {
             var data = client.attributes;
             //console.log('click switch to computer',data);
-            var msg = { 'command': 'switch_client', 'data': data };
+            var msg = { 'command': 'switch_client', 'id': client.id  };
             BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
         }
     },
@@ -108,8 +149,15 @@ var App = Backbone.Model.extend( {
         BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
     },
     remove_client: function(client) {
+        debugger;
         var msg = { 'command': 'remove_client', 'data': client.attributes };
         BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
+    },
+    send_reset: function() {
+        // tell the main app to reset state..
+        var msg = { 'command': 'reset' }
+        BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
+        
     }
-
+    
 });

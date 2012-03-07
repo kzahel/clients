@@ -31,6 +31,22 @@ var Torrent = Backbone.Model.extend({
             { name: 'directory' },
             { name: 'webseed_enabled' }
     ],
+    get_status: function() {
+        var _this = this;
+        var status = [];
+        _.map( this.meta[2].bits, function(value, index) {
+            if ( Math.pow(2, index) & _this.status ) {
+                status.push( value );
+            }
+        });
+        return status;
+    },
+    started: function() {
+        return _.contains(this.status_array, 'started');
+    },
+    isCompleted: function() {
+        return (this.downloaded == this.size);
+    },
     initialize: function( opts ) {
         this.__name__ = 'Torrent';
         var data = opts.data;
@@ -38,6 +54,8 @@ var Torrent = Backbone.Model.extend({
         for (var i=0; i<this.meta.length; i++) {
             this.set(this.meta[i].name, data[i]);
         }
+        this.status_array = this.get_status();
+        
 /*
         this.bind('all', function(e) { 
             var parts = e.split(':');
@@ -52,15 +70,15 @@ var Torrent = Backbone.Model.extend({
         var d = {}
         for (var i=1; i<this.meta.length; i++) {
             var key = this.meta[i].name;
-
+/*
             if (this.attributes[key] != arr[i]) {
+                // need to do batch set!
                 this.set(key, arr[i]);
             }
-/*
-            d[key] = arr[i];
-            this.set( d );
 */
+            d[key] = arr[i];
         }
+        this.set( d );
     }
 });
 

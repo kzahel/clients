@@ -54,113 +54,78 @@ var AddTorrentView = Backbone.View.extend({
 var TorrentView = Backbone.View.extend({
     initialize: function(opts) {
         this.template = _.template( $('#torrent_template').html() );
+        this.$el.html( this.template() );
         this.model.bind('destroy', function(m) {
             // remove from dom
             _this.el.parentNode.removeChild( _this.el );
         });
     },
     render: function() {
-        var _this = this;
-        this.$el.html( this.template() );
-        this.$('.click_container').click( function(e) {
-            _this.model.trigger('selected', _this.model);
-        });
+        var progress_width = Math.floor(this.model.get('progress')/10) + '%';
 
-        this.$('.remove').click( function(e) {
-            if (clients.selected && clients.selected.api) {
-                clients.selected.api.request('/gui/',
-                                             {action:'remove'},
-                                             {hash:_this.model.get('hash')},
-                                             function(data) {
-                                                 console.log('remove success')
-                                             },
-                                             function(xhr, status, text) {
-                                                 console.error('remove error');
-                                             }
-                                            );
+        this.$('.torrent_info').html( this.model.get('name') );
+        this.$('.torrent_info_percent_complete').html( progress_width );
+
+        // format the down speed
+        this.$('.torrent_info_speed').html( to_file_size(this.model.get('down_speed')) + '/s' );
+        this.$('.color_calc').css('width', progress_width);
+
+        if (this.model.started()) {
+            this.$('.bt_button_play').css('display','none');
+            this.$('.bt_button_pause').css('display','block');
+        } else {
+            this.$('.bt_button_pause').css('display','none');
+            this.$('.bt_button_play').css('display','block');
+
+        }
+
+        if (this.model.started()) {
+            if (this.model.isCompleted()) {
+                this.$('.torrent_dl_color').css('background-color','#86c440');
+            } else {
+                this.$('.torrent_dl_color').css('background-color','#3499ff');
             }
-        });
-
-        this.$('.name').text( this.model.get('name') );
-        this.$('.status').text( this.model.get('downloaded') / this.model.get('size') * 100 );
-        return this.el;
+        } else {
+            this.$('.torrent_dl_color').css('background-color','#cecece');
+        }
+        return this.$el;
     }
+
 });
 
 var TorrentsView = Backbone.View.extend({
     initialize: function() {
-        this.template = _.template( $('#torrents_template').html() );
-        this.$el.html( this.template() );
-    },
-    set_client: function(client) {
-        this.client = client;
-
         var _this = this;
-        this.client.bind('update', function() {
+        this.model.bind('update', function() {
             _this.render();
         });
-
-        this.render();
     },
     render: function() {
-        this.$('.list').html(''); 
+        //this.$('.list').html(''); 
+        this.$el.html('');
         var _this = this;
-        if (this.client && this.client.torrents) {
-            this.client.torrents.each( function(t) {
+        if (this.model && this.model.torrents) {
+            this.model.torrents.each( function(t) {
                 if (! t.view) {
                     t.view = new TorrentView( { model: t } );
                 }
                 // losing click events :-(
-                _this.$('.list').append( t.view.render() );
+                _this.$el.append( t.view.render() );
             });
         }
     }
 });
 
-
-var ActiveTorrentView = Backbone.View.extend({
+var ActiveTorrentView = TorrentView.extend({
     initialize: function() {
-        this.template = _.template( $('#active_torrent_template').html() );
+        this.template = _.template( $('#torrent_template').html() );
         this.$el.html( this.template() );
-        this.$('.add').click( function(e) {
-            var view = new AddTorrentView( { el: $('#new_torrent_view') } );
-            view.render();
-        });
-    },
-    set_client: function(client) {
-        if (this.client) {
-            if (this.client != client) {
-                this.client.stop_updating();
-                // also clear the state completely?
-            }
-            this.client.set('active_torrent', null);
-        }
-        this.client = client;
-        var _this = this;
 
-        // --- xxx - _this scope getting weird... ? late binding etc
-        this.client.bind('change:active_torrent', function(e,m) {
-            _this.model =  _this.client.get('active_torrent');
-            if (_this.model) {
-                _this.model.bind('change', function(a,b,c,d) {
-                    //console.log('torrent changed', this.get('id'), a,b,c,d);
-                    _this.render();
-                });
-            }
+        var _this = this;
+        this.model.bind('change', function(model,opts) {
+            console.log('torrent changed!',model.changedAttributes());
             _this.render();
         });
 
-        if (this.client.ready()) {
-            this.client.start_updating();
-        } else {
-            this.client.trigger('preparing');
-        }
-    },
-    render: function() {
-        if (this.model) {
-            this.$('.name').text( this.model.get('name') );
-        } else {
-            this.initialize();
-        }
     }
 });

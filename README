@@ -4,4 +4,6 @@ github.com/pwmckenna/btapp
 github.com/kzahel/falcon-api
 
 usage:
-load up index.html
+create conduit toolbar with two html components:
+(client.html on the left)
+(torrent.html on the right)

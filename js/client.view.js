@@ -113,15 +113,15 @@ var ClientView = Backbone.View.extend({
         this.trigger('view_active', this);
 
         this.$('.computer_name').click( function(evt) {
-            //console.log('switch to client', _this);
-            console.log('saving selected attribute on client');
-            _this.model.select();
+            //console.log('click on client', _this, 'selected:',_this.model.get('selected'));
+            if (! _this.model.get('selected')) {
+                _this.model.select();
+            }
         });
 
         this.$('.remove_computer').click( function(evt) {
             console.log('remove client', _this);
-            // remove computer
-            _this.remove();
+            _this.model.remove();
         });
 
         this.$('.remote_computer').click( function(evt) {
@@ -136,12 +136,12 @@ var ClientView = Backbone.View.extend({
     },
     set_status: function(state) {
         this.$('.status').text(state);
-    },
-    remove: function() {
-        this.model.remove();
-        if (this.timeout) {
-            clearTimeout(this.timeout);
-        }
-    },
+    }
 });
+
+
+var ActiveClientView = Backbone.View.extend( {
+    initialize: function() {
+    },
+})
 

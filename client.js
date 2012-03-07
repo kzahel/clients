@@ -1,6 +1,6 @@
 jQuery(document).ready( function() {
 
-    ChangeWidth(config.client_pane_width);
+    //ChangeWidth(config.client_pane_width);
 
     window.app = new App( { type: 'client' } );
     window.clients = new ClientCollection;
@@ -10,11 +10,17 @@ jQuery(document).ready( function() {
 
     var client = clients.selected;
     if (client) {
-        $('.computer_name').text( client.get_name() );
+        window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
     }
 
     clients.bind('selected', function(client) {
-        $('.computer_name').text( client.get_name() );
+        debugger;
+        // destroy old clientview ?
+        window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
+    });
+    clients.bind('destroy', function(client) {
+        debugger;
+        window.clientview = new ClientView( { el: $('#computerselect'), model: null } );
     });
 
     if (clients.models.length == 0) {

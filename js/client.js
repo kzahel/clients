@@ -5,6 +5,7 @@ var Client = Backbone.Model.extend({
         this.data = data;
         this.update_interval = 1000;
         this.cacheid = null;
+        this.updates = 0;
         this.updating = false;
         this.torrents = new TorrentCollection( [], { client: this } );
         this.torrents.client = this;
@@ -22,19 +23,23 @@ var Client = Backbone.Model.extend({
             debugger;
         });
 
-
         this.paired_scan_interval = 20000;
-        this.remote_scan_interval = 1000;
+        this.remote_update_interval = 4000;
 
         _.bindAll(this);
         // sort by date added...
     },
+    get_selected_torrent: function() {
+        if (this.torrents.models.length > 0) {
+            return this.torrents.models[0];
+        }
+    },
     remove: function() {
+        // this.trigger('selected',null);
         this.destroy();
+        app.trigger('reset'); // model was destroyed from collection. tell other frames to reset
     },
     select: function() {
-        this.set('selected',true);
-        this.save();
         this.trigger('selected', this); // to tell the collection a new selection is enabled
     },
     fetch_server: function() {
@@ -53,7 +58,7 @@ var Client = Backbone.Model.extend({
                     _this.save(); // update the model
                     _this.trigger('raptor_update');
                 } else {
-                    console.log(d.bt_user,'still offline');
+                    console.log(d.bt_user,'still offline', data.rapton);
                 }
 
                 //this.get('data')
@@ -136,6 +141,7 @@ var Client = Backbone.Model.extend({
         }
     },
     start_updating: function() {
+        if (this.updating) { return; }
         this.updating = true;
         this.do_update();
     },
@@ -173,7 +179,14 @@ var Client = Backbone.Model.extend({
                                   function(xhr, status, text) {
                                       if (text && text.error && text.error.code == 401) {
                                           _this.invalidate_session();
+                                      } else if (text && text.error == 'client timeout') {
+                                          // was able to contact server, but request to client timed out.
+                                          _this.fetch_server();
+                                          _this.update_timeout = setTimeout( _this.do_update, _this.update_interval * 2 );
+                                          debugger;
                                       } else if (status == 'timeout') {
+                                          // buggy server (or possibly lost internet connection)
+                                          _this.update_timeout = setTimeout( _this.do_update, _this.update_interval * 10 );
                                           debugger;
                                       } else {
                                           debugger;
@@ -184,6 +197,7 @@ var Client = Backbone.Model.extend({
         }
     },
     on_update: function(data) {
+        this.updates += 1;
         var changed = data.torrentp;
         var removed = data.torrentm;
         var added = data.torrents;
@@ -208,7 +222,9 @@ var Client = Backbone.Model.extend({
         }
 
         this.trigger('update');
-
+        if (this.updates == 1) {
+            this.trigger('firstupdate');
+        }
         this.update_timeout = setTimeout( this.do_update, this.update_interval );
     },
     add_torrent: function(d) {
@@ -264,7 +280,7 @@ var Client = Backbone.Model.extend({
                     if (data.build) {
                         _this.$('.status').text('on');
                         if (_this.updating) {
-                            _this.timeout = setTimeout( _.bind(_this.update, _this), _this.remote_scan_interval );
+                            _this.timeout = setTimeout( _.bind(_this.update, _this), _this.remote_update_interval );
                         }
                     } else {
                         _this.$('.status').text('off');
@@ -281,7 +297,7 @@ var Client = Backbone.Model.extend({
                             // xxx -- every timeout causes database lookup.
                             // do exponential backoff on fetch server
                             _this.fetch_server();
-                            _this.timeout = setTimeout( _.bind(_this.update, _this), _this.remote_scan_interval );
+                            _this.timeout = setTimeout( _.bind(_this.update, _this), _this.remote_update_interval );
                         } else {
                             console.error(text, text.error);
                             debugger;
@@ -289,7 +305,7 @@ var Client = Backbone.Model.extend({
                     } else if (status == 'timeout') {
                         // toolbar/browser lost internet connectivity
                         _this.$('.status').text('check connection');
-                        _this.timeout = setTimeout( _.bind(_this.update, _this), _this.remote_scan_interval );
+                        _this.timeout = setTimeout( _.bind(_this.update, _this), _this.remote_update_interval );
                     } else {
                         debugger;
                     }
@@ -310,8 +326,9 @@ var ClientCollection = Backbone.Collection.extend( {
         var _this = this;
 
         // XXX! don't even try to bind on change, it's totally broken for collections
+
         this.bind('selected', function(client) { 
-            _this.on_selection_change(client);
+            _this.set_active(client);
         });
 
         this.bind('add', function(client) {
@@ -319,49 +336,33 @@ var ClientCollection = Backbone.Collection.extend( {
                 client.select();
             }
         });
-
     },
-    on_selection_change: function(client) {
+    stop_all: function() {
         for (var i=0; i<this.models.length;i++) {
+            this.models[i].stop_updating();
+        }
+    },
+    get_by_id: function(id) {
+        for (var i=0; i<this.models.length;i++) {
+            if (this.models[i].id == id) {
+                return this.models[i];
+            }
+        }
+    },
+    set_active: function(client) {
+        var found = false;
+        for (var i=0; i<this.models.length;i++) {
+            if (this.models[i].id == client.id) {
+                found = this.models[i];
+                found.set('selected',true);
+                found.save();
+            }
             if (this.models[i].get('selected') && this.models[i] != client) {
                 this.models[i].set({'selected':false}, {silent:true}); // unselect everybody else
                 this.models[i].save();
             }
         }
-        this.selected = client;
-        if (window.torrentsview) { // combined web view...
-            torrentsview.set_client(client);
-            activetorrentview.set_client(client);
-        } else {
-            // send a toolbar message to other gadgets that client selection changed...
-            app.switch_to_client( client );
-        }
-    },
-    set_active: function(client) {
-        // debugger;
-        if (client) {
-            var found = false
-            for (var i=0; i<this.models.length; i++) {
-                if (this.models[i].id == client.id) {
-                    found = this.models[i];
-                    break
-                }
-            }
-            if (found) {
-                found.set('selected',true);
-                this.trigger('selected',found);
-            } else {
-                if (this.selected) {
-                    this.selected.set('selected',false);
-                }
-                this.add(client);
-                client.set('selected',true);
-                this.trigger('selected',client);
-            }
-        } else {
-            this.selected = null;
-            this.trigger('selected',null);
-        }
+        app.switch_to_client(found);
     },
     init_post_fetch: function() {
         if (this.models.length == 0) {
@@ -383,12 +384,16 @@ var ClientCollection = Backbone.Collection.extend( {
         var pairing = new Pairing();
         var _this = this;
         pairing.bind('pairing:found', function(opts) {
-            debugger;
             opts.attempt_authorization = false;
             var client = new Client( { type: 'local', data: opts } );
 
             //client.pair();
             _this.add( client );
+
+            if (_this.models.length == 1) {
+                // first client found..
+                _this.set_active(client);
+            }
 
         });
         function alldone(data) {

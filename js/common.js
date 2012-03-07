@@ -1,5 +1,21 @@
 function assert(v){if(!v){debugger;}}
 
+function to_file_size(size) {
+  var precision = 1;
+  var sz = ['b', 'kb', 'Mb', 'Gb', 'Tb', 'Pb', 'Eb'];
+  var szmax = sz.length-1;
+
+  // Force units to be at least kB
+  var unit = 1;
+  size /= 1024;
+
+  while ((size >= 1024) && (unit < szmax)) {
+    size /= 1024;
+    unit++;
+  }
+  return (size.toFixed(precision || 1) + " " + sz[unit]);
+}
+
 function make_url_relative(url) {
     // conduit turns the url into an absolute url for some reason!
     //url = window.location.origin + url;
