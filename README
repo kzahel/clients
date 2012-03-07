@@ -1,7 +1,7 @@
 requirements: (clone them into this directory)
 
-github.com/pwmckenna/btapp
-github.com/kzahel/falcon-api
+git://github.com/pwmckenna/btapp
+git://github.com/kzahel/falcon-api
 
 usage:
 create conduit toolbar with two html components:
