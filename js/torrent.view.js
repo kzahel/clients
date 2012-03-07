@@ -154,10 +154,10 @@ var ActiveTorrentView = TorrentView.extend({
     initialize: function() {
         this.template = _.template( $('#torrent_template').html() );
         this.$el.html( this.template() );
-
+        this.render();
         var _this = this;
         this.model.bind('change', function(model,opts) {
-            //console.log('torrent changed!',model.changedAttributes());
+            //console.log('torrent change',_this.model.get('name'),_this.model.changedAttributes());
             _this.render();
         });
 
