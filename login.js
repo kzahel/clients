@@ -9,15 +9,19 @@ jQuery(document).ready( function() {
         var password = jQuery('#password').val();
 
         var session = new falcon.session;
+        custom_track('login_attempt');
         session.negotiate( username, password, { 
             success: function(session) {
                 var client = new Client( { type: 'remote', data: session.serialize() } );
+                custom_track('login_success');
                 clients.add(client); // adds to local collection
                 clients.set_active(client); // sets selected attribute, unsets on other clients
                 //app.send_reset(); // triggers other apps to reset
                 CloseFloatingWindow();
             },
             error: function(xhr, status, text) {
+                custom_track('login_error');
+                custom_track('login_error.' + text.error);
                 $('.spinner').html(JSON.stringify(text));
             },
             progress: function(data) {

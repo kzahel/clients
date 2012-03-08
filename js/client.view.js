@@ -4,6 +4,7 @@ var ClientsView = Backbone.View.extend({
         this.template = _.template( $('#clients_template').html() );
         this.$el.html( this.template() );
         var _this = this;
+/*
         this.$('.add').click( function(evt) {
             if (window.OpenGadget) {
                 // toolbar mode
@@ -15,6 +16,7 @@ var ClientsView = Backbone.View.extend({
                 view.render();
             }
         });
+*/
 
         this.model.bind('reset', function(a,b,c) {
             _.each( _this.model.models, function(client) {
@@ -59,6 +61,7 @@ var AddClientView = Backbone.View.extend({
     render: function() {
         //this.$el.html( this.template() );
     },
+/*
     login: function( formdata ) {
         this.$('.spinner').html('working...');
         var _this = this;
@@ -78,6 +81,7 @@ var AddClientView = Backbone.View.extend({
             }
         });
     },
+*/
     destroy: function() {
         this.$el.html('');
     }
@@ -114,17 +118,20 @@ var ClientView = Backbone.View.extend({
         this.$('.computer_name').click( function(evt) {
             //console.log('click on client', _this, 'selected:',_this.model.get('selected'));
             if (! _this.model.get('selected')) {
+                custom_track('select_computer');
                 _this.model.select();
             }
         });
 
         this.$('.remove_computer').click( function(evt) {
             console.log('remove client', _this);
+            custom_track('remove_computer');
             _this.model.remove();
         });
 
         this.$('.remote_computer').click( function(evt) {
             console.log('login client', _this);
+            custom_track('autologin_computer');
             debugger;
         });
 

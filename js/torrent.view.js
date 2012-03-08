@@ -60,16 +60,19 @@ var TorrentView = Backbone.View.extend({
         var _this = this;
         this.$('.bt_button_x').click( function(evt) {
             console.log('remove torrent',_this.model);
+            custom_track('remove_torrent');
             _this.model.doreq('remove');
         });
 
         this.$('.bt_button_play').click( function(evt) {
             console.log('play torrent',_this.model);
+            custom_track('start_torrent');
             _this.model.doreq('start');
         });
 
         this.$('.bt_button_pause').click( function(evt) {
             console.log('pause torrent',_this.model);
+            custom_track('stop_torrent');
             _this.model.doreq('stop');
         });
     },
@@ -81,6 +84,7 @@ var TorrentView = Backbone.View.extend({
             _this.render();
         });
         this.$('.torrent_name').click( function(evt) {
+            custom_track('select_torrent');
             _this.model.trigger('selected');
         });
     },
