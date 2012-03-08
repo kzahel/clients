@@ -208,6 +208,41 @@ var Client = Backbone.Model.extend({
             }
         }
     },
+    doreq: function(params) {
+
+        var client = this;
+        if (client.get('type') == 'local') {
+            var parts = [];
+            for (var key in params) {
+                parts.push( key + '=' + encodeURIComponent(params[key]) );
+            }
+
+            jQuery.ajax({
+                url: 'http://127.0.0.1:' + client.get('data').port + '/gui/?' + parts.join('&') + '&pairing=' + client.get('data').key + '&token=' + client.get('data').key, // send token as the pairing key to save a roundtrip fetching the token,
+                dataType: 'jsonp',
+                success: function(data, status, xhr) {
+                    if (data == 'invalid request') {
+                        debugger;
+                    }
+                    console.log('doreq success', params,data);
+                },
+                error: function(xhr, status, text) {
+                    console.log('doreq error', text, params);
+                }
+            });
+
+        } else {
+            client.api.request('/gui/',
+                              {},
+                              params,
+                              function(data, status, xhr) {
+                                  console.log('doreq success', params, data);
+                              },
+                              function(xhr, status, text) {
+                                  console.log('doreq error', text, params);
+                              });
+        }
+    },
     on_update: function(data) {
         this.updates += 1;
         var changed = data.torrentp;

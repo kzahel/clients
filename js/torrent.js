@@ -82,6 +82,7 @@ var Torrent = Backbone.Model.extend({
         }
         this.set( d );
         this.status_array = this.get_status();
+
     },
     doreq: function(type) {
         var client = this.collection.client;
@@ -90,11 +91,11 @@ var Torrent = Backbone.Model.extend({
             jQuery.ajax({
                 url: 'http://127.0.0.1:' + client.get('data').port + '/gui/?action=' + type + '&hash=' + this.get('hash') + '&pairing=' + client.get('data').key + '&token=' + client.get('data').key, // send token as the pairing key to save a roundtrip fetching the token,
                 dataType: 'jsonp',
-                success: function(data) {
+                success: function(data, status, xhr) {
                     if (data == 'invalid request') {
                         debugger;
                     }
-                    console.log('doreq success',type);
+                    console.log('doreq success',type,data);
                 },
                 error: function(xhr, status, text) {
                     console.log('doreq error',type);
@@ -106,7 +107,7 @@ var Torrent = Backbone.Model.extend({
                               {},
                               { action: type, hash: this.get('hash') },
                               function(data, status, xhr) {
-                                  console.log('doreq success',type);
+                                  console.log('doreq success',type,data);
                               },
                               function(xhr, status, text) {
                                   console.log('doreq error',type);

@@ -102,7 +102,7 @@ var TorrentView = Backbone.View.extend({
         });
     },
     render: function() {
-        var progress_width = Math.floor(this.model.get('progress')/10) + '%';
+        var progress_width = Math.floor(1000 * this.model.get('downloaded')/this.model.get('size'))/10 + '%';
 
         this.$('.torrent_info').html( this.model.get('name') );
         this.$('.torrent_info_percent_complete').html( progress_width );

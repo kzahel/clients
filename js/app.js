@@ -116,6 +116,8 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                 var client = new Client( msg.data );
                 clients.set_active(client);
 */
+            } else if (msg.command == 'add_by_url') {
+                clients.selected.doreq( { action: 'add-url', s: msg.url } );
             } else if (msg.command == 'add_client') {
                 var client = new Client( msg.data );
                 clients.add( client );
