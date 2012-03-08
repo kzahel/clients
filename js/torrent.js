@@ -57,6 +57,21 @@ var Torrent = Backbone.Model.extend({
             this.set(this.meta[i].name, data[i]);
         }
         this.status_array = this.get_status();
+
+        this.bind('selected', _.bind(function() {
+            var previous = this.collection.client.get_selected_torrent();
+            if (previous) {
+                previous.set('selected',false);
+            }
+            
+            this.set('selected',true);
+            this.collection.client.set('active_hash',this.get('hash'));
+            console.log('setting active hash',this.get('hash'));
+            this.collection.client.save();
+            // set this as selected torrent on the client model
+            app.send_message( { recipient: 'torrent', command: 'select_torrent' } );
+        }, this));
+
     },
     update: function(arr) {
         var d = {}

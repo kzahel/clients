@@ -57,6 +57,6 @@ for filename in ['add',
 
     print 'output is ','\n'.join(newdata.split('\n')[:20])
 
-    #fo = open('%s.html' % filename, 'w')
-    #fo.write(newdata)
-    #fo.close()
+    fo = open('%s.html' % filename, 'w')
+    fo.write(newdata)
+    fo.close()

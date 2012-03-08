@@ -81,11 +81,7 @@ var TorrentView = Backbone.View.extend({
             _this.render();
         });
         this.$('.torrent_name').click( function(evt) {
-            _this.model.collection.client.set('active_hash',_this.model.get('hash'));
-            console.log('setting active hash',_this.model.get('hash'));
-            _this.model.collection.client.save();
-            // set this as selected torrent on the client model
-            app.send_message( { recipient: 'torrent', command: 'select_torrent' } );
+            _this.model.trigger('selected');
         });
     },
     initialize: function(opts) {
@@ -101,6 +97,12 @@ var TorrentView = Backbone.View.extend({
     },
     render: function() {
         var progress_width = Math.floor(1000 * this.model.get('downloaded')/this.model.get('size'))/10 + '%';
+
+        if (this.model.get('selected')) {
+            this.$('.bt_torrent_list').addClass('selected_torrent');
+        } else {
+            this.$('.bt_torrent_list').removeClass('selected_torrent');
+        }
 
         this.$('.torrent_info').html( this.model.get('name') );
         this.$('.torrent_info_percent_complete').html( progress_width );

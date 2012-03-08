@@ -11,7 +11,6 @@ jQuery(document).ready( function() {
         var session = new falcon.session;
         session.negotiate( username, password, { 
             success: function(session) {
-                debugger;
                 var client = new Client( { type: 'remote', data: session.serialize() } );
                 clients.add(client); // adds to local collection
                 clients.set_active(client); // sets selected attribute, unsets on other clients
