@@ -160,19 +160,6 @@ html, body {
       color: #ccc;
       font-size: 10px;
       font-style: normal; }
-  .computer_selection_wrapper .computer_state {
-    position: absolute;
-    top: 9px;
-    left: 10px;
-    width: 7px;
-    height: 7px;
-    overflow: hidden;
-    text-indent: -9999px;
-    -webkit-border-radius: 8px 8px 8px 8px;
-    -moz-border-radius: 8px 8px 8px 8px;
-    border-radius: 8px 8px 8px 8px;
-    border: 2px solid #a40000;
-    background: #a40000; }
   .computer_selection_wrapper .remove_computer {
     position: absolute;
     top: 7px;
@@ -192,9 +179,23 @@ html, body {
     height: 16px;
     overflow: hidden;
     text-indent: -9999px;
-    background: url("images/toolbar/action_sprite.png") no-repeat 0 -203px; }
+    background: url("images/toolbar/action_sprite.png") no-repeat 0 -192px; }
     .computer_selection_wrapper .remote_computer:hover {
-      background: url("images/toolbar/action_sprite.png") no-repeat -64px -203px; }
+      background: url("images/toolbar/action_sprite.png") no-repeat -64px -192px; }
+  .computer_selection_wrapper .computer_state {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    width: 12px;
+    height: 12px;
+    overflow: hidden;
+    text-indent: -9999px; }
+  .computer_selection_wrapper .computer_connected {
+    background: url("images/toolbar/action_sprite.png") no-repeat -2px -323px; }
+  .computer_selection_wrapper .computer_unavailable {
+    background: url("images/toolbar/action_sprite.png") no-repeat -2px -355px; }
+  .computer_selection_wrapper .computer_disconnected {
+    background: url("images/toolbar/action_sprite.png") no-repeat -2px -387px; }
 
 .selected {
   background: #f0f0f0; }
@@ -206,7 +207,7 @@ html, body {
   z-index: 9999;
   width: 150px;
   color: #fff;
-  background: #999999 url("images/toolbar/action_sprite.png") no-repeat 128px -240px; }
+  background: #999999 url("images/toolbar/action_sprite.png") no-repeat 128px -285px; }
   #computerselect:hover {
     background-color: #000; }
   #computerselect .computer_name {
