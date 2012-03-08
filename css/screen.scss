@@ -41,6 +41,30 @@ html, body {
 	height: 26px;
 	overflow: hidden;
 }
+.control_torrent_container {margin-right:26px}
+.torrent_wrapper {position:relative}
+.arrow_collapse {
+  position:absolute;
+  top:0px;right:0px;
+  width:26px;height:26px;
+  overflow: hidden;
+	text-indent: -9999px;
+	background: transparent url('images/toolbar/action_sprite.png') no-repeat 5px -219px;
+	&:hover {
+		background: #000 url('images/toolbar/action_sprite.png') no-repeat -59px -219px;
+	}
+}
+.arrow_expand {
+  position:absolute;
+  top:0px;right:0px;
+  width:26px;height:26px;
+  overflow: hidden;
+	text-indent: -9999px;
+	background: transparent url('images/toolbar/action_sprite.png') no-repeat 5px -251px;
+	&:hover {
+		background: #000 url('images/toolbar/action_sprite.png') no-repeat -59px -251px;
+	}
+}
 
 .dialog_head {
 	background-color: #333;
@@ -444,8 +468,8 @@ html, body {
 		right: 0px;
 		top: 0;
 		text-indent: -9999px;
-		background: #f0f0f0 url('images/toolbar/action_sprite.png') no-repeat 5px -157px;
 		overflow: hidden;
+		background: #f0f0f0 url('images/toolbar/action_sprite.png') no-repeat 5px -157px;
 		&:hover {
 			background: #000 url('images/toolbar/action_sprite.png') no-repeat -59px -157px;
 		}
