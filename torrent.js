@@ -1,4 +1,6 @@
 jQuery(document).ready( function() {
+    // this entire window is reloaded every time a client switch is initaited, to simplyfy the code
+
 
     //ChangeWidth(config.torrent_pane_width);
 
@@ -26,7 +28,6 @@ jQuery(document).ready( function() {
             }
         }
 
-        
         // this client object is dead after a clients.fetch(). we did clients.fetch to get updated active_hash.
         // perhaps it would be better to store active_hash on the torrentcollection, but that way it would not be persisted... :-(
 

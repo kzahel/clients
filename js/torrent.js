@@ -64,8 +64,9 @@ var Torrent = Backbone.Model.extend({
             var key = this.meta[i].name;
             d[key] = arr[i];
         }
-        this.set( d );
         this.status_array = this.get_status(d.status); // XXX -- this needs to happen before the "set" so that the change events get triggered
+        this.set( d );
+
 
     },
     doreq: function(type) {

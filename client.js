@@ -15,6 +15,10 @@ jQuery(document).ready( function() {
             client.pair();
         }
         window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
+        jQuery('#computerselect').click( function(evt) {
+            BTOpenGadget('clients.html', 286, 160, { openposition: 'offset:(25;30)' });
+        });
+
     }
 
 
@@ -22,14 +26,19 @@ jQuery(document).ready( function() {
         if (window.clientview) {
             if (clientview.model.id == client.id) {
                 return;
+            } else {
+                clientview.destroy()
             }
         }
 
-        clientview.destroy()
-
-        // destroy old clientview ?
+        // should subclass clientview, activeclientview...
         window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
+        jQuery('#computerselect').click( function(evt) {
+            BTOpenGadget('clients.html', 286, 160, { openposition: 'offset:(25;30)' });
+        });
+
     });
+
 
 /*
     clients.bind('destroy', function(client) {
@@ -38,10 +47,6 @@ jQuery(document).ready( function() {
     });
 */
 
-
-    jQuery('#computerselect').click( function(evt) {
-        BTOpenGadget('clients.html', 286, 160, { openposition: 'offset:(25;30)' });
-    });
 
 
 } );
