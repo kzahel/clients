@@ -17,6 +17,36 @@ html, body {
   height: 26px;
   overflow: hidden; }
 
+.control_torrent_container {
+  margin-right: 26px; }
+
+.torrent_wrapper {
+  position: relative; }
+
+.arrow_collapse {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 26px;
+  height: 26px;
+  overflow: hidden;
+  text-indent: -9999px;
+  background: transparent url("images/toolbar/action_sprite.png") no-repeat 5px -219px; }
+  .arrow_collapse:hover {
+    background: black url("images/toolbar/action_sprite.png") no-repeat -59px -219px; }
+
+.arrow_expand {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 26px;
+  height: 26px;
+  overflow: hidden;
+  text-indent: -9999px;
+  background: transparent url("images/toolbar/action_sprite.png") no-repeat 5px -251px; }
+  .arrow_expand:hover {
+    background: black url("images/toolbar/action_sprite.png") no-repeat -59px -251px; }
+
 .dialog_head {
   background-color: #333;
   color: #fff;
@@ -121,6 +151,11 @@ html, body {
     text-indent: -99999px;
     background: url("images/toolbar/help.png") no-repeat 0 0; }
 
+.client_list_container {
+  height: 89px;
+  overflow-x: hidden;
+  overflow-y: auto; }
+
 .button_footer {
   position: relative;
   background-color: #a9a9a9;
@@ -129,7 +164,7 @@ html, body {
 
 .text_footer {
   position: absolute;
-  top: 89px;
+  top: 131px;
   width: 100%;
   background-color: #a9a9a9;
   padding: 5px 0 5px 26px;
@@ -387,8 +422,8 @@ html, body {
     right: 0px;
     top: 0;
     text-indent: -9999px;
-    background: #f0f0f0 url("images/toolbar/action_sprite.png") no-repeat 5px -157px;
-    overflow: hidden; }
+    overflow: hidden;
+    background: #f0f0f0 url("images/toolbar/action_sprite.png") no-repeat 5px -157px; }
     .board_container .button_open:hover {
       background: black url("images/toolbar/action_sprite.png") no-repeat -59px -157px; }
   .board_container.torrent_list_dd {
