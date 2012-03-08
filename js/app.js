@@ -72,11 +72,11 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
     },
     handle_message: function(k,msg) {
 
-        if (msg.recipient) {
+        if (msg.recipient) { // some messages are sent to specific windows
             if (this.get('type') == msg.recipient) {
                 if (msg.command == 'select_torrent') {
                     // this logic is duplicated in the "torrent" frame script onready
-                    //clients.reset(); // this is DELETING all the TORRENTS :-( :-( :-(
+                    //clients.reset(); // this is DELETING all the TORRENTS in the collection. so store it for later.
                     var torrents = clients.selected.torrents;
                     clients.fetch();
                     console.log('models',clients.selected.get_name(), clients.selected.torrents);
@@ -86,7 +86,7 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                     var torrent = client.get_selected_torrent();
                     console.log('switching active torrent view to', torrent.get('name'));
                     if (torrent) {
-                        // window.torrentview.destroy(); ?? 
+                        window.torrentview.destroy();
                         window.torrentview = new ActiveTorrentView( { el: $('#torrent_template_container'), model: torrent } );
                     }
                 }

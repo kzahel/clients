@@ -59,25 +59,11 @@ $(document).on('click','.bt_button_x', function(evt) {
 
 var TorrentView = Backbone.View.extend({
     destroy: function() {
-        this.unbind();
+        this.unbind(); // does this actually do anything?
         this.el.parentNode.removeChild( this.el ); // equivalent to this.remove()?
     },
-    initialize: function(opts) {
-        this.template = _.template( $('#torrent_template').html() );
-        this.$el.html( this.template() );
-        this.$el.data( {id:this.model.id} );
-        this.model.bind('removed', function(m) {
-            // remove from dom
-            _this.destroy();
-        });
-
-        this.model.bind('change', function(m) {
-            console.log('torrent change',_this.model.get('name'),_this.model.changedAttributes());
-            _this.render();
-        });
-
+    bind_events: function() {
         var _this = this;
-
         this.$('.bt_button_x').click( function(evt) {
             console.log('remove torrent',_this.model);
             _this.model.doreq('remove');
@@ -92,6 +78,24 @@ var TorrentView = Backbone.View.extend({
             console.log('pause torrent',_this.model);
             _this.model.doreq('stop');
         });
+    },
+    initialize: function(opts) {
+        this.template = _.template( $('#torrent_template').html() );
+        this.$el.html( this.template() );
+        this.$el.data( {id:this.model.id} );
+        this.model.bind('removed', function(m) {
+            // remove from dom
+            _this.destroy();
+        });
+
+        this.bind_events();
+
+        this.model.bind('change', function(m) {
+            // console.log('torrent change',_this.model.get('name'),_this.model.changedAttributes());
+            _this.render();
+        });
+
+        var _this = this;
 
         this.$('.torrent_name').click( function(evt) {
             _this.model.collection.client.set('active_hash',_this.model.get('hash'));
@@ -164,6 +168,7 @@ var ActiveTorrentView = TorrentView.extend({
             //console.log('torrent change',_this.model.get('name'),_this.model.changedAttributes());
             _this.render();
         });
+        this.bind_events();
         this.render();
     }
 });
