@@ -25,12 +25,12 @@ jQuery(document).ready( function() {
                 client.start_updating();
             }
         }
-    }
 
-    client.bind('change:active_hash', function() {
-        var torrent = client.get_selected_torrent();
-        window.torrentview = new ActiveTorrentView( { el: $('#torrent_template_container'), model: torrent } );
-    });
+        client.bind('change:active_hash', function() {
+            var torrent = client.get_selected_torrent();
+            window.torrentview = new ActiveTorrentView( { el: $('#torrent_template_container'), model: torrent } );
+        });
+    }
 
     jQuery('#torrent_list').click( function(evt) {
         BTOpenGadget('torrents.html', 400, 344, { openposition: 'offset:(0;30)' });

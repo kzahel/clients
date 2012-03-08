@@ -75,11 +75,14 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
         if (msg.recipient) {
             if (this.get('type') == msg.recipient) {
                 if (msg.command == 'select_torrent') {
-                    debugger;
-                    clients.reset();
+                    // this logic is duplicated in the "torrent" frame script onready
+                    //clients.reset(); // this is DELETING all the TORRENTS :-( :-( :-(
+                    var torrents = clients.selected.torrents;
                     clients.fetch();
+                    console.log('models',clients.selected.get_name(), clients.selected.torrents);
                     clients.init_post_fetch(); // have to call this or else active client wont get set
                     var client = clients.selected;
+                    client.torrents = torrents;
                     var torrent = client.get_selected_torrent();
                     console.log('switching active torrent view to', torrent.get('name'));
                     if (torrent) {

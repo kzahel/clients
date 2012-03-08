@@ -42,6 +42,8 @@ var Client = Backbone.Model.extend({
                 }
             }
             return this.torrents.models[0];
+        } else {
+            console.error('get selected torrent -- no torrent models fetched');
         }
     },
     remove: function() {
@@ -225,9 +227,9 @@ var Client = Backbone.Model.extend({
             _.map(added, this.change_torrent);
         }
 
-        if (! this.get('active_torrent')) {
+        if (! this.get('active_hash')) {
             if (this.torrents.models.length > 0) {
-                this.set('active_torrent', this.torrents.models[0]);
+                this.set('active_hash', this.torrents.get('hash'));
             }
         }
 
@@ -389,7 +391,7 @@ var ClientCollection = Backbone.Collection.extend( {
                 if (this.models[i].get('selected')) {
                     this.set_active(this.models[i], { silent: true });
                     console.log('restored selected client',this.selected);
-                    break;
+                    return;
                 }
             }
             console.log('init post fetch -- no client had selected attribute');
