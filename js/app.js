@@ -76,28 +76,9 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
             if (this.get('type') == msg.recipient) {
                 if (msg.command == 'select_torrent') {
                     // this logic is duplicated in the "torrent" frame script onready
-
-
-                    if (false) {
-                        //clients.reset(); // this is DELETING all the TORRENTS in the collection. so store it for later.
-                        // old style, wasnt working too well
-                        var torrents = clients.selected.torrents;
-                        clients.fetch();
-                        console.log('models',clients.selected.get_name(), clients.selected.torrents);
-                        clients.init_post_fetch(); // have to call this or else active client wont get set
-                        var client = clients.selected;
-                        client.torrents = torrents;
-                        var torrent = client.get_selected_torrent();
-                        console.log('switching active torrent view to', torrent.get('name'));
-                        if (torrent) {
-                            window.torrentview.destroy();
-                            window.torrentview = new ActiveTorrentView( { el: $('#torrent_template_container'), model: torrent } );
-                        }
-
-                    } else {
-                        var client = clients.selected;
-                        client.fetch(); // fetches updated "active_hash" attribute
-                    }
+                    var client = clients.selected; 
+                    assert(client.collection);
+                    client.fetch(); // fetches updated "active_hash" attribute
                 }
             }
             return;
@@ -148,25 +129,7 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
             }
         } else if (this.get('type') == 'torrent') {
             if (msg.command == 'switch_client') {
-                clients.stop_all();
-                clients.reset(); // does this cancel updating?
-                clients.fetch();
-                var client = clients.get_by_id(msg.id);
-                assert(client);
-                var torrent = client.get_selected_torrent();
-                if (torrent) {
-                    window.torrentview = new ActiveTorrentView( { el: $('#torrent_template_container'), model: torrent } );
-                } else {
-                    $('#torrent_template_container').text('loading...');
-                    if (! client.updating) {
-                        client.bind('firstupdate', function(arg) {
-                            var torrent = client.get_selected_torrent();
-                            window.torrentview = new ActiveTorrentView( { el: $('#torrent_template_container'), model: torrent } );
-                        });
-                        client.start_updating();
-                    }
-                }
-
+                window.location.reload(); // this works better than duplicating the init logic in torrent.js
             }
         }
     },
