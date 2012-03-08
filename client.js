@@ -19,6 +19,12 @@ jQuery(document).ready( function() {
             BTOpenGadget('clients.html', 286, 160, { openposition: 'offset:(25;30)' });
         });
 
+    } else {
+        // no client, still allow dropdown..
+        jQuery('#computerselect').click( function(evt) {
+            BTOpenGadget('clients.html', 286, 160, { openposition: 'offset:(25;30)' });
+        });
+
     }
 
 

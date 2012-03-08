@@ -21,7 +21,13 @@ jQuery(document).ready( function() {
                 $('.spinner').html(JSON.stringify(text));
             },
             progress: function(data) {
-                $('.spinner').html(JSON.stringify(data));
+                if (data.progress) {
+                    var w = data.progress * 100 + '%'
+                    console.log('set progress width',w);
+                    $('.progressbar_fill').css('width', w);
+                } else if (data.message) {
+                    $('.spinner').html(data.message);
+                }
             }
         });
 

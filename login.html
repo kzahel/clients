@@ -4,13 +4,13 @@
 <!--[if IE 8 ]><html lang="en" class="ie ie8"><![endif]-->
 <!--[if (gte IE 9)|!(IE)]><!--> <html lang="en"><!--<![endif]-->
 <head>
-<link rel="stylesheet" href="css/style_robv.css?v=3.01">
-<script src="js/config.js?v=3.01"></script>
+<link rel="stylesheet" href="css/style_robv.css?v=3.02">
+<script src="js/config.js?v=3.02"></script>
 
 
 
-<script src="lib/jsload.js?v=3.01"></script>
-<script src="tags.js?v=3.01"></script>
+<script src="lib/jsload.js?v=3.02"></script>
+<script src="tags.js?v=3.02"></script>
 <script>
   (new JSLoad(tags)).load( ["login"], function() {
   });
@@ -47,11 +47,14 @@
         <!--input type="button" id="button_scan" value="Scan" class="button" /-->
 
     </div>
+        <div class="progressbar_container" style="width:200px; height:10px; border:1px solid black">
+          <div class="progressbar_fill" style="width:0%; height:10px; background:#888"></div>
+        </div>
+
     <div class="button_footer">
         <div class="spinner"></div>
         <input type="button" id="button_login" value="Login" class="button_upload" />
     </div>
-
 
   </body>
 </html>
