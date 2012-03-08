@@ -10,7 +10,8 @@ jQuery(document).ready( function() {
         var msg = { 'command': 'add_by_url', 'url': url };
         SendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
         jQuery('#url_input').val('');
-        CloseFloatingWindow();
+        custom_track('add_torrent');
+        BTCloseFloatingWindow();
     });
 
 

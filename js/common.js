@@ -59,3 +59,26 @@ function BTSendMessage(key, msg) {
     console.log('sending message',key,msg);
     SendMessage(key, msg);
 }
+
+function BTCloseFloatingWindow(arg) {
+    CloseFloatingWindow();
+}
+
+function custom_track(name, mydata) {
+    if (window.app && app.get('type') != 'client') {
+        // forward stats tracking messages to the main frame (because it wont close randomly etc like gadget windows)
+        app.send_message( { recipient: 'client', command: 'custom_track', data: { name: name, mydata: mydate } } );
+        return
+    }
+    var kvs = [];
+
+    for (var k in mydata) {
+        kvs.push( encodeURIComponent(k) + '=' + encodeURIComponent(mydata[k]) );
+    }
+
+    var full_stats_url = config.stats_url + '?name=' + encodeURIComponent(name) + '&' + kvs.join('&');
+    jQuery.ajax( { url: full_stats_url,
+                   jsonp: true,
+                   callback: function() {}
+                 } );
+}
