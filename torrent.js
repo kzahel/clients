@@ -69,5 +69,10 @@ jQuery(document).ready( function() {
         BTOpenGadget('add.html', 395, 150, { openposition: 'offset:(25;30)' });
     });
 
+    jQuery('.arrow_collapse').click( function(evt) {
+        //BTOpenGadget('add.html', 395, 118, { openposition: 'offset:(25;30)' });
+        $('#torrent_container').hide();
+
+    });
 
 } );
