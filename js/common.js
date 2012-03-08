@@ -34,6 +34,10 @@ function make_url_relative(url) {
 }
 
 function BTOpenGadget(url, w, h, extra_opts) {
+    var is_firefox = navigator.userAgent.match(/firefox/i);
+    var is_msie = navigator.userAgent.match(/MSIE/i);
+    var ff_fudge = is_firefox ? -39 : 0;
+
     var opts = { 
       resizable:0,
       saveresizedsize:0,
@@ -48,7 +52,7 @@ function BTOpenGadget(url, w, h, extra_opts) {
     var opts_str = _.map( opts, function(v,k) { return k + '=' + v; } ).join(','); // conduit has a weird api
 
     var abs_url = make_url_relative(url);
-    OpenGadget(abs_url, w, h, opts_str);
+    OpenGadget(abs_url, w, h + ff_fudge, opts_str);
 }
 
 function BTSendMessage(key, msg) {
