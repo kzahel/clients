@@ -335,9 +335,10 @@ html, body {
 	.button_add-torrent { // Add button
 		display: block;
 		position: absolute;
+		z-index:22222;
 		width: 16px;
 		height: 16px;
-		right: 30px;
+		left: 6px;
 		top: 5px;
 		text-indent: -9999px;
 		background: url('images/toolbar/action_sprite.png') no-repeat 0 -96px;
@@ -365,7 +366,7 @@ html, body {
 		position: absolute;
 		width: 26px;
 		height: 26px;
-		right: 55px;
+		right: 0px;
 		top: 0;
 		text-indent: -9999px;
 		background: #f0f0f0 url('images/toolbar/action_sprite.png') no-repeat 4px -157px;
@@ -418,7 +419,9 @@ html, body {
 				position: relative;
 				@include border_radius(2px, 2px, 2px, 2px);
 			}
+			.selected_color_container {padding-left:20px}
 		}
+		.selected_color {left:28px}
 		.torrent_item_container {
 			position: relative;
 			.flt_lft {
@@ -430,8 +433,8 @@ html, body {
 				right: 0;
 				top: 4px;
 				margin-right: 120px;
+				padding-left:10px;
 				text-align: left;
-				padding-left: 10px;
 				font-size: 11px;
 				line-height: 11px;
 				white-space: nowrap;
@@ -440,6 +443,9 @@ html, body {
 				text-overflow: ellipsis;
 				-o-text-overflow: ellipsis;
 			}
+			.selected_name {
+			  padding-left: 28px;
+			}
 			.bt_button_pause { // stop button
 				display: block;
 				position: absolute;
@@ -447,7 +453,7 @@ html, body {
 				height: 16px;
 				text-indent: -9999px;
 				top: 5px;
-				right: 30px;
+				right: 50px;
 				background: url('images/toolbar/action_sprite.png') no-repeat 0 0;
 				overflow: hidden;
 				&:hover {
@@ -461,7 +467,7 @@ html, body {
 				height: 16px;
 				text-indent: -9999px;
 				top: 5px;
-				right: 30px;
+				right: 50px;
 				background: url('images/toolbar/action_sprite.png') no-repeat 0 -32px;
 				overflow: hidden;
 				&:hover {
@@ -475,7 +481,7 @@ html, body {
 				height: 16px;
 				text-indent: -9999px;
 				top: 5px;
-				right: 10px;
+				right: 30px;
 				background: url('images/toolbar/action_sprite.png') no-repeat 0 -64px;
 				overflow: hidden;
 				&:hover {

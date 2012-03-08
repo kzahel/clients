@@ -255,9 +255,10 @@ html, body {
   .board_container .button_add-torrent {
     display: block;
     position: absolute;
+    z-index: 22222;
     width: 16px;
     height: 16px;
-    right: 30px;
+    left: 6px;
     top: 5px;
     text-indent: -9999px;
     background: url("images/toolbar/action_sprite.png") no-repeat 0 -96px;
@@ -281,7 +282,7 @@ html, body {
     position: absolute;
     width: 26px;
     height: 26px;
-    right: 55px;
+    right: 0px;
     top: 0;
     text-indent: -9999px;
     background: #f0f0f0 url("images/toolbar/action_sprite.png") no-repeat 4px -157px;
@@ -328,6 +329,10 @@ html, body {
         -webkit-border-radius: 2px 2px 2px 2px;
         -moz-border-radius: 2px 2px 2px 2px;
         border-radius: 2px 2px 2px 2px; }
+      .board_container .bt_torrent_list .torrent_color_container .selected_color_container {
+        padding-left: 20px; }
+    .board_container .bt_torrent_list .selected_color {
+      left: 28px; }
     .board_container .bt_torrent_list .torrent_item_container {
       position: relative; }
       .board_container .bt_torrent_list .torrent_item_container .flt_lft {
@@ -338,8 +343,8 @@ html, body {
         right: 0;
         top: 4px;
         margin-right: 120px;
-        text-align: left;
         padding-left: 10px;
+        text-align: left;
         font-size: 11px;
         line-height: 11px;
         white-space: nowrap;
@@ -347,6 +352,8 @@ html, body {
         overflow: hidden;
         text-overflow: ellipsis;
         -o-text-overflow: ellipsis; }
+      .board_container .bt_torrent_list .torrent_item_container .selected_name {
+        padding-left: 28px; }
       .board_container .bt_torrent_list .torrent_item_container .bt_button_pause {
         display: block;
         position: absolute;
@@ -354,7 +361,7 @@ html, body {
         height: 16px;
         text-indent: -9999px;
         top: 5px;
-        right: 30px;
+        right: 50px;
         background: url("images/toolbar/action_sprite.png") no-repeat 0 0;
         overflow: hidden; }
         .board_container .bt_torrent_list .torrent_item_container .bt_button_pause:hover {
@@ -366,7 +373,7 @@ html, body {
         height: 16px;
         text-indent: -9999px;
         top: 5px;
-        right: 30px;
+        right: 50px;
         background: url("images/toolbar/action_sprite.png") no-repeat 0 -32px;
         overflow: hidden; }
         .board_container .bt_torrent_list .torrent_item_container .bt_button_play:hover {
@@ -378,7 +385,7 @@ html, body {
         height: 16px;
         text-indent: -9999px;
         top: 5px;
-        right: 10px;
+        right: 30px;
         background: url("images/toolbar/action_sprite.png") no-repeat 0 -64px;
         overflow: hidden; }
         .board_container .bt_torrent_list .torrent_item_container .bt_button_x:hover {
