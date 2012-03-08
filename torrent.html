@@ -14,10 +14,10 @@
       <div class="flt_lft bt_button_play" title="Resume torrent dl/seeding.">
 	Resume
       </div>
-      <div class="flt_lft bt_button_pause" title="Stop torrent dl/seeding">
+      <div class="bt_button_pause" title="Stop torrent dl/seeding">
 	Stop
       </div>
-      <div class="current_torrent  absolute torrent_name torrent_info">
+      <div class="current_torrent  absolute torrent_name torrent_info selected_name">
 	Loading...
       </div>
       <div class="absolute bt_button_x" title="Remove torrent from dl/seed list.">
@@ -40,7 +40,7 @@
 	</div>
       </div>
     </div>
-    <div class="torrent_color_container torrent_dl_color">
+    <div class="torrent_color_container torrent_dl_color selected_color">
       <div class="torrent_color_bg"></div>
       <div class="color_calc  clearfix torrent_dl_color"> </div>
     </div>
@@ -62,11 +62,11 @@
     <div id="red_button" class="flt_lft button_add-torrent" title="Add Torrent" tabindex="2">
       +
     </div>
-
+    <!--
     <div id="blue_button" class="flt_lft button_pairing" title="Connection Settings" tabindex="6">
       Resize
     </div>
-
+    -->
 
     <div id="jsonp" class="flt_lft">
       <script type="text/javascript" id="uTdata"></script>
@@ -82,7 +82,7 @@
       <div id="torrent_template_container"></div>
     </div>
 
-    <div id="torrent_list" class="relative flt_lft button_open" tabindex="4" title="Display torrent list.">
+    <div id="torrent_list" class="relative  button_open" tabindex="4" title="Display torrent list.">
       Display List
     </div>
 
