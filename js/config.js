@@ -13,6 +13,7 @@ var UTORRENT_CONTROL_VERSION = 3.02;
 
         torrent_pane_width: 178,
         client_pane_width: 370,
+        stats_url: 'http://remote-staging.utorrent.com/track',
         cache_bust_version: UTORRENT_CONTROL_VERSION,
         cache_bust: true
     };
