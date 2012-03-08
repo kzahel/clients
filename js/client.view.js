@@ -140,7 +140,6 @@ var ClientView = Backbone.View.extend({
         this.$('.computer_name').html(this.model.get_name());
 
         if (this.model.get('selected')) {
-            console.log('rendering selected client!');
             this.$('.computer_name').css('text-decoration: underline');
         } else {
             this.$('.computer_name').css('text-decoration: none');
@@ -148,12 +147,20 @@ var ClientView = Backbone.View.extend({
     },
     set_status: function(state) {
         this.$('.status').text(state);
+    },
+    destroy: function() {
+        var parent = this.$el.parent();
+        var id = this.$el.attr('id');
+        this.unbind();
+        this.remove();
+        // backbone remove gets rid of the container which we want to re-use to re-attach another view
+        parent.append( $('<div id="'+id+'"></div>') );
     }
 });
 
 
 var ActiveClientView = Backbone.View.extend( {
     initialize: function() {
-    },
+    }
 })
 

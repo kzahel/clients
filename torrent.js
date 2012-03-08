@@ -16,7 +16,7 @@ jQuery(document).ready( function() {
         if (torrent) {
             window.torrentview = new ActiveTorrentView( { el: $('#torrent_template_container'), model: torrent } );
         } else {
-            $('#torrent_template_container').text('loading...');
+            $('#torrent_template_container').text('Loading view...');
             if (! client.updating) {
                 client.bind('firstupdate', function(arg) {
                     var torrent = client.get_selected_torrent();

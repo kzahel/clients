@@ -51,7 +51,8 @@ var Client = Backbone.Model.extend({
         app.trigger('reset'); // model was destroyed from collection. tell other frames to reset
     },
     select: function() {
-        this.trigger('selected', this); // to tell the collection a new selection is enabled
+        this.collection.set_active(this);
+        //this.trigger('selected', this); // to tell the collection a new selection is enabled
     },
     fetch_server: function() {
         // fetches "raptor" from database
@@ -119,8 +120,6 @@ var Client = Backbone.Model.extend({
             app.pair(this);
             //BTOpenGadget('pairing');
         } else {
-
-        
 
         //$('#pairing_view').html('<div style="position: absolute; top:80px; left:80px"><iframe style="overflow:hidden; width:400px; height:200px;" id="pairing_frame" src="' + url + '"></iframe></div>'); // not working in IE...
 
@@ -370,13 +369,14 @@ var ClientCollection = Backbone.Collection.extend( {
 
         var _this = this;
 
-        // XXX! don't even try to bind on change, it's totally broken for collections
-
+/* // want to manually call set_active instead of simply writing a selected attribute
         this.bind('selected', function(client) { 
             _this.set_active(client);
         });
+*/
 
         this.bind('add', function(client) {
+            debugger;
             if (! _this.selected) {
                 client.select();
             }
@@ -395,6 +395,9 @@ var ClientCollection = Backbone.Collection.extend( {
         }
     },
     set_active: function(client, opts) {
+        // backbone does not support .set() on collections :-( so we
+        // set selected attribute on a model (which gets persisted)
+        // and then simply assign our own selected attribute.
         var found = false;
         for (var i=0; i<this.models.length;i++) {
             if (this.models[i].id == client.id) {
@@ -410,7 +413,15 @@ var ClientCollection = Backbone.Collection.extend( {
         this.selected = found;
         if (opts && opts.silent) {
         } else {
+            console.log('app',app.get('type'),'sending switch to client message');
             app.switch_to_client(found);
+        }
+    },
+    get_selected: function() {
+        for (var i=0; i<this.models.length; i++) {
+            if (this.models[i].get('selected')) {
+                return this.models[i];
+            }
         }
     },
     init_post_fetch: function() {
@@ -420,14 +431,13 @@ var ClientCollection = Backbone.Collection.extend( {
             });
         } else {
             // set selected client if one has selected attribute
-            for (var i=0; i<this.models.length; i++) {
-                if (this.models[i].get('selected')) {
-                    this.set_active(this.models[i], { silent: true });
-                    console.log('restored selected client',this.selected);
-                    return;
-                }
+            var selected = this.get_selected();
+            if (selected) {
+                this.selected = selected;
+                console.log(app.get('type'),'restored selected client',this.selected);
+            } else {
+                console.log('init post fetch -- no client had selected attribute');
             }
-            console.log('init post fetch -- no client had selected attribute');
         }
     },
     find_local_clients: function(callback) {
@@ -436,10 +446,8 @@ var ClientCollection = Backbone.Collection.extend( {
         pairing.bind('pairing:found', function(opts) {
             opts.attempt_authorization = false;
             var client = new Client( { type: 'local', data: opts } );
-
             client.pair();
             
-
             _this.add( client );
 
             if (_this.models.length == 1) {

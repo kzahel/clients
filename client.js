@@ -17,23 +17,26 @@ jQuery(document).ready( function() {
         window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
     }
 
-/*
+
     clients.bind('selected', function(client) {
-        debugger;
+        if (window.clientview) {
+            if (clientview.model.id == client.id) {
+                return;
+            }
+        }
+
+        clientview.destroy()
+
         // destroy old clientview ?
         window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
     });
 
+/*
     clients.bind('destroy', function(client) {
         debugger;
         window.clientview = new ClientView( { el: $('#computerselect'), model: null } );
     });
 */
-    if (clients.models.length == 0) {
-        // init post fetch will scan for clients...
-        // BTOpenGadget('pairing.html', 286, 130, { openposition: 'offset:(25;30)' });
-    }
-
 
 
     jQuery('#computerselect').click( function(evt) {

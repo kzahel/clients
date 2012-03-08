@@ -79,6 +79,9 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                     var client = clients.selected; 
                     assert(client.collection);
                     client.fetch(); // fetches updated "active_hash" attribute
+                } else if (msg.command == 'scan_clients') {
+                    clients.find_local_clients( function(clients) {
+                    });
                 }
             }
             return;
@@ -90,22 +93,16 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
             clients.reset();
             return;
         }
-        console.log('app',this.get('type'),'handling toolbarapi message',k,msg);
+        console.log('app',this.get('type'),'handling toolbarapi message',k,JSON.stringify(msg));
         if (this.get('type') == 'client') {
             
             if (msg.command == 'switch_client') {
-                var client = clients.get_by_id(msg.id);
-                if (! client) {
-                    clients.reset();
-                    clients.fetch();
-                    client = clients.get_by_id(msg.id);
-                }
-                assert(client);
-                clients.set_active(client);
-/*
-                var client = new Client( msg.data );
-                clients.set_active(client);
-*/
+                var prevclient = clients.selected;
+                clients.fetch(); // should get new selected attribute
+                clients.selected = clients.get_selected();
+                assert( clients.selected.id == msg.id );
+                clients.trigger('selected', clients.selected); // triggers recreation of view
+
             } else if (msg.command == 'add_by_url') {
                 clients.selected.doreq( { action: 'add-url', s: msg.url } );
             } else if (msg.command == 'add_client') {
@@ -135,6 +132,7 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
     },
     switch_to_client: function(client) {
         if (this.get('type') == 'client') { // MAIN APP
+            debugger;
             window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
             // $('.computer_name').text( client.get_name() );
         } else {
