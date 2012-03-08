@@ -438,7 +438,9 @@ var ClientCollection = Backbone.Collection.extend( {
             var selected = this.get_selected();
             if (selected) {
                 this.selected = selected;
-                console.log(app.get('type'),'restored selected client',this.selected);
+                if (window.app) {
+                    console.log(app.get('type'),'restored selected client',this.selected);
+                }
             } else {
                 console.log('init post fetch -- no client had selected attribute');
             }

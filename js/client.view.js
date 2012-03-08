@@ -139,10 +139,12 @@ var ClientView = Backbone.View.extend({
     render: function() {
         this.$('.computer_name').html(this.model.get_name());
 
-        if (this.model.get('selected')) {
-            this.$('.computer_name').css('text-decoration: underline');
-        } else {
-            this.$('.computer_name').css('text-decoration: none');
+        if (app.get('type') == 'clients') {
+            if (this.model.get('selected')) {
+                this.$('.indie_computer_wrapper').addClass('selected');
+            } else {
+                this.$('.indie_computer_wrapper').removeClass('selected');
+            }
         }
     },
     set_status: function(state) {
