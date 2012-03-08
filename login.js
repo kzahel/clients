@@ -16,6 +16,7 @@ jQuery(document).ready( function() {
                 custom_track('login_success');
                 clients.add(client); // adds to local collection
                 clients.set_active(client); // sets selected attribute, unsets on other clients
+                app.send_message( { recipient: 'client', command: 'switch_to_client', id: client.id } );
                 //app.send_reset(); // triggers other apps to reset
                 CloseFloatingWindow();
             },

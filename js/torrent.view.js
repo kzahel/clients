@@ -170,6 +170,7 @@ var ActiveTorrentView = TorrentView.extend({
     initialize: function() {
         this.template = _.template( $('#torrent_template').html() );
         this.$el.html( this.template() );
+        $('.default_container').hide();
         var _this = this;
         this.model.bind('change', function(model,opts) {
             // console.log('active torrent change',_this.model.get('name'),_this.model.changedAttributes());
