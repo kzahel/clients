@@ -82,6 +82,15 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                 } else if (msg.command == 'scan_clients') {
                     clients.find_local_clients( function(clients) {
                     });
+                } else if (msg.command == 'update_client_status') {
+                    var client = clients.get_by_id(msg.id);
+                    client.fetch();
+/*
+                    clients.each( function(client) {
+                        client.fetch(); // update status attribute on client
+                    });
+*/
+
                 }
             }
             return;

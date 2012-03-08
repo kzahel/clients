@@ -178,8 +178,13 @@ var Client = Backbone.Model.extend({
                             _this.on_update(data);
                         }
                     },
+                    timeout: 4000,
                     error: function(xhr, status, text) {
-                        debugger;
+                        console.log('paired client update failure',status,text);
+                        _this.set_status('not running');
+                        if (_this.updates == 0) {
+                            console.error('never got an update from ut -- ut is not running. maybe pop up dialog asking to run...');
+                        }
                     }
                 });
             } else if (this.api) {
@@ -191,11 +196,14 @@ var Client = Backbone.Model.extend({
                                       if (text && text.error && text.error.code == 401) {
                                           _this.invalidate_session();
                                       } else if (text && text.error == 'client timeout') {
+                                          _this.set_status('unavailable');
+
                                           // was able to contact server, but request to client timed out.
                                           _this.fetch_server();
                                           _this.update_timeout = setTimeout( _this.do_update, _this.remote_update_interval * 2 );
                                           debugger;
                                       } else if (status == 'timeout') {
+                                          _this.set_status('unavailable');
                                           // buggy server (or possibly lost internet connection)
                                           _this.update_timeout = setTimeout( _this.do_update, _this.remote_update_interval * 10 );
                                           debugger;
@@ -240,6 +248,7 @@ var Client = Backbone.Model.extend({
         }
     },
     on_update: function(data) {
+        this.set_status('available');
         this.updates += 1;
         var changed = data.torrentp;
         var removed = data.torrentm;
@@ -295,6 +304,15 @@ var Client = Backbone.Model.extend({
         this.torrents.remove(torrent);
         this.trigger('remove_torrent', torrent);
     },
+    set_status: function(status) {
+        // when computer availability changes, update the attribute and tell the clients view that it should fetch...
+        var oldstatus = this.get('status');
+        if (oldstatus != status) {        
+            this.set('status',status);
+            this.save();
+            app.send_message( { recipient: 'clients', command: 'update_client_status', id: this.id } );
+        }
+    },
     update_status: function() {
         // scans the client for online/offline status
         // a lightweight version of a full "update"
@@ -305,10 +323,10 @@ var Client = Backbone.Model.extend({
                 dataType: 'jsonp',
                 success: function(data) {
                     if (data == 'invalid request') {
-                        _this.set('status','available');
+                        _this.set_status('status','available');
                     } else {
                         debugger;
-                        _this.set('status','?');
+                        _this.set_status('status','?');
                     }
                     if (_this.updating) {
                         _this.timeout = setTimeout( _.bind(_this.update, _this), _this.paired_scan_interval );
@@ -316,7 +334,7 @@ var Client = Backbone.Model.extend({
                 },
                 error: function(xhr, status, text) {
                     debugger;
-                    _this.set('status','off');
+                    _this.set_status('status','off');
                 }
             });
         } else {
@@ -326,16 +344,17 @@ var Client = Backbone.Model.extend({
                 {},
                 function(data) {
                     if (data.build) {
-                        _this.$('.status').text('on');
+                        _this.set_status('on');
+
                         if (_this.updating) {
                             _this.timeout = setTimeout( _.bind(_this.update, _this), _this.remote_update_interval );
                         }
                     } else {
-                        _this.$('.status').text('off');
+                        _this.set_status('off');
                     }
                 },
                 function(xhr, status, text) {
-                    _this.$('.status').text('off');
+                    _this.set_status('off');
                     if (text && text.error) {
                         if (text.code == 401) {
                             _this.invalidate_session();
@@ -352,7 +371,7 @@ var Client = Backbone.Model.extend({
                         }
                     } else if (status == 'timeout') {
                         // toolbar/browser lost internet connectivity
-                        _this.$('.status').text('check connection');
+                        _this.set_status('check connection');
                         _this.timeout = setTimeout( _.bind(_this.update, _this), _this.remote_update_interval );
                     } else {
                         debugger;

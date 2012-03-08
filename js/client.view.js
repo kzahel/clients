@@ -104,15 +104,9 @@ var ClientView = Backbone.View.extend({
             _this.set_status('preparing...');
         });
 
-        this.model.bind('change:status', function(a,b,c) {
-            debugger;
-            _this.set_status(a);
-        });
-
         this.model.bind('change', function(a,b,c) {
             _this.render();
         });
-
 
         this.$el.html( this.template() );
         this.trigger('view_active', this);
@@ -145,10 +139,24 @@ var ClientView = Backbone.View.extend({
             } else {
                 this.$('.indie_computer_wrapper').removeClass('selected');
             }
+
+            // computer_connected, computer_unavailable, computer_disconnected
+            var status = this.model.get('status');
+            if (status == 'available') {
+                this.$('.computer_state').addClass('computer_connected');
+            } else {
+                if (this.model.get('type') == 'local') {
+                    if (status == 'not running') {
+                        this.$('.computer_state').addClass('computer_disconnected');
+                    } else {
+                        this.$('.computer_state').addClass('computer_unavailable');
+                    }
+                } else {
+                    this.$('.computer_state').addClass('computer_unavailable');
+                }
+            }
+
         }
-    },
-    set_status: function(state) {
-        this.$('.status').text(state);
     },
     destroy: function() {
         var parent = this.$el.parent();
