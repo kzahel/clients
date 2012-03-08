@@ -1,4 +1,4 @@
-var VERSION = 3.01;
+var UTORRENT_CONTROL_VERSION = 3.02;
 
 (function() {
     if (! window.console) {
@@ -13,7 +13,7 @@ var VERSION = 3.01;
 
         torrent_pane_width: 178,
         client_pane_width: 370,
-        cache_bust_version: VERSION,
+        cache_bust_version: UTORRENT_CONTROL_VERSION,
         cache_bust: true
     };
 
