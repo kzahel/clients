@@ -23,10 +23,10 @@ html, body {
 .torrent_wrapper {
   position: relative; }
 
+.arrow_container {
+  float: left; }
+
 .arrow_collapse {
-  position: absolute;
-  top: 0px;
-  right: 0px;
   width: 26px;
   height: 26px;
   overflow: hidden;
