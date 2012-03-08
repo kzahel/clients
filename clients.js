@@ -21,4 +21,9 @@ jQuery(document).ready( function() {
 
     console.log('clients',clients.models);
 
+    $('.add').click( function(evt) {
+        app.open_gadget('login');
+    });
+
+
 } );
