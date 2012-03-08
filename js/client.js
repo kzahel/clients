@@ -47,8 +47,12 @@ var Client = Backbone.Model.extend({
         }
     },
     remove: function() {
+        //app.trigger('reset'); // model was destroyed from collection. tell other frames to reset
+        if (this.get('selected')) {
+            console.error('remove client that was selected -- special case');
+            debugger;
+        }
         this.destroy();
-        app.trigger('reset'); // model was destroyed from collection. tell other frames to reset
     },
     select: function() {
         this.collection.set_active(this);

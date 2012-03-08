@@ -90,6 +90,8 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                         client.fetch(); // update status attribute on client
                     });
 */
+                } else if (msg.command == 'switch_client') {
+                    debugger;
                 } else if (msg.command == 'custom_track') {
                     console.log('sending custom track event', msg.data.name, msg.data.mydata);
                     custom_track(msg.data.name, msg.data.mydata);

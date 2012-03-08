@@ -60,8 +60,14 @@ function BTSendMessage(key, msg) {
     SendMessage(key, msg);
 }
 
-function BTCloseFloatingWindow(arg) {
-    CloseFloatingWindow();
+function BTCloseFloatingWindow(delay) {
+    if (delay) {
+        setTimeout( function() {
+            CloseFloatingWindow();
+        }, delay);
+    } else {
+        CloseFloatingWindow();
+    }
 }
 
 function custom_track(name, mydata) {

@@ -16,9 +16,10 @@ jQuery(document).ready( function() {
                 custom_track('login_success');
                 clients.add(client); // adds to local collection
                 clients.set_active(client); // sets selected attribute, unsets on other clients
-                app.send_message( { recipient: 'client', command: 'switch_to_client', id: client.id } );
+                app.switch_to_client(client);
+                //app.send_message( { command: 'switch_client', id: client.id } );
                 //app.send_reset(); // triggers other apps to reset
-                CloseFloatingWindow();
+                BTCloseFloatingWindow(200);
             },
             error: function(xhr, status, text) {
                 custom_track('login_error');
@@ -33,7 +34,8 @@ jQuery(document).ready( function() {
                 } else if (data.message) {
                     $('.spinner').html(data.message);
                 }
-            }
+            },
+            timeout: 3000,
         });
 
     });
