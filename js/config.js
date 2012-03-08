@@ -1,3 +1,5 @@
+var VERSION = 3.01;
+
 (function() {
     if (! window.console) {
         window.console = { log: function(){},
@@ -11,6 +13,7 @@
 
         torrent_pane_width: 178,
         client_pane_width: 370,
+        cache_bust_version: VERSION,
         cache_bust: true
     };
 
