@@ -18,6 +18,7 @@
 
 <script type="text/template" id="client_template">
   <div class="indie_computer_wrapper">
+    <div class="computer_state">State</div>
     <div class="remove_computer">Remove</div>
     <div class="remote_computer">uTorrent Remote</div>
     <div class="computer_name">
@@ -25,33 +26,30 @@
     </div>
  </div>
 </script>
-
 <script type="text/template" id="clients_template">
-  <div class="clients">
+  <div class="clients ">
   </div>
-  <div class="add">add a client</div>
+  <div class="add text_footer">
+      <div class="add_computer">+</div>
+      Add new remote computer
+  </div>
 </script>
+
 
 </head>
 
 <body style="overflow-x: hidden;">
+    <div class="help_row ">
+        <a href="http://www.utorrent.com/help/faq/utorrent-control" target="_blank" class="help_link torrent_fudge" onclick="sendmsg('close_gadgets');">Need help with torrent controls?</a>
+    </div>
+    <div class="dialog_head head_connect">
+        <h2>Computer Selection</h2>
+    </div>
 
-  <div class="help_row ">
-    <a href="http://www.utorrent.com/help/faq/utorrent-control" target="_blank" class="help_link torrent_fudge" onclick="sendmsg('close_gadgets');">Need help with torrent controls?</a>
-  </div>
+    <div id="global_container" class="computer_selection_wrapper">
 
+        <div id="clients_view"></div> <!-- view gets rendered in here -->
 
-  <div class="dialog_head head_connect">
-    <h2>Computer Selection</h2>
-  </div>
-
-  <div id="global_container" class="computer_selection_wrapper">
-
-    <div id="clients_view"></div> <!-- view gets rendered in here -->
-
-  </div>
-
-
-
+    </div>
 </body>
 </html>

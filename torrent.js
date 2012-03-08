@@ -37,7 +37,7 @@ jQuery(document).ready( function() {
     });
 
     jQuery('#red_button').click( function(evt) {
-        BTOpenGadget('add.html', 395, 118, { openposition: 'offset:(25;30)' });
+        BTOpenGadget('add.html', 395, 150, { openposition: 'offset:(25;30)' });
     });
 
 

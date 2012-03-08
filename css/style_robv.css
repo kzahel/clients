@@ -1,4 +1,11 @@
 @import url(ut_foundation.css);
+.cleardiv {
+  clear: both;
+  font-size: 0px; }
+
+.block_pad {
+  height: 10px; }
+
 html, body {
   background: transparent;
   color: #333; }
@@ -21,22 +28,33 @@ html, body {
     margin: 0;
     padding: 0; }
 
+.bg_dialog {
+  background: #dcdcdc; }
+
+.dialog_tip {
+  color: #666;
+  padding: 0 0 7px 0; }
+
 .dialog_container {
-  padding: 20px; }
+  padding: 10px 20px 20px 20px; }
 
 .form_row label {
   display: block;
   float: left;
   width: 70px;
-  padding: 4px 0 0; }
+  padding: 2px 0 0;
+  color: #666;
+  font-weight: bold; }
 .form_row .bt_input {
   border: 1px solid #ccc;
   background: #fff;
   padding: 4px 6px;
   float: left;
-  width: 203px; }
+  width: 146px; }
+  .form_row .bt_input.url_field {
+    width: 254px; }
 .form_row .button_upload {
-  padding: 5px 7px;
+  padding: 5px 17px;
   border: 0;
   background: #333;
   color: #fff;
@@ -47,6 +65,20 @@ html, body {
   .form_row .button_upload:focus {
     background: #000; }
   .form_row .button_upload:hover {
+    background: #000; }
+
+.button_upload {
+  padding: 5px 17px;
+  border: 0;
+  background: #333;
+  color: #fff;
+  margin-right: 10px;
+  -webkit-border-radius: 8px 8px 8px 8px;
+  -moz-border-radius: 8px 8px 8px 8px;
+  border-radius: 8px 8px 8px 8px; }
+  .button_upload:focus {
+    background: #000; }
+  .button_upload:hover {
     background: #000; }
 
 .link_grp .button {
@@ -88,6 +120,29 @@ html, body {
     text-indent: -99999px;
     background: url("images/toolbar/help.png") no-repeat 0 0; }
 
+.button_footer {
+  background-color: #a9a9a9;
+  padding: 10px;
+  text-align: right; }
+
+.text_footer {
+  position: absolute;
+  top: 89px;
+  width: 100%;
+  background-color: #a9a9a9;
+  padding: 5px 0 5px 26px;
+  text-align: left;
+  color: #666;
+  font-weight: bold; }
+
+.add_computer {
+  position: absolute;
+  top: 0px;
+  left: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #666666; }
+
 .computer_selection_wrapper {
   position: relative;
   background: #f0f0f0;
@@ -95,15 +150,29 @@ html, body {
   .computer_selection_wrapper .indie_computer_wrapper {
     position: relative; }
   .computer_selection_wrapper .computer_name {
-    padding: 5px 30px 5px 8px;
+    padding: 5px 0 5px 26px;
     font-weight: bold;
     overflow: hidden;
     text-overflow: ellipsis;
-    -o-text-overflow: ellipsis; }
+    -o-text-overflow: ellipsis;
+    color: #666; }
     .computer_selection_wrapper .computer_name em {
       color: #ccc;
       font-size: 10px;
       font-style: normal; }
+  .computer_selection_wrapper .computer_state {
+    position: absolute;
+    top: 9px;
+    left: 10px;
+    width: 7px;
+    height: 7px;
+    overflow: hidden;
+    text-indent: -9999px;
+    -webkit-border-radius: 8px 8px 8px 8px;
+    -moz-border-radius: 8px 8px 8px 8px;
+    border-radius: 8px 8px 8px 8px;
+    border: 2px solid #a40000;
+    background: #a40000; }
   .computer_selection_wrapper .remove_computer {
     position: absolute;
     top: 7px;
@@ -285,10 +354,10 @@ html, body {
     right: 0px;
     top: 0;
     text-indent: -9999px;
-    background: #f0f0f0 url("images/toolbar/action_sprite.png") no-repeat 4px -157px;
+    background: #f0f0f0 url("images/toolbar/action_sprite.png") no-repeat 5px -157px;
     overflow: hidden; }
     .board_container .button_open:hover {
-      background: black url("images/toolbar/action_sprite.png") no-repeat -60px -157px; }
+      background: black url("images/toolbar/action_sprite.png") no-repeat -59px -157px; }
   .board_container.torrent_list_dd {
     overflow: visible; }
     .board_container.torrent_list_dd .bt_torrent_list {

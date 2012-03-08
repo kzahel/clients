@@ -25,7 +25,8 @@
     -moz-border-radius: $topleft $topright $bottomright $bottomleft;
     border-radius: $topleft $topright $bottomright $bottomleft;
 }
-
+.cleardiv {clear:both;font-size:0px}
+.block_pad {height:10px}
 html, body {
 	background: transparent;
 	color: #333;
@@ -53,9 +54,10 @@ html, body {
 		padding: 0;
 	}
 }
-
+.bg_dialog {background:#dcdcdc}
+.dialog_tip {color:#666;padding:0 0 7px 0}
 .dialog_container {
-	padding: 20px;
+	padding: 10px 20px 20px 20px;
 }
 
 .form_row {
@@ -63,17 +65,20 @@ html, body {
 		display: block;
 		float: left;
 		width: 70px;
-		padding: 4px 0 0;
+		padding: 2px 0 0;
+		color:#666;
+		font-weight:bold
 	}
 	.bt_input {
 		border: 1px solid #ccc;
 		background: #fff;
 		padding: 4px 6px;
 		float: left;
-		width: 203px;
+		width: 146px;
+		&.url_field {width: 254px;}
 	}
 	.button_upload {
-		padding: 5px 7px;
+		padding: 5px 17px;
 		border: 0;
 		background: #333;
 		color: #fff;
@@ -87,7 +92,20 @@ html, body {
 		}
 	}
 }
-
+.button_upload {
+		padding: 5px 17px;
+		border: 0;
+		background: #333;
+		color: #fff;
+		margin-right: 10px;
+		@include border_radius();
+		&:focus {
+			background: #000;
+		}
+		&:hover {
+			background: #000;
+		}
+	}
 .link_grp {
 	.button {
 		position: absolute;
@@ -133,6 +151,24 @@ html, body {
 	}
 }
 
+.button_footer {
+	background-color: #a9a9a9;
+	padding: 10px;
+	text-align:right
+}
+.text_footer {
+  position:absolute;top:89px;
+  width:100%;
+  background-color: #a9a9a9;
+	padding: 5px 0 5px 26px;
+	text-align:left;
+	color:#666;
+	font-weight:bold
+}
+.add_computer {
+  position:absolute;top:0px;left:10px;
+  font-size:16px;font-weight:bold;color:#666
+}
 .computer_selection_wrapper {
 	position: relative;
 	background: #f0f0f0;
@@ -141,16 +177,29 @@ html, body {
 		position: relative;
 	}
 	.computer_name {
-		padding: 5px 30px 5px 8px;
+		padding: 5px 0 5px 26px;
 		font-weight: bold;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				-o-text-overflow: ellipsis;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		-o-text-overflow: ellipsis;
+		color:#666;
 		em {
 			color: #ccc;
 			font-size: 10px;
 			font-style: normal;
 		}
+	}
+	.computer_state {
+		position: absolute;
+		top: 9px;
+		left: 10px;
+		width: 7px;
+		height: 7px;
+		overflow: hidden;
+		text-indent: -9999px;
+		@include border_radius();
+		border:2px solid #a40000;
+		background:#a40000
 	}
 	.remove_computer {
 		position: absolute;
@@ -369,10 +418,10 @@ html, body {
 		right: 0px;
 		top: 0;
 		text-indent: -9999px;
-		background: #f0f0f0 url('images/toolbar/action_sprite.png') no-repeat 4px -157px;
+		background: #f0f0f0 url('images/toolbar/action_sprite.png') no-repeat 5px -157px;
 		overflow: hidden;
 		&:hover {
-			background: #000 url('images/toolbar/action_sprite.png') no-repeat -60px -157px;
+			background: #000 url('images/toolbar/action_sprite.png') no-repeat -59px -157px;
 		}
 	}
 	&.torrent_list_dd {
