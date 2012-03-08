@@ -67,7 +67,7 @@ function BTCloseFloatingWindow(arg) {
 function custom_track(name, mydata) {
     if (window.app && app.get('type') != 'client') {
         // forward stats tracking messages to the main frame (because it wont close randomly etc like gadget windows)
-        app.send_message( { recipient: 'client', command: 'custom_track', data: { name: name, mydata: mydate } } );
+        app.send_message( { recipient: 'client', command: 'custom_track', data: { name: name, mydata: mydata } } );
         return
     }
     var kvs = [];
