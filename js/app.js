@@ -152,7 +152,10 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
         BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
     },
     pair: function(client) {
-        debugger;
+        if (this.get('type') == 'client') {
+            // popup pairing
+            BTOpenGadget('pairing.html', 286, 200, { openposition: 'offset:(0;30)' });
+        }
     },
     add_client: function(client) {
         var msg = { 'command': 'add_client', 'data': client.attributes };
