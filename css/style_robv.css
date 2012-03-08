@@ -121,6 +121,11 @@ html, body {
     text-indent: -99999px;
     background: url("images/toolbar/help.png") no-repeat 0 0; }
 
+.client_list_container {
+  height: 89px;
+  overflow-x: hidden;
+  overflow-y: auto; }
+
 .button_footer {
   position: relative;
   background-color: #a9a9a9;
@@ -129,7 +134,7 @@ html, body {
 
 .text_footer {
   position: absolute;
-  top: 89px;
+  top: 131px;
   width: 100%;
   background-color: #a9a9a9;
   padding: 5px 0 5px 26px;

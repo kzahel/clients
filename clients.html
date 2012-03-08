@@ -29,16 +29,12 @@
 <script type="text/template" id="clients_template">
   <div class="clients ">
   </div>
-  <div class="add text_footer">
-      <div class="add_computer">+</div>
-      Add new remote computer
-  </div>
 </script>
 
 
 </head>
 
-<body class="bg_dialog" style="overflow-x: hidden;">
+<body class="bg_dialog" style="overflow: hidden">
     <div class="help_row ">
         <a href="http://www.utorrent.com/help/faq/utorrent-control" target="_blank" class="help_link torrent_fudge" onclick="sendmsg('close_gadgets');">Need help with torrent controls?</a>
     </div>
@@ -48,8 +44,12 @@
 
     <div id="global_container" class="computer_selection_wrapper">
 
-        <div id="clients_view"></div> <!-- view gets rendered in here -->
+        <div id="clients_view" class="client_list_container"></div> <!-- view gets rendered in here -->
 
     </div>
+    <div class="add text_footer">
+      <div class="add_computer">+</div>
+      Add new remote computer
+  </div>
 </body>
 </html>
