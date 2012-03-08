@@ -32,6 +32,7 @@ html, body {
   background: #dcdcdc; }
 
 .dialog_tip {
+  height: 19px;
   color: #666;
   padding: 0 0 7px 0; }
 
@@ -136,16 +137,32 @@ html, body {
   color: #666;
   font-weight: bold; }
 
+.progressbar_container {
+  position: absolute;
+  left: 18px;
+  top: 17px;
+  width: 170px;
+  height: 14px;
+  border: 0px solid black;
+  z-index: 333; }
+
+.progressbar_fill {
+  width: 0%;
+  height: 14px;
+  background: #888888; }
+
 .spinner {
   position: absolute;
-  left: 20px;
-  top: 10px;
+  left: 5px;
+  top: -1px;
   width: 170px;
-  color: #666;
+  color: #111;
+  font-size: 11px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  -o-text-overflow: ellipsis; }
+  -o-text-overflow: ellipsis;
+  text-align: left; }
 
 .add_computer {
   position: absolute;
