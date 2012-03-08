@@ -367,7 +367,7 @@ html, body {
       margin: 0 !important;
       border-bottom: 1px solid #fff; }
   .board_container .bt_torrent_list {
-    background: #f0f0f0;
+    background: #dcdcdc;
     margin: 0 0px 0 0px;
     color: #666;
     position: relative;
@@ -471,3 +471,5 @@ html, body {
         color: #888; }
         .board_container .bt_torrent_list .torrent_item_container .bt_info_container .bt_state_container {
           display: none; }
+  .board_container .selected_torrent {
+    background: #f0f0f0; }
