@@ -121,6 +121,7 @@ html, body {
     background: url("images/toolbar/help.png") no-repeat 0 0; }
 
 .button_footer {
+  position: relative;
   background-color: #a9a9a9;
   padding: 10px;
   text-align: right; }
@@ -134,6 +135,17 @@ html, body {
   text-align: left;
   color: #666;
   font-weight: bold; }
+
+.spinner {
+  position: absolute;
+  left: 20px;
+  top: 10px;
+  width: 170px;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis; }
 
 .add_computer {
   position: absolute;
