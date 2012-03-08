@@ -49,35 +49,15 @@ var AddTorrentView = Backbone.View.extend({
     }
 });
 
-/*
-$(document).on('click','.bt_button_x', function(evt) {
-    var data = $(evt.currentTarget).data();
-    console.log('remove torrent', evt, data);
-});
-*/
-
-
 var TorrentView = Backbone.View.extend({
     destroy: function() {
-        this.unbind();
-        this.el.parentNode.removeChild( this.el ); // equivalent to this.remove()?
+        this.unbind(); // does this actually do anything?
+        //this.el.parentNode.removeChild( this.el ); // equivalent to this.remove()?
+        this.remove();
+        // do the parent insert element back thing... ?
     },
-    initialize: function(opts) {
-        this.template = _.template( $('#torrent_template').html() );
-        this.$el.html( this.template() );
-        this.$el.data( {id:this.model.id} );
-        this.model.bind('removed', function(m) {
-            // remove from dom
-            _this.destroy();
-        });
-
-        this.model.bind('change', function(m) {
-            console.log('torrent change',_this.model.get('name'),_this.model.changedAttributes());
-            _this.render();
-        });
-
+    bind_action_events: function() {
         var _this = this;
-
         this.$('.bt_button_x').click( function(evt) {
             console.log('remove torrent',_this.model);
             _this.model.doreq('remove');
@@ -92,7 +72,14 @@ var TorrentView = Backbone.View.extend({
             console.log('pause torrent',_this.model);
             _this.model.doreq('stop');
         });
-
+    },
+    bind_events: function() {
+        var _this = this;
+        this.bind_action_events();
+        this.model.bind('change', function(m) {
+            // console.log('torrent change',_this.model.get('name'),_this.model.changedAttributes());
+            _this.render();
+        });
         this.$('.torrent_name').click( function(evt) {
             _this.model.collection.client.set('active_hash',_this.model.get('hash'));
             console.log('setting active hash',_this.model.get('hash'));
@@ -101,8 +88,19 @@ var TorrentView = Backbone.View.extend({
             app.send_message( { recipient: 'torrent', command: 'select_torrent' } );
         });
     },
+    initialize: function(opts) {
+        this.template = _.template( $('#torrent_template').html() );
+        this.$el.html( this.template() );
+        this.$el.data( {id:this.model.id} );
+        var _this = this;
+        this.model.bind('removed', function(m) {
+            // remove from dom
+            _this.destroy();
+        });
+        //this.bind_events();
+    },
     render: function() {
-        var progress_width = Math.floor(this.model.get('progress')/10) + '%';
+        var progress_width = Math.floor(1000 * this.model.get('downloaded')/this.model.get('size'))/10 + '%';
 
         this.$('.torrent_info').html( this.model.get('name') );
         this.$('.torrent_info_percent_complete').html( progress_width );
@@ -137,9 +135,16 @@ var TorrentsView = Backbone.View.extend({
         this.model.bind('firstupdate', function() {
             _this.render();
         });
+
+        this.model.bind('new_torrent', function(t) {
+            if (! t.view) {
+                t.view = new TorrentView( { model: t } );
+            }
+            _this.$el.prepend( t.view.render() );
+        });
+
     },
     render: function() {
-        //this.$('.list').html(''); 
         this.$el.html('');
         var _this = this;
         if (this.model && this.model.torrents) {
@@ -147,9 +152,9 @@ var TorrentsView = Backbone.View.extend({
                 if (! t.view) {
                     t.view = new TorrentView( { model: t } );
                 }
-                // losing click events :-(
-                //t.view.render().appendTo( _this.$el );
-                _this.$el.append( t.view.render() );
+                // losing click events!!!
+                _this.el.appendChild( t.view.el );
+                t.view.bind_events();
             });
         }
     }
@@ -161,9 +166,16 @@ var ActiveTorrentView = TorrentView.extend({
         this.$el.html( this.template() );
         var _this = this;
         this.model.bind('change', function(model,opts) {
-            //console.log('torrent change',_this.model.get('name'),_this.model.changedAttributes());
+            // console.log('active torrent change',_this.model.get('name'),_this.model.changedAttributes());
             _this.render();
         });
+        this.bind_action_events();
         this.render();
+
+        this.model.collection.bind('new_torrent', function(t) {
+            console.log('may want to replace current acitve torrent view with new torrent',t.get('name'));
+        });
+
+
     }
 });

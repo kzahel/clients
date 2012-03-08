@@ -72,20 +72,16 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
     },
     handle_message: function(k,msg) {
 
-        if (msg.recipient) {
+        if (msg.recipient) { // some messages are sent to specific windows
             if (this.get('type') == msg.recipient) {
                 if (msg.command == 'select_torrent') {
-                    debugger;
-                    clients.reset();
-                    clients.fetch();
-                    clients.init_post_fetch(); // have to call this or else active client wont get set
-                    var client = clients.selected;
-                    var torrent = client.get_selected_torrent();
-                    console.log('switching active torrent view to', torrent.get('name'));
-                    if (torrent) {
-                        // window.torrentview.destroy(); ?? 
-                        window.torrentview = new ActiveTorrentView( { el: $('#torrent_template_container'), model: torrent } );
-                    }
+                    // this logic is duplicated in the "torrent" frame script onready
+                    var client = clients.selected; 
+                    assert(client.collection);
+                    client.fetch(); // fetches updated "active_hash" attribute
+                } else if (msg.command == 'scan_clients') {
+                    clients.find_local_clients( function(clients) {
+                    });
                 }
             }
             return;
@@ -97,22 +93,18 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
             clients.reset();
             return;
         }
-        console.log('app',this.get('type'),'handling toolbarapi message',k,msg);
+        console.log('app',this.get('type'),'handling toolbarapi message',k,JSON.stringify(msg));
         if (this.get('type') == 'client') {
             
             if (msg.command == 'switch_client') {
-                var client = clients.get_by_id(msg.id);
-                if (! client) {
-                    clients.reset();
-                    clients.fetch();
-                    client = clients.get_by_id(msg.id);
-                }
-                assert(client);
-                clients.set_active(client);
-/*
-                var client = new Client( msg.data );
-                clients.set_active(client);
-*/
+                var prevclient = clients.selected;
+                clients.fetch(); // should get new selected attribute
+                clients.selected = clients.get_selected();
+                assert( clients.selected.id == msg.id );
+                clients.trigger('selected', clients.selected); // triggers recreation of view
+
+            } else if (msg.command == 'add_by_url') {
+                clients.selected.doreq( { action: 'add-url', s: msg.url } );
             } else if (msg.command == 'add_client') {
                 var client = new Client( msg.data );
                 clients.add( client );
@@ -134,30 +126,13 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
             }
         } else if (this.get('type') == 'torrent') {
             if (msg.command == 'switch_client') {
-                clients.stop_all();
-                clients.reset(); // does this cancel updating?
-                clients.fetch();
-                var client = clients.get_by_id(msg.id);
-                assert(client);
-                var torrent = client.get_selected_torrent();
-                if (torrent) {
-                    window.torrentview = new ActiveTorrentView( { el: $('#torrent_template_container'), model: torrent } );
-                } else {
-                    $('#torrent_template_container').text('loading...');
-                    if (! client.updating) {
-                        client.bind('firstupdate', function(arg) {
-                            var torrent = client.get_selected_torrent();
-                            window.torrentview = new ActiveTorrentView( { el: $('#torrent_template_container'), model: torrent } );
-                        });
-                        client.start_updating();
-                    }
-                }
-
+                window.location.reload(); // this works better than duplicating the init logic in torrent.js
             }
         }
     },
     switch_to_client: function(client) {
         if (this.get('type') == 'client') { // MAIN APP
+            debugger;
             window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
             // $('.computer_name').text( client.get_name() );
         } else {

@@ -31,12 +31,12 @@ var Torrent = Backbone.Model.extend({
             { name: 'directory' },
             { name: 'webseed_enabled' }
     ],
-    get_status: function() {
+    get_status: function(opt_status) {
         var _this = this;
         var status = [];
 
         _.map( this.meta[1].bits, function(value, index) {
-            if ( Math.pow(2, index) & _this.get('status') ) {
+            if ( Math.pow(2, index) & (opt_status || _this.get('status')) ) {
                 status.push( value );
             }
         });
@@ -57,44 +57,27 @@ var Torrent = Backbone.Model.extend({
             this.set(this.meta[i].name, data[i]);
         }
         this.status_array = this.get_status();
-        
-/*
-        this.bind('all', function(e) { 
-            var parts = e.split(':');
-            var attr = parts[1];
-            if (attr) {
-                console.log('torrent',this,e, this.get(parts[1]));
-            }
-        });
-*/
     },
     update: function(arr) {
         var d = {}
         for (var i=1; i<this.meta.length; i++) {
             var key = this.meta[i].name;
-/*
-            if (this.attributes[key] != arr[i]) {
-                // need to do batch set!
-                this.set(key, arr[i]);
-            }
-*/
             d[key] = arr[i];
         }
+        this.status_array = this.get_status(d.status); // XXX -- this needs to happen before the "set" so that the change events get triggered
         this.set( d );
-        this.status_array = this.get_status();
     },
     doreq: function(type) {
         var client = this.collection.client;
         if (client.get('type') == 'local') {
-
             jQuery.ajax({
                 url: 'http://127.0.0.1:' + client.get('data').port + '/gui/?action=' + type + '&hash=' + this.get('hash') + '&pairing=' + client.get('data').key + '&token=' + client.get('data').key, // send token as the pairing key to save a roundtrip fetching the token,
                 dataType: 'jsonp',
-                success: function(data) {
+                success: function(data, status, xhr) {
                     if (data == 'invalid request') {
                         debugger;
                     }
-                    console.log('doreq success',type);
+                    console.log('doreq success',type,data);
                 },
                 error: function(xhr, status, text) {
                     console.log('doreq error',type);
@@ -102,15 +85,16 @@ var Torrent = Backbone.Model.extend({
             });
 
         } else {
-            client.api.request('/gui/',
-                              {},
-                              { action: type, hash: this.get('hash') },
-                              function(data, status, xhr) {
-                                  console.log('doreq success',type);
-                              },
-                              function(xhr, status, text) {
-                                  console.log('doreq error',type);
-                              });
+            client.api.request(
+                '/gui/',
+                {},
+                { action: type, hash: this.get('hash') },
+                function(data, status, xhr) {
+                    console.log('doreq success',type,data);
+                },
+                function(xhr, status, text) {
+                    console.log('doreq error',type);
+                });
         }
     }
 });

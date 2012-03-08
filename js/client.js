@@ -42,6 +42,8 @@ var Client = Backbone.Model.extend({
                 }
             }
             return this.torrents.models[0];
+        } else {
+            console.error('get selected torrent -- no torrent models fetched');
         }
     },
     remove: function() {
@@ -49,7 +51,8 @@ var Client = Backbone.Model.extend({
         app.trigger('reset'); // model was destroyed from collection. tell other frames to reset
     },
     select: function() {
-        this.trigger('selected', this); // to tell the collection a new selection is enabled
+        this.collection.set_active(this);
+        //this.trigger('selected', this); // to tell the collection a new selection is enabled
     },
     fetch_server: function() {
         // fetches "raptor" from database
@@ -117,8 +120,6 @@ var Client = Backbone.Model.extend({
             app.pair(this);
             //BTOpenGadget('pairing');
         } else {
-
-        
 
         //$('#pairing_view').html('<div style="position: absolute; top:80px; left:80px"><iframe style="overflow:hidden; width:400px; height:200px;" id="pairing_frame" src="' + url + '"></iframe></div>'); // not working in IE...
 
@@ -206,6 +207,38 @@ var Client = Backbone.Model.extend({
             }
         }
     },
+    doreq: function(params) {
+        var client = this;
+        if (client.get('type') == 'local') {
+            var parts = [];
+            for (var key in params) {
+                parts.push( key + '=' + encodeURIComponent(params[key]) );
+            }
+            jQuery.ajax({
+                url: 'http://127.0.0.1:' + client.get('data').port + '/gui/?' + parts.join('&') + '&pairing=' + client.get('data').key + '&token=' + client.get('data').key, // send token as the pairing key to save a roundtrip fetching the token,
+                dataType: 'jsonp',
+                success: function(data, status, xhr) {
+                    if (data == 'invalid request') {
+                        debugger;
+                    }
+                    console.log('doreq success', params,data);
+                },
+                error: function(xhr, status, text) {
+                    console.log('doreq error', text, params);
+                }
+            });
+        } else {
+            client.api.request('/gui/',
+                              {},
+                              params,
+                              function(data, status, xhr) {
+                                  console.log('doreq success', params, data);
+                              },
+                              function(xhr, status, text) {
+                                  console.log('doreq error', text, params);
+                              });
+        }
+    },
     on_update: function(data) {
         this.updates += 1;
         var changed = data.torrentp;
@@ -225,9 +258,9 @@ var Client = Backbone.Model.extend({
             _.map(added, this.change_torrent);
         }
 
-        if (! this.get('active_torrent')) {
+        if (! this.get('active_hash')) {
             if (this.torrents.models.length > 0) {
-                this.set('active_torrent', this.torrents.models[0]);
+                this.set('active_hash', this.torrents.get('hash'));
             }
         }
 
@@ -240,6 +273,10 @@ var Client = Backbone.Model.extend({
     add_torrent: function(d) {
         var torrent = new Torrent( { id: d[0], data: d } );
         this.trigger('add_torrent', torrent);
+        if (this.cacheid) {
+            // allow new torrents to be inserted in-order in an existing list (updates only)
+            this.trigger('new_torrent', torrent);
+        }
         // if cacheid is outdated, adding here makes no sense...
         this.torrents.add(torrent);
     },
@@ -249,13 +286,14 @@ var Client = Backbone.Model.extend({
             this.trigger('change_torrent', torrent);
             torrent.update(d);
         } else {
+            //debugger;
             this.add_torrent(d);
         }
     },
     remove_torrent: function(hash) {
         var torrent = this.torrents.get(hash);
-        this.trigger('remove_torrent', torrent);
         this.torrents.remove(torrent);
+        this.trigger('remove_torrent', torrent);
     },
     update_status: function() {
         // scans the client for online/offline status
@@ -335,13 +373,14 @@ var ClientCollection = Backbone.Collection.extend( {
 
         var _this = this;
 
-        // XXX! don't even try to bind on change, it's totally broken for collections
-
+/* // want to manually call set_active instead of simply writing a selected attribute
         this.bind('selected', function(client) { 
             _this.set_active(client);
         });
+*/
 
         this.bind('add', function(client) {
+            debugger;
             if (! _this.selected) {
                 client.select();
             }
@@ -360,6 +399,9 @@ var ClientCollection = Backbone.Collection.extend( {
         }
     },
     set_active: function(client, opts) {
+        // backbone does not support .set() on collections :-( so we
+        // set selected attribute on a model (which gets persisted)
+        // and then simply assign our own selected attribute.
         var found = false;
         for (var i=0; i<this.models.length;i++) {
             if (this.models[i].id == client.id) {
@@ -375,7 +417,15 @@ var ClientCollection = Backbone.Collection.extend( {
         this.selected = found;
         if (opts && opts.silent) {
         } else {
+            console.log('app',app.get('type'),'sending switch to client message');
             app.switch_to_client(found);
+        }
+    },
+    get_selected: function() {
+        for (var i=0; i<this.models.length; i++) {
+            if (this.models[i].get('selected')) {
+                return this.models[i];
+            }
         }
     },
     init_post_fetch: function() {
@@ -385,14 +435,13 @@ var ClientCollection = Backbone.Collection.extend( {
             });
         } else {
             // set selected client if one has selected attribute
-            for (var i=0; i<this.models.length; i++) {
-                if (this.models[i].get('selected')) {
-                    this.set_active(this.models[i], { silent: true });
-                    console.log('restored selected client',this.selected);
-                    break;
-                }
+            var selected = this.get_selected();
+            if (selected) {
+                this.selected = selected;
+                console.log(app.get('type'),'restored selected client',this.selected);
+            } else {
+                console.log('init post fetch -- no client had selected attribute');
             }
-            console.log('init post fetch -- no client had selected attribute');
         }
     },
     find_local_clients: function(callback) {
@@ -401,10 +450,8 @@ var ClientCollection = Backbone.Collection.extend( {
         pairing.bind('pairing:found', function(opts) {
             opts.attempt_authorization = false;
             var client = new Client( { type: 'local', data: opts } );
-
             client.pair();
             
-
             _this.add( client );
 
             if (_this.models.length == 1) {

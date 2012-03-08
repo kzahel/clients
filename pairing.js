@@ -3,7 +3,7 @@ jQuery(document).ready( function() {
     clients.fetch();
     clients.init_post_fetch();
 
-    var client = clients.selected;
+    var client = clients.selected; // want to allow pair for non-selected too... make get the id out of the url...
     if (client) {
         function on_pair_response(jqevt) {
             var evt = jqevt.originalEvent;
@@ -15,7 +15,7 @@ jQuery(document).ready( function() {
                 d.type = 'local';
                 client.set('data', d);
                 client.save();
-                //clients.add(client);
+                //clients.add(client); // was already added
                 //clients.set_active(client)
                 CloseFloatingWindow();
             } else {

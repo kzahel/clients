@@ -15,30 +15,38 @@ jQuery(document).ready( function() {
             client.pair();
         }
         window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
+        jQuery('#computerselect').click( function(evt) {
+            BTOpenGadget('clients.html', 286, 160, { openposition: 'offset:(25;30)' });
+        });
+
     }
 
-/*
+
     clients.bind('selected', function(client) {
-        debugger;
-        // destroy old clientview ?
+        if (window.clientview) {
+            if (clientview.model.id == client.id) {
+                return;
+            } else {
+                clientview.destroy()
+            }
+        }
+
+        // should subclass clientview, activeclientview...
         window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
+        jQuery('#computerselect').click( function(evt) {
+            BTOpenGadget('clients.html', 286, 160, { openposition: 'offset:(25;30)' });
+        });
+
     });
 
+
+/*
     clients.bind('destroy', function(client) {
         debugger;
         window.clientview = new ClientView( { el: $('#computerselect'), model: null } );
     });
 */
-    if (clients.models.length == 0) {
-        // init post fetch will scan for clients...
-        // BTOpenGadget('pairing.html', 286, 130, { openposition: 'offset:(25;30)' });
-    }
 
-
-
-    jQuery('#computerselect').click( function(evt) {
-        BTOpenGadget('clients.html', 286, 160, { openposition: 'offset:(25;30)' });
-    });
 
 
 } );
