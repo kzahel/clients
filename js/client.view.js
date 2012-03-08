@@ -109,6 +109,11 @@ var ClientView = Backbone.View.extend({
             _this.set_status(a);
         });
 
+        this.model.bind('change', function(a,b,c) {
+            _this.render();
+        });
+
+
         this.$el.html( this.template() );
         this.trigger('view_active', this);
 
@@ -133,6 +138,13 @@ var ClientView = Backbone.View.extend({
     },
     render: function() {
         this.$('.computer_name').html(this.model.get_name());
+
+        if (this.model.get('selected')) {
+            console.log('rendering selected client!');
+            this.$('.computer_name').css('text-decoration: underline');
+        } else {
+            this.$('.computer_name').css('text-decoration: none');
+        }
     },
     set_status: function(state) {
         this.$('.status').text(state);

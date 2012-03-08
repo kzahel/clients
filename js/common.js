@@ -52,6 +52,6 @@ function BTOpenGadget(url, w, h, extra_opts) {
 }
 
 function BTSendMessage(key, msg) {
-    console.log('sending message',key,'of len',msg.length);
+    console.log('sending message',key,msg);
     SendMessage(key, msg);
 }

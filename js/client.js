@@ -34,8 +34,10 @@ var Client = Backbone.Model.extend({
         if (this.torrents.models.length > 0) {
             var hash = this.get('active_hash');
             if (hash) {
+                console.log('get selected torrent, hash',hash);
                 var torrent = this.torrents.get( hash );
                 if (torrent) {
+                    console.log('got torrent',torrent.get('name'));
                     return torrent;
                 }
             }
@@ -390,6 +392,7 @@ var ClientCollection = Backbone.Collection.extend( {
                     break;
                 }
             }
+            console.log('init post fetch -- no client had selected attribute');
         }
     },
     find_local_clients: function(callback) {
