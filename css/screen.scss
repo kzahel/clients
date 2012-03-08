@@ -171,7 +171,7 @@ html, body {
 }
 .computer_selection_wrapper {
 	position: relative;
-	background: #f0f0f0;
+	background:#dcdcdc;
 	color: #222;
 	.indie_computer_wrapper {
 		position: relative;
@@ -228,7 +228,7 @@ html, body {
 		}
 	}
 }
-
+.selected {background:#f0f0f0}
 #computerselect {
 	position: absolute;
 	left: 26px;

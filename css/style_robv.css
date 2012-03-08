@@ -145,7 +145,7 @@ html, body {
 
 .computer_selection_wrapper {
   position: relative;
-  background: #f0f0f0;
+  background: #dcdcdc;
   color: #222; }
   .computer_selection_wrapper .indie_computer_wrapper {
     position: relative; }
@@ -195,6 +195,9 @@ html, body {
     background: url("images/toolbar/action_sprite.png") no-repeat 0 -203px; }
     .computer_selection_wrapper .remote_computer:hover {
       background: url("images/toolbar/action_sprite.png") no-repeat -64px -203px; }
+
+.selected {
+  background: #f0f0f0; }
 
 #computerselect {
   position: absolute;
