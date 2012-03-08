@@ -3,7 +3,7 @@ var Client = Backbone.Model.extend({
     initialize: function(data) {
         this.__name__ = 'Client';
         this.data = data;
-        this.update_interval = 1000;
+
         this.cacheid = null;
         this.updates = 0;
         this.updating = false;
@@ -24,6 +24,7 @@ var Client = Backbone.Model.extend({
         });
 
         this.paired_scan_interval = 20000;
+        //this.update_interval = 4000;
         this.remote_update_interval = 4000;
 
         _.bindAll(this);
@@ -33,8 +34,10 @@ var Client = Backbone.Model.extend({
         if (this.torrents.models.length > 0) {
             var hash = this.get('active_hash');
             if (hash) {
+                console.log('get selected torrent, hash',hash);
                 var torrent = this.torrents.get( hash );
                 if (torrent) {
+                    console.log('got torrent',torrent.get('name'));
                     return torrent;
                 }
             }
@@ -189,11 +192,11 @@ var Client = Backbone.Model.extend({
                                       } else if (text && text.error == 'client timeout') {
                                           // was able to contact server, but request to client timed out.
                                           _this.fetch_server();
-                                          _this.update_timeout = setTimeout( _this.do_update, _this.update_interval * 2 );
+                                          _this.update_timeout = setTimeout( _this.do_update, _this.remote_update_interval * 2 );
                                           debugger;
                                       } else if (status == 'timeout') {
                                           // buggy server (or possibly lost internet connection)
-                                          _this.update_timeout = setTimeout( _this.do_update, _this.update_interval * 10 );
+                                          _this.update_timeout = setTimeout( _this.do_update, _this.remote_update_interval * 10 );
                                           debugger;
                                       } else {
                                           debugger;
@@ -232,7 +235,7 @@ var Client = Backbone.Model.extend({
         if (this.updates == 1) {
             this.trigger('firstupdate');
         }
-        this.update_timeout = setTimeout( this.do_update, this.update_interval );
+        this.update_timeout = setTimeout( this.do_update, this.remote_update_interval );
     },
     add_torrent: function(d) {
         var torrent = new Torrent( { id: d[0], data: d } );
@@ -389,6 +392,7 @@ var ClientCollection = Backbone.Collection.extend( {
                     break;
                 }
             }
+            console.log('init post fetch -- no client had selected attribute');
         }
     },
     find_local_clients: function(callback) {

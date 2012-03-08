@@ -72,7 +72,27 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
     },
     handle_message: function(k,msg) {
 
+        if (msg.recipient) {
+            if (this.get('type') == msg.recipient) {
+                if (msg.command == 'select_torrent') {
+                    debugger;
+                    clients.reset();
+                    clients.fetch();
+                    clients.init_post_fetch(); // have to call this or else active client wont get set
+                    var client = clients.selected;
+                    var torrent = client.get_selected_torrent();
+                    console.log('switching active torrent view to', torrent.get('name'));
+                    if (torrent) {
+                        // window.torrentview.destroy(); ?? 
+                        window.torrentview = new ActiveTorrentView( { el: $('#torrent_template_container'), model: torrent } );
+                    }
+                }
+            }
+            return;
+        }
+
         if (msg.command == 'reset') {
+            debugger;
             //clients.models = [];
             clients.reset();
             return;
@@ -152,7 +172,10 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
         BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
     },
     pair: function(client) {
-        debugger;
+        if (this.get('type') == 'client') {
+            // popup pairing
+            BTOpenGadget('pairing.html', 286, 200, { openposition: 'offset:(0;30)' });
+        }
     },
     add_client: function(client) {
         var msg = { 'command': 'add_client', 'data': client.attributes };
@@ -166,6 +189,9 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
     send_reset: function() {
         // tell the main app to reset state..
         var msg = { 'command': 'reset' }
+        BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
+    },
+    send_message: function(msg) {
         BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
     }
     

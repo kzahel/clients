@@ -10,19 +10,25 @@ jQuery(document).ready( function() {
 
     var client = clients.selected;
     if (client) {
+        var data = client.get('data');
+        if (! data.key) {
+            client.pair();
+        }
         window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
     }
 
+/*
     clients.bind('selected', function(client) {
         debugger;
         // destroy old clientview ?
         window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
     });
+
     clients.bind('destroy', function(client) {
         debugger;
         window.clientview = new ClientView( { el: $('#computerselect'), model: null } );
     });
-
+*/
     if (clients.models.length == 0) {
         // init post fetch will scan for clients...
         // BTOpenGadget('pairing.html', 286, 130, { openposition: 'offset:(25;30)' });
