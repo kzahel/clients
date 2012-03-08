@@ -69,10 +69,22 @@ jQuery(document).ready( function() {
         BTOpenGadget('add.html', 395, 150, { openposition: 'offset:(25;30)' });
     });
 
-    jQuery('.arrow_collapse').click( function(evt) {
+    jQuery('.arrow_collapse').live('click', function(evt) {
         //BTOpenGadget('add.html', 395, 118, { openposition: 'offset:(25;30)' });
+        $(evt.target).addClass('arrow_expand');
+        $(evt.target).removeClass('arrow_collapse');
+        ChangeWidth(config.torrent_pane_collapsed_width);
+        clients.selected.stop_updating();
         $('#torrent_container').hide();
+    });
 
+    jQuery('.arrow_expand').live('click', function(evt) {
+        //BTOpenGadget('add.html', 395, 118, { openposition: 'offset:(25;30)' });
+        $(evt.target).addClass('arrow_collapse');
+        $(evt.target).removeClass('arrow_expand');
+        ChangeWidth(config.torrent_pane_width);
+        clients.selected.start_updating()
+        $('#torrent_container').show();
     });
 
 } );

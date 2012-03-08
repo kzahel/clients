@@ -11,8 +11,9 @@ var UTORRENT_CONTROL_VERSION = 3.02;
         conduit_toolbar_message_key: 'ut_toolbar_main',
         conduit_toolbar_message_key_slave: 'ut_toolbar_gadget',
 
-        torrent_pane_width: 178,
-        client_pane_width: 370,
+        client_pane_width: 178,
+        torrent_pane_width: 370,
+        torrent_pane_collapsed_width: 50,
         stats_url: 'http://remote-staging.utorrent.com/track',
         cache_bust_version: UTORRENT_CONTROL_VERSION,
         cache_bust: true
