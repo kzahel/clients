@@ -289,8 +289,8 @@ var Client = Backbone.Model.extend({
     },
     remove_torrent: function(hash) {
         var torrent = this.torrents.get(hash);
-        this.trigger('remove_torrent', torrent);
         this.torrents.remove(torrent);
+        this.trigger('remove_torrent', torrent);
     },
     update_status: function() {
         // scans the client for online/offline status

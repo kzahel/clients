@@ -60,7 +60,8 @@ $(document).on('click','.bt_button_x', function(evt) {
 var TorrentView = Backbone.View.extend({
     destroy: function() {
         this.unbind(); // does this actually do anything?
-        this.el.parentNode.removeChild( this.el ); // equivalent to this.remove()?
+        //this.el.parentNode.removeChild( this.el ); // equivalent to this.remove()?
+        this.remove();
     },
     bind_events: function() {
         var _this = this;
