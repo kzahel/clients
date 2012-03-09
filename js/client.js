@@ -57,8 +57,7 @@ var Client = Backbone.Model.extend({
                 // select a random model...
                 collection.models[0].select();
             } else {
-                console.error('no clients left! not sure what to do');
-                debugger;
+                console.error('no clients left! broadcast no clients');
                 app.broadcast( { message: 'no clients' } );
                 BTCloseFloatingWindow();
             }

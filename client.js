@@ -64,16 +64,8 @@ jQuery(document).ready( function() {
             // client.pair(); // manually trigger this
         }
         window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
-        jQuery('#computerselect').click( function(evt) {
-            BTOpenGadget('clients.html', 286, 160, { openposition: 'offset:(25;30)' });
-        });
-
     } else {
         // no client, still allow dropdown..
-        jQuery('#computerselect').click( function(evt) {
-            BTOpenGadget('clients.html', 286, 160, { openposition: 'offset:(25;30)' });
-        });
-
     }
 
 
@@ -85,13 +77,13 @@ jQuery(document).ready( function() {
                 clientview.destroy()
             }
         }
-
         // should subclass clientview, activeclientview...
         window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
-        jQuery('#computerselect').click( function(evt) {
-            BTOpenGadget('clients.html', 286, 160, { openposition: 'offset:(25;30)' });
-        });
+    });
 
+
+    jQuery('#computerselect').live('click', function(evt) {
+        BTOpenGadget('clients.html', 286, 160, { openposition: 'offset:(25;30)' });
     });
 
 
