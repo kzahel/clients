@@ -6,9 +6,10 @@ function EBCallBackMessageReceived(msg) {
 
 function EBDocumentComplete() {
     var track_all_urls = false;
-    JSInjection('window.foobar=23; EBCallBackMessageReceived("foobar");');
+    //JSInjection('window.foobar=23; EBCallBackMessageReceived("foobar");');
     var frame_url = GetMainFrameUrl();
     var frame_title = GetMainFrameTitle();
+    debugger;
     var bittorrent_login = config.autologin_url.replace('utorrent.com','bittorrent.com');
     var utorrent_login = config.autologin_url;
 
@@ -58,7 +59,7 @@ jQuery(document).ready( function() {
     if (client) {
         var data = client.get('data');
         if (! data.key) {
-            client.pair();
+            // client.pair(); // manually trigger this
         }
         window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
         jQuery('#computerselect').click( function(evt) {

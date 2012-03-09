@@ -1,5 +1,6 @@
 jQuery(document).ready( function() {
     window.clients = new ClientCollection;
+    window.app = new App( { type: 'pairing' } );
     clients.fetch();
     clients.init_post_fetch();
 
@@ -8,23 +9,29 @@ jQuery(document).ready( function() {
         function on_pair_response(jqevt) {
             var evt = jqevt.originalEvent;
             console.log('postmessage on window',evt.origin, evt.data);
-            if (evt.data.key) {
+            if (evt.data.match && evt.data.match(/ToolbarApi/)) {
+                // toolbar is sending messages too that conflict with
+                // the pairing mechanism, just ignore them.
+            } else if (evt.data.key) {
                 var d = client.get('data');
                 d.key = evt.data.key;
                 d.type = 'local';
                 client.set('data', d);
                 client.save();
+                clients.set_active(client);
                 custom_track('pairing_iframe_allow');
-                //clients.add(client); // was already added
+                //clients.add(client); // was already added on scan
+                app.broadcast( { message: 'pairing accepted', id: client.id } );
                 //clients.set_active(client)
-                CloseFloatingWindow();
+                BTCloseFloatingWindow();
             } else {
+                debugger;
                 custom_track('pairing_iframe_deny');
                 console.error('pairing DEnied');
-                CloseFloatingWindow();
+                BTCloseFloatingWindow();
             }
-            $('#pairing_view').html('');
-            jQuery(window).off('message', on_pair_response);
+            // $('#pairing_view').html('');
+            // jQuery(window).off('message', on_pair_response);
         }
 
         //var url = 'http://127.0.0.1:' + client.get('data').port + '/gui/pair';//?iframe=' + encodeURIComponent(window.location.href);

@@ -95,7 +95,7 @@ function remotelog(evtname, data){
         var server = config.remotelog_server;
         var url = server + '/remotelog?data='+encodeURIComponent(JSON.stringify(s));
         jQuery.ajax( { url: url,
-                       jsonp: true,
+                       dataType: 'jsonp',
                        success: function(){},
                        error: function(){}
                      } );

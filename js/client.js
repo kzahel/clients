@@ -47,11 +47,23 @@ var Client = Backbone.Model.extend({
     },
     remove: function() {
         //app.trigger('reset'); // model was destroyed from collection. tell other frames to reset
-        if (this.get('selected')) {
-            console.error('remove client that was selected -- special case');
-            debugger;
-        }
+        var collection = this.collection
+        var selected = this.get('selected');
         this.destroy();
+
+        if (selected) {
+            console.log('remove client that was selected -- special case');
+            if (collection.models.length > 0) {
+                // select a random model...
+                collection.models[0].select();
+            } else {
+                console.error('no clients left! not sure what to do');
+                debugger;
+                app.broadcast( { message: 'no clients' } );
+                BTCloseFloatingWindow();
+            }
+        }
+
     },
     select: function() {
         this.collection.set_active(this);
@@ -95,6 +107,7 @@ var Client = Backbone.Model.extend({
             return true;
         }
     },
+/*
     on_pair_response: function(jqevt) {
         var evt = jqevt.originalEvent;
 
@@ -106,27 +119,40 @@ var Client = Backbone.Model.extend({
             this.set('data', d);
             clients.add(this);
             this.save();
-            this.start_updating();
+            debugger;
+            app.broadcast( { message: 'pairing accepted', id: this.id } );
+            //this.start_updating();
         } else {
             console.error('pairing DEnied');
         }
-        $('#pairing_view').html('');
+        // $('#pairing_view').html('');
         jQuery(window).off('message',this.on_pair_response);
     },
+*/
+    pair_jsonp: function() {
+        var url = 'http://127.0.0.1:' + this.get('data').port + '/gui/pair&name=' + encodeURIComponent('Control');
+        jQuery.ajax( { url: url,
+                       success: function(data) {
+                           debugger;
+                       },
+                       dataType: 'jsonp',
+                       error: function(xhr, status, text) {
+                       },
+                     }
+                   );
+    },
     pair: function() {
-        // XXX -- needs to pop up in a gadget window :-(
-
+        app.pair(this);
+        return;
+/*
+        debugger;
         var _this = this;
         var url = 'http://127.0.0.1:' + this.get('data').port + '/gui/pair?iframe=' + encodeURIComponent(window.location.href);
 
         if (window.OpenGadget) {
             app.pair(this);
-            //BTOpenGadget('pairing');
         } else {
-
         //$('#pairing_view').html('<div style="position: absolute; top:80px; left:80px"><iframe style="overflow:hidden; width:400px; height:200px;" id="pairing_frame" src="' + url + '"></iframe></div>'); // not working in IE...
-
-
             var iframe = document.createElement('iframe');
             iframe.src = url;
             iframe.setAttribute('style','width:300px; height:250px; border: 0px; overflow:hidden;');
@@ -137,6 +163,7 @@ var Client = Backbone.Model.extend({
             //window.addEventListener('message', this.on_pair_response, false);
             jQuery(window).on('message', this.on_pair_response);
         }
+*/
     },
     invalidate_session: function() {
         if (this.get('data').type == 'local') {
@@ -436,11 +463,14 @@ var ClientCollection = Backbone.Collection.extend( {
             }
         }
         this.selected = found;
+        /*
+          always do silent mode -- require people to manually tell other views to update
         if (opts && opts.silent) {
         } else {
             console.log('app',app.get('type'),'sending switch to client message');
             app.switch_to_client(found);
         }
+        */
     },
     get_selected: function() {
         for (var i=0; i<this.models.length; i++) {
@@ -473,13 +503,13 @@ var ClientCollection = Backbone.Collection.extend( {
         pairing.bind('pairing:found', function(opts) {
             opts.attempt_authorization = false;
             var client = new Client( { type: 'local', data: opts } );
-            client.pair();
+            // client.pair(); // dont pair automatically
             
             _this.add( client );
 
             if (_this.models.length == 1) {
                 // first client found..
-                _this.set_active(client);
+                _this.set_active(client); // maybe don't do this..
             }
 
         });
