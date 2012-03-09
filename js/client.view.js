@@ -118,7 +118,6 @@ var ClientView = Backbone.View.extend({
         this.$('.computer_name').click( function(evt) {
             //console.log('click on client', _this, 'selected:',_this.model.get('selected'));
             if (! _this.model.get('selected')) {
-                custom_track('select_computer');
                 _this.model.select();
             }
         });

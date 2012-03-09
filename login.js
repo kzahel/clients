@@ -16,10 +16,11 @@ jQuery(document).ready( function() {
                 custom_track('login_success');
                 clients.add(client); // adds to local collection
                 clients.set_active(client); // sets selected attribute, unsets on other clients
-                app.switch_to_client(client);
+                // app.switch_to_client(client);
+                app.broadcast( { message: 'remote login', id: client.id } );
                 //app.send_message( { command: 'switch_client', id: client.id } );
                 //app.send_reset(); // triggers other apps to reset
-                BTCloseFloatingWindow(200);
+                BTCloseFloatingWindow();
             },
             error: function(xhr, status, text) {
                 custom_track('login_error');

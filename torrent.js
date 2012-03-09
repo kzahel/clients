@@ -5,7 +5,6 @@ jQuery(document).ready( function() {
     //ChangeWidth(config.torrent_pane_width);
 
     window.clients = new ClientCollection;
-    
     window.app = new App( { type: 'torrent' } );
 
     clients.fetch(); // don't fetch! we will receive messages...
@@ -14,11 +13,20 @@ jQuery(document).ready( function() {
 
     var client = clients.selected;
     if (client) {
+
+        if (client.get('type') == 'local' && ! client.get('data').key) {
+            $('.default_container').text('Click to setup control'); // insert iframe here instead?
+            $('.default_container').click( function() {
+                app.send_message( { recipient: 'client', command: 'pair', id: client.id } );
+            });
+            return;
+        }
+
         var torrent = client.get_selected_torrent();
         if (torrent) {
             window.torrentview = new ActiveTorrentView( { el: $('#torrent_template_container'), model: torrent } );
         } else {
-            $('#torrent_template_container').text('Loading view...');
+            // $('#torrent_template_container').text('Loading view...');
             if (! client.updating) {
                 client.bind('firstupdate', function(arg) {
                     var torrent = client.get_selected_torrent();

@@ -72,30 +72,73 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
     },
     handle_message: function(k,msg) {
 
-        if (msg.recipient) { // some messages are sent to specific windows
-            if (this.get('type') == msg.recipient) {
-                if (msg.command == 'select_torrent') {
-                    // this logic is duplicated in the "torrent" frame script onready
-                    var client = clients.selected; 
-                    assert(client.collection);
-                    client.fetch(); // fetches updated "active_hash" attribute
-                } else if (msg.command == 'scan_clients') {
-                    clients.find_local_clients( function(clients) {
-                    });
-                } else if (msg.command == 'update_client_status') {
-                    var client = clients.get_by_id(msg.id);
-                    client.fetch();
-/*
-                    clients.each( function(client) {
-                        client.fetch(); // update status attribute on client
-                    });
-*/
-                } else if (msg.command == 'switch_client') {
-                    debugger;
-                } else if (msg.command == 'custom_track') {
-                    console.log('sending custom track event', msg.data.name, msg.data.mydata);
-                    custom_track(msg.data.name, msg.data.mydata);
+        if (msg.type == 'broadcast') {
+
+            // simple solution for state issues. when client changes
+            // (due to login or pairing accept or whatever, just
+            // reload everything)
+            if (msg.message == 'new client selection') {
+
+                if (this.get('type') == 'client') {
+                    var client = clients.get_by_id( msg.id );
+                    assert(client);
+                    if (window.clientview) {
+                        window.clientview.destroy();
+                    }
+                    window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
+                } else if (this.get('type') == 'torrent') {
+
+                    window.location.reload();
+
                 }
+
+            } else if (msg.message == 'no clients') {
+                window.location.reload();
+
+/*
+                if (this.get('type') == 'client') {
+                    if (window.clientview) {
+                        window.clientview.destroy();
+                        // this should be putting the parent container back but isnt... ?
+                    }
+                }
+*/
+            } else if (msg.message == 'pairing accepted') {
+                window.location.reload();
+            } else if (msg.message == 'remote login') {
+                window.location.reload();
+            }
+
+            return;
+        }
+
+        if (msg.recipient && this.get('type') == msg.recipient) { // some messages are sent to specific windows
+            if (msg.command == 'select_torrent') {
+                // this logic is duplicated in the "torrent" frame script onready
+                var client = clients.selected; 
+                assert(client.collection);
+                client.fetch(); // fetches updated "active_hash" attribute
+            } else if (msg.command == 'reload') {
+                window.location.reload();
+            } else if (msg.command == 'pair') {
+                var client = clients.get_by_id(msg.id);
+                this.pair(client);
+            } else if (msg.command == 'scan_clients') {
+                clients.find_local_clients( function(clients) {
+                });
+            } else if (msg.command == 'update_client_status') {
+                var client = clients.get_by_id(msg.id);
+                client.fetch();
+                /*
+                  clients.each( function(client) {
+                  client.fetch(); // update status attribute on client
+                  });
+                */
+            } else if (msg.command == 'switch_client') {
+                debugger;
+            } else if (msg.command == 'custom_track') {
+                console.log('sending custom track event', msg.data.name, msg.data.mydata);
+                custom_track(msg.data.name, msg.data.mydata);
             }
             return;
         }
@@ -106,6 +149,8 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
             clients.reset();
             return;
         }
+
+        // older message types (before broadcast & send_message)
         console.log('app',this.get('type'),'handling toolbarapi message',k,JSON.stringify(msg));
         if (this.get('type') == 'client') {
             
@@ -144,11 +189,13 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
         }
     },
     switch_to_client: function(client) {
-        if (this.get('type') == 'client') { // MAIN APP
-            debugger;
+        if (this.get('type') == 'client') {
+            // mainly occurs after pairing found port
             window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
+            this.send_message( { recipient: 'torrent', command: 'reload' } );
             // $('.computer_name').text( client.get_name() );
         } else {
+            debugger;
             var data = client.attributes;
             //console.log('click switch to computer',data);
             var msg = { 'command': 'switch_client', 'id': client.id  };
@@ -161,8 +208,14 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
     },
     pair: function(client) {
         if (this.get('type') == 'client') {
-            // popup pairing
-            BTOpenGadget('pairing.html', 286, 200, { openposition: 'offset:(0;30)' });
+            if (client.get('data').name != 'unknown') {
+                // likely supports new style pairing
+                BTOpenGadget('pairing.html', 286, 200, { openposition: 'offset:(0;30)' });
+            } else {
+                client.pair_jsonp();
+            }
+        } else {
+            console.error('must pair from client frame');
         }
     },
     add_client: function(client) {
@@ -180,6 +233,11 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
         BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
     },
     send_message: function(msg) {
+        BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
+    },
+    broadcast: function(msg) {
+        // sends a message to all windows
+        msg.type = 'broadcast';
         BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
     }
     

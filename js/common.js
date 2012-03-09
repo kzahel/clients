@@ -88,3 +88,38 @@ function custom_track(name, mydata) {
                    callback: function() {}
                  } );
 }
+
+function remotelog(evtname, data){
+    var s = { event: evtname, data: data };
+    if (config.verbose > 1) {
+        var server = config.remotelog_server;
+        var url = server + '/remotelog?data='+encodeURIComponent(JSON.stringify(s));
+        jQuery.ajax( { url: url,
+                       dataType: 'jsonp',
+                       success: function(){},
+                       error: function(){}
+                     } );
+    }
+}
+
+function logger(a,b,c,d,e) {
+    var args = [a,b,c,d,e];
+    var s = '';
+    for (var i=0; i<args.length; i++) {
+        if (args[i] !== undefined) {
+            s = s + ' ' + args[i];
+        }
+    }
+    remotelog(s);
+}
+
+window.myconsole = { log: logger,
+                     error: logger,
+                     warn: logger };
+
+
+var is_firefox = navigator.userAgent.match(/firefox/i)
+if (is_firefox) {
+    // only way known to debug toolbar in firefox is to jsonp log stuff
+    window.console = window.myconsole;
+}
