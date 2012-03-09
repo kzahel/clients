@@ -18,6 +18,9 @@ html, body {
   height: 26px;
   overflow: hidden; }
 
+#torrent_controls {
+  display: none; }
+
 .default_container {
   height: 21px;
   width: 334px;
@@ -26,10 +29,62 @@ html, body {
   color: #666666; }
 
 .control_torrent_container {
-  margin-right: 26px; }
+  margin: 0 53px 0 26px; }
 
 .torrent_wrapper {
   position: relative; }
+  .torrent_wrapper .button_add-torrent {
+    display: block;
+    position: absolute;
+    z-index: 22222;
+    width: 25px;
+    height: 26px;
+    left: 0px;
+    top: 0px;
+    text-indent: -9999px;
+    background: #f0f0f0 url("images/toolbar/action_sprite.png") no-repeat 5px -91px;
+    overflow: hidden; }
+    .torrent_wrapper .button_add-torrent:hover {
+      background: #f0f0f0 url("images/toolbar/action_sprite.png") no-repeat -59px -91px; }
+  .torrent_wrapper .double_tap {
+    position: absolute;
+    left: 25px;
+    top: 1px;
+    padding: 4px 0;
+    width: 1px;
+    height: 16px;
+    background: #f0f0f0; }
+    .torrent_wrapper .double_tap .tap {
+      height: 17px;
+      width: 1px;
+      background: #dcdcdc;
+      font-size: 0px; }
+  .torrent_wrapper .triple_tap {
+    position: absolute;
+    right: 52px;
+    top: 1px;
+    padding: 4px 0;
+    width: 1px;
+    height: 16px;
+    background: #f0f0f0; }
+    .torrent_wrapper .triple_tap .tap {
+      height: 17px;
+      width: 1px;
+      background: #dcdcdc;
+      font-size: 0px; }
+  .torrent_wrapper .button_open {
+    display: block;
+    position: absolute;
+    z-index: 444;
+    width: 26px;
+    height: 26px;
+    right: 26px;
+    top: 0;
+    text-indent: -9999px;
+    overflow: hidden;
+    background: #f0f0f0 url("images/toolbar/action_sprite.png") no-repeat 5px -157px; }
+    .torrent_wrapper .button_open:hover {
+      background: black url("images/toolbar/action_sprite.png") no-repeat -59px -157px; }
 
 .arrow_collapse {
   position: absolute;
@@ -411,19 +466,6 @@ html, body {
       width: 26px;
       height: 26px;
       background: #777777 url("images/toolbar/toolbar_logo.png") no-repeat 2px 2px; }
-  .board_container .button_add-torrent {
-    display: block;
-    position: absolute;
-    z-index: 22222;
-    width: 16px;
-    height: 16px;
-    left: 6px;
-    top: 5px;
-    text-indent: -9999px;
-    background: url("images/toolbar/action_sprite.png") no-repeat 0 -96px;
-    overflow: hidden; }
-    .board_container .button_add-torrent:hover {
-      background: url("images/toolbar/action_sprite.png") no-repeat -64px -96px; }
   .board_container .button_pairing {
     display: block;
     position: absolute;
@@ -436,26 +478,14 @@ html, body {
     overflow: hidden; }
     .board_container .button_pairing:hover {
       background: url("images/toolbar/action_sprite.png") no-repeat -64px -128px; }
-  .board_container .button_open {
-    display: block;
-    position: absolute;
-    width: 26px;
-    height: 26px;
-    right: 0px;
-    top: 0;
-    text-indent: -9999px;
-    overflow: hidden;
-    background: #f0f0f0 url("images/toolbar/action_sprite.png") no-repeat 5px -157px; }
-    .board_container .button_open:hover {
-      background: black url("images/toolbar/action_sprite.png") no-repeat -59px -157px; }
   .board_container.torrent_list_dd {
     overflow: visible; }
     .board_container.torrent_list_dd .bt_torrent_list {
-      margin: 0 !important;
+      margin: 0 5px !important;
       border-bottom: 1px solid #fff; }
   .board_container .bt_torrent_list {
     background: #dcdcdc;
-    margin: 0 0px 0 0px;
+    margin: 0px;
     color: #666;
     position: relative;
     height: 26px;
@@ -463,8 +493,8 @@ html, body {
     .board_container .bt_torrent_list .torrent_color_container {
       position: absolute;
       height: 4px;
-      left: 10px;
-      right: 70px;
+      left: 5px;
+      right: 47px;
       bottom: 4px;
       background: #ccc;
       overflow: hidden;
@@ -488,10 +518,6 @@ html, body {
         -webkit-border-radius: 2px 2px 2px 2px;
         -moz-border-radius: 2px 2px 2px 2px;
         border-radius: 2px 2px 2px 2px; }
-      .board_container .bt_torrent_list .torrent_color_container .selected_color_container {
-        padding-left: 20px; }
-    .board_container .bt_torrent_list .selected_color {
-      left: 28px; }
     .board_container .bt_torrent_list .torrent_item_container {
       position: relative; }
       .board_container .bt_torrent_list .torrent_item_container .flt_lft {
@@ -502,7 +528,7 @@ html, body {
         right: 0;
         top: 4px;
         margin-right: 120px;
-        padding-left: 10px;
+        padding-left: 5px;
         text-align: left;
         font-size: 11px;
         line-height: 11px;
@@ -511,8 +537,6 @@ html, body {
         overflow: hidden;
         text-overflow: ellipsis;
         -o-text-overflow: ellipsis; }
-      .board_container .bt_torrent_list .torrent_item_container .selected_name {
-        padding-left: 28px; }
       .board_container .bt_torrent_list .torrent_item_container .bt_button_pause {
         display: block;
         position: absolute;
@@ -520,7 +544,7 @@ html, body {
         height: 16px;
         text-indent: -9999px;
         top: 5px;
-        right: 50px;
+        right: 25px;
         background: url("images/toolbar/action_sprite.png") no-repeat 0 0;
         overflow: hidden; }
         .board_container .bt_torrent_list .torrent_item_container .bt_button_pause:hover {
@@ -532,7 +556,7 @@ html, body {
         height: 16px;
         text-indent: -9999px;
         top: 5px;
-        right: 50px;
+        right: 25px;
         background: url("images/toolbar/action_sprite.png") no-repeat 0 -32px;
         overflow: hidden; }
         .board_container .bt_torrent_list .torrent_item_container .bt_button_play:hover {
@@ -544,14 +568,14 @@ html, body {
         height: 16px;
         text-indent: -9999px;
         top: 5px;
-        right: 30px;
+        right: 5px;
         background: url("images/toolbar/action_sprite.png") no-repeat 0 -64px;
         overflow: hidden; }
         .board_container .bt_torrent_list .torrent_item_container .bt_button_x:hover {
           background: url("images/toolbar/action_sprite.png") no-repeat -64px -64px; }
       .board_container .bt_torrent_list .torrent_item_container .bt_info_container {
         position: absolute;
-        right: 70px;
+        right: 47px;
         top: 4px;
         line-height: 10px;
         font-size: 10px;
