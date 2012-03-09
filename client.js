@@ -69,8 +69,9 @@ jQuery(document).ready( function() {
         // no client, still allow dropdown..
     }
 
-
+/*
     clients.bind('selected', function(client) {
+        return; // we get messages...
         if (window.clientview) {
             if (clientview.model.id == client.id) {
                 return;
@@ -81,7 +82,7 @@ jQuery(document).ready( function() {
         // should subclass clientview, activeclientview...
         window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
     });
-
+*/
 
     jQuery('#computerselect').live('click', function(evt) {
         BTOpenGadget('clients.html', 286, 160, { openposition: 'offset:(25;30)' });
