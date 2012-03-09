@@ -6,6 +6,14 @@
 <head>
 <link rel="stylesheet" href="css/style_robv.css?v=3.08">
 <script src="js/config.js?v=3.08"></script>
+<script src="lib/jsload.js?v=3.08"></script>
+<script src="tags.js?v=3.08"></script>
+<script>
+(new JSLoad(tags)).load( ["client"], function() {
+});
+</script>
+<script src="lib/BrowserCompApi.js"></script>
+
 <script type="text/template" id="client_template">
   <div class="indie_computer_wrapper">
     <div class="remove_computer">Remove</div>
@@ -59,17 +67,6 @@
 
 </div>
 
-
-<script src="lib/jsload.js?v=3.08"></script>
-<script src="tags.js?v=3.08"></script>
-<script>
-(new JSLoad(tags)).load( ["client"], function() {
-});
-</script>
-
-<!-- order of the include here matters! if included in reverse order, GetMainFrameUrl returns empty string -->
-
-<script src="lib/BrowserCompApi.js"></script>
 
 
 

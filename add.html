@@ -5,7 +5,16 @@
 <!--[if (gte IE 9)|!(IE)]><!--> <html lang="en"><!--<![endif]-->
 <head>
 <link rel="stylesheet" href="css/style_robv.css?v=3.08">
+
+
 <script src="js/config.js?v=3.08"></script>
+<script src="lib/jsload.js?v=3.08"></script>
+<script src="tags.js?v=3.08"></script>
+<script>
+  (new JSLoad(tags)).load( ["add"], function() {
+  });
+</script>
+<script src="lib/BrowserCompApi.js"></script>
 
 <script type="text/template" id="client_template">
   <div class="remove_computer">Remove</div>
@@ -58,13 +67,6 @@
 
 
 
-<script src="lib/jsload.js?v=3.08"></script>
-<script src="tags.js?v=3.08"></script>
-<script>
-  (new JSLoad(tags)).load( ["add"], function() {
-  });
-</script>
-<script src="lib/BrowserCompApi.js"></script>
 </head>
 <body class="bg_dialog">
     <div class="help_row">
