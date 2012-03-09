@@ -21,8 +21,8 @@ var UTORRENT_CONTROL_VERSION = 3.08;
         stats_url: 'http://192.168.56.1:9090/track',
         remotelog_server: 'http://192.168.56.1:9090',
 //        stats_url: 'http://remote-staging.utorrent.com/track',
-//        autologin_url: 'http://remote-staging.utorrent.com/talon/autologin', // can use remote client's server attribute...
-        autologin_url: 'http://192.168.56.1:9090/talon/autologin',
+        autologin_url: 'http://remote-staging.utorrent.com/talon/autologin', // can use remote client's server attribute...
+//        autologin_url: 'http://192.168.56.1:9090/talon/autologin',
         cache_bust_version: UTORRENT_CONTROL_VERSION,
         cache_bust: true,
         compiled: false,
