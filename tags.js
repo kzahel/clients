@@ -1,3 +1,8 @@
+if (config.compiled) {
+    var conduit_deps = "compiled/conduit_deps";
+} else {
+    var conduit_deps = "conduit_deps";
+}
 var tags = [
 
     { name: "lib/jquery" },
@@ -50,17 +55,17 @@ var tags = [
 
     { name: "conduit_deps", tagOnly: true,
       requires: ["deps", "js/common", "js/client.view", "js/torrent.view", "js/app"] },
+    { name: "compiled/conduit_deps" },
+    { name: "web", requires: [conduit_deps] }, // standalone web app
+    { name: "client", requires: [conduit_deps] }, // conduit main toolbar thing
+    { name: "clients", requires: [conduit_deps] }, // clients gadget dropdown
+    { name: "torrent", requires: [conduit_deps] },
+    { name: "torrents", requires: [conduit_deps] },
+    { name: "add", requires: [conduit_deps] }, // add torrent gadget
+    { name: "login", requires: [conduit_deps] }, // add torrent gadget
+    { name: "pairing", requires: [conduit_deps] } // add torrent gadget
 
-    { name: "web", requires: ["conduit_deps"] }, // standalone web app
-
-    { name: "client", requires: ["conduit_deps"] }, // conduit main toolbar thing
-    { name: "clients", requires: ["conduit_deps"] }, // clients gadget dropdown
-
-    { name: "torrent", requires: ["conduit_deps"] },
-    { name: "torrents", requires: ["conduit_deps"] },
-
-    { name: "add", requires: ["conduit_deps"] }, // add torrent gadget
-    { name: "login", requires: ["conduit_deps"] }, // add torrent gadget
-    { name: "pairing", requires: ["conduit_deps"] } // add torrent gadget
 
 ];
+
+

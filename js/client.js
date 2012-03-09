@@ -1,4 +1,3 @@
-
 var Client = Backbone.Model.extend({
     initialize: function(data) {
         this.__name__ = 'Client';
