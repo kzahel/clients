@@ -75,7 +75,7 @@ jQuery(document).ready( function() {
         $(evt.target).removeClass('arrow_collapse');
         ChangeWidth(config.torrent_pane_collapsed_width);
         clients.selected.stop_updating();
-        $('#torrent_container').hide();
+        $('.torrent_wrapper').hide();
     });
 
     jQuery('.arrow_expand').live('click', function(evt) {
@@ -84,7 +84,7 @@ jQuery(document).ready( function() {
         $(evt.target).removeClass('arrow_expand');
         ChangeWidth(config.torrent_pane_width);
         clients.selected.start_updating()
-        $('#torrent_container').show();
+        $('.torrent_wrapper').show();
     });
 
 } );
