@@ -104,6 +104,8 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                 var client = clients.selected; 
                 assert(client.collection);
                 client.fetch(); // fetches updated "active_hash" attribute
+            } else if (msg.command == 'reload') {
+                window.location.reload();
             } else if (msg.command == 'pair') {
                 var client = clients.get_by_id(msg.id);
                 this.pair(client);
@@ -173,11 +175,13 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
         }
     },
     switch_to_client: function(client) {
-        if (this.get('type') == 'client') { // MAIN APP
-            debugger;
+        if (this.get('type') == 'client') {
+            // mainly occurs after pairing found port
             window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
+            this.send_message( { recipient: 'torrent', command: 'reload' } );
             // $('.computer_name').text( client.get_name() );
         } else {
+            debugger;
             var data = client.attributes;
             //console.log('click switch to computer',data);
             var msg = { 'command': 'switch_client', 'id': client.id  };

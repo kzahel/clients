@@ -22,7 +22,6 @@ jQuery(document).ready( function() {
             return;
         }
 
-
         var torrent = client.get_selected_torrent();
         if (torrent) {
             window.torrentview = new ActiveTorrentView( { el: $('#torrent_template_container'), model: torrent } );

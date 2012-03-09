@@ -463,6 +463,12 @@ var ClientCollection = Backbone.Collection.extend( {
             }
         }
         this.selected = found;
+
+        if (opts && opts.broadcast) {
+            // tell other gadget windows to switch...
+            app.switch_to_client(found);
+        }
+
         /*
           always do silent mode -- require people to manually tell other views to update
         if (opts && opts.silent) {
@@ -481,9 +487,11 @@ var ClientCollection = Backbone.Collection.extend( {
     },
     init_post_fetch: function() {
         if (this.models.length == 0) {
-            this.find_local_clients( function(clients) {
-                //console.log('found clients',clients);
-            });
+            if (app.get('type') == 'client') {
+                this.find_local_clients( function(clients) {
+                    //console.log('found clients',clients);
+                });
+            }
         } else {
             // set selected client if one has selected attribute
             var selected = this.get_selected();
@@ -509,7 +517,7 @@ var ClientCollection = Backbone.Collection.extend( {
 
             if (_this.models.length == 1) {
                 // first client found..
-                _this.set_active(client); // maybe don't do this..
+                _this.set_active(client, { broadcast: true } ); // maybe don't do this..
             }
 
         });
