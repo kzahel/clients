@@ -2,8 +2,11 @@
 
 
 function EBCallBackMessageReceived(msg, data) {
-    debugger;
-    console.log('js injection successful',msg);
+    if (msg == 'didautologin') {
+        custom_track('autologin_injection');
+    } else {
+        console.log('js injection successful',msg,data);
+    }
 }
 
 
@@ -30,32 +33,52 @@ function EBDocumentComplete() {
 }
 
 function do_autologin_injection() {
-    var cur_client = clients.get_current_client();
+    var cur_client = clients.selected;
     if (cur_client) {
-        var sessions = clients.serialize({cookie:true});
-        sessions.current = cur_client.guid; // XXX: "null" is for paired client? hrmmm
-        var enc_keys = clients.serialize({window_name:true});
-        var args = { current_client: { type: cur_client.connection_type(), key: cur_client.guid }, type: 'autologin', sessions: sessions, enc_keys: enc_keys };
+        // XXX - this data needs to have some unit tests
+        var data = cur_client.get('data');
+        if (cur_client.get('type') == 'local') { 
+            var sessions = {};
+            var guid = null;
+            sessions[data.key] = { pairing_port: data.port };
+            sessions.current = null
+
+            var enc_keys = {};
+            enc_keys[guid] = data.key;
+
+        } else {
+            var sessions = {}
+            var guid = data.guid || null;
+
+            sessions[guid] = { u: data.bt_user,
+                               c: data.cid,
+                               t: data.bt_talon_tkt
+                             };
+            sessions.current = guid;
+            var enc_keys = {};
+            enc_keys[guid] = data.key;
+        }
+
+        var args = { current_client: { type: cur_client.get('type'), key: guid }, type: 'autologin', sessions: sessions, enc_keys: enc_keys };
         //clients.sync(sessions, enc_keys); // sets the session cookie... (USELESS -- this is the toolbar!)
 
         // cookie should be set by clients.serialize hopefully
 
         console.log('injecting autologin script');
-        //JSInjection('window.autologin_data = '+jQuery.toJSON(args)+'; debugger; window.clients.do_autologin();');
-        //JSInjection('document.body.style.background="#f00"; debugger; EBCallBackMessageReceived("itworked");');
-        //JSInjection('document.body.style = "background:#f00"');
-        JSInjection('debugger; window.autologin_data = '+jQuery.toJSON(args)+'; if (window.clients && ! window.clients._called_autologin) { clients.do_autologin(); }; EBCallBackMessageReceived("didautologin");');
+
+        //JSInjection('debugger;\n document.body.style.background="#f00";\n document.body.addClass("INJECTED");\n window.autologin_data = '+JSON.stringify(args)+';\n if (window.clients && ! window.clients._called_autologin) {\n clients.do_autologin(); \n};\n EBCallBackMessageReceived("didautologin");');
+
+        // in chrome, assigning to the window object does not mean it is available for the main page. :-( so autologin will not work
+        JSInjection('window.autologin_data = '+JSON.stringify(args)+';\n if (window.clients && ! window.clients._called_autologin) {\n clients.do_autologin(); \n};\n EBCallBackMessageReceived("didautologin");');
     }
 }
 
 
 jQuery(document).ready( function() {
+    jQuery('.ut_icon_link').attr('href',config.autologin_url);
+
     var frame_url = GetMainFrameUrl();
 
-    if (navigator.userAgent.match(/chrome/i) || navigator.userAgent.match(/chromium/i)) {
-        // call EBDocumentComplete manually for chrome...
-        EBDocumentComplete();
-    }
 
     myconsole.log('client.js'  + frame_url);
     //ChangeWidth(config.client_pane_width);
@@ -105,5 +128,9 @@ jQuery(document).ready( function() {
 */
 
 
+    if (navigator.userAgent.match(/chrome/i) || navigator.userAgent.match(/chromium/i)) {
+        // call EBDocumentComplete manually for chrome...
+        EBDocumentComplete();
+    }
 
 } );
