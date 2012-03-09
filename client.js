@@ -1,8 +1,10 @@
 myconsole.log('client.js');
 
-function EBCallBackMessageReceived(msg) {
+/*
+function EBCallBackMessageReceived(msg, data) {
     console.log('js injection successful',msg);
 }
+*/
 
 function EBDocumentComplete() {
     var track_all_urls = false;

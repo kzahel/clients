@@ -77,8 +77,22 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
             // simple solution for state issues. when client changes
             // (due to login or pairing accept or whatever, just
             // reload everything)
+            if (msg.message == 'new client selection') {
 
-            if (msg.message == 'no clients') {
+                if (this.get('type') == 'client') {
+                    var client = clients.get_by_id( msg.id );
+                    assert(client);
+                    if (window.clientview) {
+                        window.clientview.destroy();
+                    }
+                    window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
+                } else if (this.get('type') == 'torrent') {
+
+                    window.location.reload();
+
+                }
+
+            } else if (msg.message == 'no clients') {
                 window.location.reload();
 
 /*

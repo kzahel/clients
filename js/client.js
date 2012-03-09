@@ -67,7 +67,7 @@ var Client = Backbone.Model.extend({
     },
     select: function() {
         this.collection.set_active(this);
-        //this.trigger('selected', this); // to tell the collection a new selection is enabled
+        app.broadcast( { message: 'new client selection', id: this.id } ); // sends messages to other windows
     },
     fetch_server: function() {
         // fetches "raptor" from database
