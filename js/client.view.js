@@ -150,15 +150,19 @@ var ClientView = Backbone.View.extend({
             var status = this.model.get('status');
             if (status == 'available') {
                 this.$('.computer_state').addClass('computer_connected');
+				this.$('.computer_state').attr('title', 'Computer connected.');
             } else {
                 if (this.model.get('type') == 'local') {
                     if (status == 'not running') {
                         this.$('.computer_state').addClass('computer_disconnected');
+						this.$('.computer_state').attr('title', 'Computer disconnected.');
                     } else {
                         this.$('.computer_state').addClass('computer_unavailable');
+						this.$('.computer_state').attr('title', 'Computer unavailable.');
                     }
                 } else {
                     this.$('.computer_state').addClass('computer_unavailable');
+					this.$('.computer_state').attr('title', 'Computer unavailable.');
                 }
             }
 
