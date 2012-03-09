@@ -1,7 +1,6 @@
 jQuery(document).ready( function() {
     // this entire window is reloaded every time a client switch is initaited, to simplyfy the code
 
-
     //ChangeWidth(config.torrent_pane_width);
 
     window.clients = new ClientCollection;
