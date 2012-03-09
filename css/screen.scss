@@ -299,22 +299,29 @@ html, body {
 		background-color: #000;
 	}
 	.computer_name {
-		padding: 0 30px 0 8px;
+		float: left;
+		width: 70px;
+		padding: 0 5px 0 8px;
 		font-weight: bold;
 		text-align: left;
+		color:white;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		-o-text-overflow: ellipsis;
 		strong {
 			display: block;
-			float: left;
-			width: 68px;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				-o-text-overflow: ellipsis;
 		}
 		em {
 			color: #ccc;
 			font-size: 10px;
 			font-style: normal;
 		}
+	}
+	.computer_location {
+	  float:left;
+	  font-style:normal;
+	  font-size:10px;
+	  color:#ccc;
 	}
 	.remove_computer {
 		display: none;

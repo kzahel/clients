@@ -288,20 +288,26 @@ html, body {
   #computerselect:hover {
     background-color: #000; }
   #computerselect .computer_name {
-    padding: 0 30px 0 8px;
+    float: left;
+    width: 70px;
+    padding: 0 5px 0 8px;
     font-weight: bold;
-    text-align: left; }
+    text-align: left;
+    color: white;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -o-text-overflow: ellipsis; }
     #computerselect .computer_name strong {
-      display: block;
-      float: left;
-      width: 68px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      -o-text-overflow: ellipsis; }
+      display: block; }
     #computerselect .computer_name em {
       color: #ccc;
       font-size: 10px;
       font-style: normal; }
+  #computerselect .computer_location {
+    float: left;
+    font-style: normal;
+    font-size: 10px;
+    color: #ccc; }
   #computerselect .remove_computer {
     display: none;
     position: absolute;

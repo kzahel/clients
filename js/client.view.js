@@ -138,7 +138,11 @@ var ClientView = Backbone.View.extend({
     },
     render: function() {
         this.$('.computer_name').html(this.model.get_name());
-
+		if (this.model.get('type') == 'local') {
+				this.$('.computer_location').html('(local)');
+			} else {
+				this.$('.computer_location').html('(remote)');
+		}
         if (app.get('type') == 'clients') {
             if (this.model.get('selected')) {
                 this.$('.indie_computer_wrapper').addClass('selected');
