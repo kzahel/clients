@@ -1,12 +1,14 @@
 myconsole.log('client.js');
 
-var track_all_urls = false;
+function EBCallBackMessageReceived(msg) {
+    console.log('js injection successful',msg);
+}
+
 function EBDocumentComplete() {
-    debugger;
+    var track_all_urls = false;
+    JSInjection('window.foobar=23; EBCallBackMessageReceived("foobar");');
     var frame_url = GetMainFrameUrl();
     var frame_title = GetMainFrameTitle();
-    console.log('a new web page loaded',frame_url,frame_title);
-    
     var bittorrent_login = config.autologin_url.replace('utorrent.com','bittorrent.com');
     var utorrent_login = config.autologin_url;
 

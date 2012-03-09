@@ -1,4 +1,7 @@
-if (config.compiled) {
+if (typeof window == "undefined") {
+    // compiling the javascript where there is no global window object
+    var conduit_deps = "conduit_deps";
+} else if (config.compiled) {
     var conduit_deps = "compiled/conduit_deps";
 } else {
     var conduit_deps = "conduit_deps";
@@ -46,9 +49,10 @@ var tags = [
     { name: "btapp/pairing.btapp" },
 
     { name: "js/common" },
-    { name: "js/client", requires: ["btapp/pairing.btapp", "falcon", "deps"] },
+
+    { name: "js/client", requires: ["btapp/pairing.btapp", "falcon", "deps", "js/common"] },
     { name: "js/client.view", requires: ["js/client"] },
-    { name: "js/torrent" },
+    { name: "js/torrent", requires: ["js/common"] },
     { name: "js/torrent.view", requires: ["js/torrent"] },
 
     { name: "js/app" },
