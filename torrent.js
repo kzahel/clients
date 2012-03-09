@@ -14,7 +14,8 @@ jQuery(document).ready( function() {
     if (client) {
 
         if (client.get('type') == 'local' && ! client.get('data').key) {
-            $('.default_container').text('Click to setup control'); // insert iframe here instead?
+            $('#torrent_controls').hide();
+			$('.default_container').text('Click to setup control'); // insert iframe here instead?
             $('.default_container').click( function() {
                 app.send_message( { recipient: 'client', command: 'pair', id: client.id } );
             });

@@ -171,6 +171,7 @@ var ActiveTorrentView = TorrentView.extend({
     initialize: function() {
         this.template = _.template( $('#torrent_template').html() );
         this.$el.html( this.template() );
+		$('#torrent_controls').show();
         $('.default_container').hide();
         var _this = this;
         this.model.bind('change', function(model,opts) {
