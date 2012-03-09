@@ -103,7 +103,11 @@ html, body {
 	.bt_input {
 		border: 1px solid #ccc;
 		background: #fff;
-		padding: 4px 6px;
+		height:20px;
+		padding: 2px 6px 0 6px;
+		*height:18px;
+		*padding:5px 6px 2px 6px;
+		vertical-align:baseline;
 		float: right;
 		width: 144px;
 		&.url_field {width: 254px;}
@@ -185,7 +189,8 @@ html, body {
 .button_footer {
 	position:relative;
 	background-color: #a9a9a9;
-	padding: 10px;
+	height:34px;
+	padding: 10px 10px 0 10px;
 	text-align:right
 }
 .text_footer {
@@ -379,9 +384,9 @@ html, body {
 	}
 	input {
 		border: 0;
-		padding: 2px 6px;
+		padding: 2px 6px 0 6px;
 		margin: 0 0 0 5px;
-		height: 20px;
+		height: 22px;
 		&.first_field {
 			margin-left: 10px !important;
 		}
