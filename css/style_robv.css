@@ -18,9 +18,11 @@ html, body {
   overflow: hidden; }
 
 .default_container {
-  height: 26px;
-  width: 344px;
-  background: #f0f0f0; }
+  height: 21px;
+  width: 334px;
+  background: #f0f0f0;
+  padding: 5px 0 0 10px;
+  color: #666666; }
 
 .control_torrent_container {
   margin-right: 26px; }
