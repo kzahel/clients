@@ -14,6 +14,7 @@ html, body {
   outline: none !important; }
 
 #page_wrapper {
+  position: relative;
   height: 26px;
   overflow: hidden; }
 
