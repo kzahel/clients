@@ -12,8 +12,8 @@ jQuery(document).ready( function() {
             if (evt.data.match && evt.data.match(/ToolbarApi/)) {
                 // toolbar is sending messages too that conflict with
                 // the pairing mechanism, just ignore them.
-            } else if (evt.data.key) {
-                client.got_key(evt.data.key);
+            } else if (evt.data.length == 40) {
+                client.got_key(evt.data);
                 custom_track('pairing_iframe_allow');
                 //clients.add(client); // was already added on scan
                 app.broadcast( { message: 'pairing accepted', id: client.id } );
