@@ -78,8 +78,8 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
             // (due to login or pairing accept or whatever, just
             // reload everything)
             if (msg.message == 'new client selection') {
-
                 if (this.get('type') == 'client') {
+                    //clients.reset();
                     clients.fetch();
                     var client = clients.get_by_id( msg.id );
                     assert(client);
@@ -88,11 +88,10 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                     }
                     window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
                 } else if (this.get('type') == 'torrent') {
-
                     window.location.reload();
-
                 }
-
+            } else if (msg.message == 'close floating windows') {
+                CloseFloatingWindow();
             } else if (msg.message == 'no clients') {
                 window.location.reload();
 

@@ -121,9 +121,12 @@ var Client = Backbone.Model.extend({
                        success: function(data) {
                            var key = data;
                            _this.got_key(key);
+                           app.broadcast( { message: 'pairing accepted', id: _this.id } );
+                           //app.broadcast( { message: 'close floating windows' } );
                        },
                        dataType: 'jsonp',
                        error: function(xhr, status, text) {
+                           app.broadcast( { message: 'close floating windows' } );
                            debugger;
                        },
                      }
@@ -397,6 +400,7 @@ var ClientCollection = Backbone.Collection.extend( {
 
         this.bind('add', function(client) {
             if (! _this.selected) {
+                debugger;
                 client.select();
             }
         });
