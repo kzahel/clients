@@ -80,6 +80,7 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
             if (msg.message == 'new client selection') {
 
                 if (this.get('type') == 'client') {
+                    clients.fetch();
                     var client = clients.get_by_id( msg.id );
                     assert(client);
                     if (window.clientview) {
