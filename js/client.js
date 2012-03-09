@@ -106,63 +106,31 @@ var Client = Backbone.Model.extend({
             return true;
         }
     },
-/*
-    on_pair_response: function(jqevt) {
-        var evt = jqevt.originalEvent;
-
-        console.log('postmessage on window',evt.origin, evt.data);
-        if (evt.data.key) {
-            var d = this.get('data');
-            d.key = evt.data.key;
-            d.type = 'local';
-            this.set('data', d);
-            clients.add(this);
-            this.save();
-            debugger;
-            app.broadcast( { message: 'pairing accepted', id: this.id } );
-            //this.start_updating();
-        } else {
-            console.error('pairing DEnied');
-        }
-        // $('#pairing_view').html('');
-        jQuery(window).off('message',this.on_pair_response);
+    got_key: function(key) {
+        var d = this.get('data');
+        d.key = key;
+        d.type = 'local';
+        this.set('data', d);
+        this.save();
+        this.collection.set_active(this);
     },
-*/
     pair_jsonp: function() {
         var url = 'http://127.0.0.1:' + this.get('data').port + '/gui/pair&name=' + encodeURIComponent('Control');
+        var _this = this;
         jQuery.ajax( { url: url,
                        success: function(data) {
-                           debugger;
+                           var key = data;
+                           _this.got_key(key);
                        },
                        dataType: 'jsonp',
                        error: function(xhr, status, text) {
+                           debugger;
                        },
                      }
                    );
     },
     pair: function() {
         app.pair(this);
-        return;
-/*
-        debugger;
-        var _this = this;
-        var url = 'http://127.0.0.1:' + this.get('data').port + '/gui/pair?iframe=' + encodeURIComponent(window.location.href);
-
-        if (window.OpenGadget) {
-            app.pair(this);
-        } else {
-        //$('#pairing_view').html('<div style="position: absolute; top:80px; left:80px"><iframe style="overflow:hidden; width:400px; height:200px;" id="pairing_frame" src="' + url + '"></iframe></div>'); // not working in IE...
-            var iframe = document.createElement('iframe');
-            iframe.src = url;
-            iframe.setAttribute('style','width:300px; height:250px; border: 0px; overflow:hidden;');
-            iframe.id="pairing_frame";
-            //var iframe = $('#pairing_frame')[0];
-            document.getElementById('pairing_view').appendChild(iframe);
-            
-            //window.addEventListener('message', this.on_pair_response, false);
-            jQuery(window).on('message', this.on_pair_response);
-        }
-*/
     },
     invalidate_session: function() {
         if (this.get('data').type == 'local') {

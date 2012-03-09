@@ -213,6 +213,7 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                 // likely supports new style pairing
                 BTOpenGadget('pairing.html', 286, 200, { openposition: 'offset:(0;30)' });
             } else {
+                BTOpenGadget('pairing_instructions.html', 286, 200, { openposition: 'offset:(0;30)' });
                 client.pair_jsonp();
             }
         } else {

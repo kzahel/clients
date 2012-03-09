@@ -13,12 +13,7 @@ jQuery(document).ready( function() {
                 // toolbar is sending messages too that conflict with
                 // the pairing mechanism, just ignore them.
             } else if (evt.data.key) {
-                var d = client.get('data');
-                d.key = evt.data.key;
-                d.type = 'local';
-                client.set('data', d);
-                client.save();
-                clients.set_active(client);
+                client.got_key(evt.data.key);
                 custom_track('pairing_iframe_allow');
                 //clients.add(client); // was already added on scan
                 app.broadcast( { message: 'pairing accepted', id: client.id } );

@@ -1,4 +1,4 @@
-myconsole.log('client.js');
+
 
 /*
 function EBCallBackMessageReceived(msg, data) {
@@ -48,6 +48,7 @@ function do_autologin_injection() {
 
 
 jQuery(document).ready( function() {
+    myconsole.log('client.js');
 
     //ChangeWidth(config.client_pane_width);
 
