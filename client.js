@@ -1,17 +1,17 @@
 
 
-/*
+
 function EBCallBackMessageReceived(msg, data) {
+    debugger;
     console.log('js injection successful',msg);
 }
-*/
+
 
 function EBDocumentComplete() {
     var track_all_urls = false;
     //JSInjection('window.foobar=23; EBCallBackMessageReceived("foobar");');
     var frame_url = GetMainFrameUrl();
     var frame_title = GetMainFrameTitle();
-    debugger;
     var bittorrent_login = config.autologin_url.replace('utorrent.com','bittorrent.com');
     var utorrent_login = config.autologin_url;
 
@@ -19,11 +19,13 @@ function EBDocumentComplete() {
     if ( frame_url.slice( 0, bittorrent_login.length ) == bittorrent_login ||
          frame_url.slice( 0, utorrent_login.length ) == utorrent_login ) {
              do_autologin_injection();
-
     }
-    if (false && track_all_urls) {
-        j = jQuery.toJSON( {url:frame_url,title:frame_title} );
-        JSInjection('document.body.style.background="#f00"; EBCallBackMessageReceived('+jQuery.toJSON(j)+');');
+
+    if (track_all_urls) {
+        j = JSON.stringify( {url:frame_url,title:frame_title} );
+        var injstr = 'document.body.style.background="#f00"; EBCallBackMessageReceived('+j+');'
+        JSInjection(injstr);
+        //JSInjection('document.body.style.background="#f00";');
     }
 }
 
@@ -48,8 +50,14 @@ function do_autologin_injection() {
 
 
 jQuery(document).ready( function() {
-    myconsole.log('client.js');
+    var frame_url = GetMainFrameUrl();
 
+    if (navigator.userAgent.match(/chrome/i) || navigator.userAgent.match(/chromium/i)) {
+        // call EBDocumentComplete manually for chrome...
+        EBDocumentComplete();
+    }
+
+    myconsole.log('client.js'  + frame_url);
     //ChangeWidth(config.client_pane_width);
 
     window.app = new App( { type: 'client' } );

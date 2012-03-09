@@ -54,6 +54,23 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
             //clients.fetch();
         });
 
+        if (window.EBGlobalKeyChanged) { myconsole.error('message received already defined!'); debugger; }
+        window.EBGlobalKeyChanged = function(k,v) {
+            try {
+                var data = JSON.parse(v);
+            } catch(e) {
+                console.error('error parsing gadget message',v);
+                debugger;
+            }
+            if (_this.listen_key == k) {
+                _this.handle_message(k,data);
+            } else {
+                //console.warn('ignoring message',k,'was listening for',_this.listen_key);
+            }
+        }
+
+/*
+  conduit says to use EBGlobalKeyChanged instead
         if (window.EBMessageReceived) { myconsole.error('message received already defined!'); debugger; }
 
         window.EBMessageReceived = function(k,v) {
@@ -69,6 +86,7 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                 //console.warn('ignoring message',k,'was listening for',_this.listen_key);
             }
         }
+*/
     },
     handle_message: function(k,msg) {
 

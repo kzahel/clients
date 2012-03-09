@@ -128,7 +128,7 @@ var Client = Backbone.Model.extend({
                        error: function(xhr, status, text) {
                            app.broadcast( { message: 'close floating windows' } );
                            debugger;
-                       },
+                       }
                      }
                    );
     },

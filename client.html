@@ -66,8 +66,11 @@
 (new JSLoad(tags)).load( ["client"], function() {
 });
 </script>
+
+<!-- order of the include here matters! if included in reverse order, GetMainFrameUrl returns empty string -->
+
 <script src="lib/BrowserCompApi.js"></script>
-<script src="lib/ToolbarApi.js"></script>
+
 
 
 

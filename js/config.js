@@ -30,7 +30,7 @@ var UTORRENT_CONTROL_VERSION = 3.08;
 
     if (staging) {
         toolbar_config.cache_bust = false;
-        toolbar_config.compiled = true;
+        toolbar_config.compiled = false;
         toolbar_config.verbose = 1;
     }
 
