@@ -92,6 +92,7 @@ var TorrentView = Backbone.View.extend({
         this.template = _.template( $('#torrent_template').html() );
         this.$el.html( this.template() );
         this.$el.data( {id:this.model.id} );
+        this.render();
         var _this = this;
         this.model.bind('removed', function(m) {
             // remove from dom
@@ -159,7 +160,7 @@ var TorrentsView = Backbone.View.extend({
                     t.view = new TorrentView( { model: t } );
                 }
                 // losing click events!!!
-                _this.el.appendChild( t.view.el );
+                _this.$el.append( t.view.$el );
                 t.view.bind_events();
             });
         }

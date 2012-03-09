@@ -52,6 +52,13 @@ function BTOpenGadget(url, w, h, extra_opts) {
     var opts_str = _.map( opts, function(v,k) { return k + '=' + v; } ).join(','); // conduit has a weird api
 
     var abs_url = make_url_relative(url);
+
+    if (window.config && config.cache_bust) {
+        abs_url = abs_url + '?v=' + (new Date()).getTime();
+    } else if (window.config && config.cache_bust_version) {
+        abs_url = abs_url + '?v=' + config.cache_bust_version;
+    }
+
     OpenGadget(abs_url, w, h + ff_fudge, opts_str);
 }
 
