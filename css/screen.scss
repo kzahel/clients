@@ -235,17 +235,20 @@ html, body {
 		position: relative;
 	}
 	.computer_name {
-		padding: 5px 0 5px 26px;
+		float: left;
+		padding: 5px 5px 5px 26px;
 		font-weight: bold;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		-o-text-overflow: ellipsis;
 		color:#666;
-		em {
-			color: #ccc;
-			font-size: 10px;
-			font-style: normal;
-		}
+	}
+	.computer_location {
+	  float:left;
+	  font-style:normal;
+	  font-size:10px;
+	  color:#666;
+	  padding-top:7px
 	}
 	.remove_computer {
 		position: absolute;
