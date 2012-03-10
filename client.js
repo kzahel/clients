@@ -127,10 +127,12 @@ jQuery(document).ready( function() {
     });
 */
 
-
+/*
+  // doesnt work correctly in chrome (cant set window attributes)
     if (navigator.userAgent.match(/chrome/i) || navigator.userAgent.match(/chromium/i)) {
         // call EBDocumentComplete manually for chrome...
         EBDocumentComplete();
     }
+*/
 
 } );

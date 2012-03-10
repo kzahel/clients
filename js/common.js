@@ -102,6 +102,8 @@ function custom_track(name, mydata) {
 }
 
 function remotelog(evtname, data){
+    var dev = (window.location.host.match('192.168.56.1'));
+    if (! dev) { return; }
     var s = { event: evtname, data: data };
     if (config.verbose > 1) {
         var server = config.remotelog_server;
