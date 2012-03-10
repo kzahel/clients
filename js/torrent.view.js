@@ -166,7 +166,6 @@ var TorrentsView = Backbone.View.extend({
                 t.view.bind_events();
             });
         }
-        this.$el.append( $('<div>foo</div>') );
     }
 });
 
