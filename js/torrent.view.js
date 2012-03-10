@@ -139,11 +139,13 @@ var TorrentView = Backbone.View.extend({
 var TorrentsView = Backbone.View.extend({
     initialize: function() {
         var _this = this;
+
         this.model.bind('firstupdate', function() {
             _this.render();
         });
 
         this.model.bind('new_torrent', function(t) {
+            console.log('add new torrent',t);
             if (! t.view) {
                 t.view = new TorrentView( { model: t } );
             }
@@ -156,14 +158,15 @@ var TorrentsView = Backbone.View.extend({
         var _this = this;
         if (this.model && this.model.torrents) {
             this.model.torrents.each( function(t) {
+                console.log('render elt');
                 if (! t.view) {
                     t.view = new TorrentView( { model: t } );
                 }
-                // losing click events!!!
                 _this.$el.append( t.view.$el );
                 t.view.bind_events();
             });
         }
+        this.$el.append( $('<div>foo</div>') );
     }
 });
 
@@ -171,7 +174,7 @@ var ActiveTorrentView = TorrentView.extend({
     initialize: function() {
         this.template = _.template( $('#torrent_template').html() );
         this.$el.html( this.template() );
-		$('#torrent_controls').show();
+	$('#torrent_controls').show();
         $('.default_container').hide();
         var _this = this;
         this.model.bind('change', function(model,opts) {

@@ -45,7 +45,7 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
             // duplicate messages.
 
         } else {
-            RegisterForMessaging(this.listen_key);
+            // RegisterForMessaging(this.listen_key); // dont use this, using GlobalKeyChanged
         }
         var _this = this;
 
@@ -106,12 +106,12 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                     }
                     window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
                 } else if (this.get('type') == 'torrent') {
-                    window.location.reload();
+                    BTReload();
                 }
             } else if (msg.message == 'close floating windows') {
                 CloseFloatingWindow();
             } else if (msg.message == 'no clients') {
-                window.location.reload();
+                BTReload();
 
 /*
                 if (this.get('type') == 'client') {
@@ -122,9 +122,9 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                 }
 */
             } else if (msg.message == 'pairing accepted') {
-                window.location.reload();
+                BTReload();
             } else if (msg.message == 'remote login') {
-                window.location.reload();
+                BTReload();
             }
 
             return;
@@ -137,7 +137,7 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                 assert(client.collection);
                 client.fetch(); // fetches updated "active_hash" attribute
             } else if (msg.command == 'reload') {
-                window.location.reload();
+                BTReload();
             } else if (msg.command == 'pair') {
                 var client = clients.get_by_id(msg.id);
                 this.pair(client);
@@ -202,7 +202,7 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
             }
         } else if (this.get('type') == 'torrent') {
             if (msg.command == 'switch_client') {
-                window.location.reload(); // this works better than duplicating the init logic in torrent.js
+                BTReload(); // this works better than duplicating the init logic in torrent.js
             }
         }
     },

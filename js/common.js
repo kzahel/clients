@@ -78,6 +78,10 @@ function BTCloseFloatingWindow(delay) {
     }
 }
 
+function BTReload() {
+    RefreshToolbar();
+}
+
 function custom_track(name, mydata) {
     if (window.app && app.get('type') != 'client') {
         // forward stats tracking messages to the main frame (because it wont close randomly etc like gadget windows)

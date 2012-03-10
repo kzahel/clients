@@ -4,8 +4,7 @@ jQuery(document).ready( function() {
     clients.init_post_fetch(); // sets selected
     window.app = new App( { type: "login" } );
 
-    jQuery('#button_login').click( function(evt) {
-
+    function do_login(evt) {
         var username = jQuery('#username').val();
         var password = jQuery('#password').val();
 
@@ -36,8 +35,20 @@ jQuery(document).ready( function() {
             },
             timeout: 3000, // in case offline, need falcon-api to support timeout better...
         });
+    }
 
+    jQuery('#button_login').click( do_login );
+    jQuery('#password').keydown( function(evt) {
+        if (evt.keyCode == 13) {
+            do_login(evt);
+        }
     });
+    jQuery('#username').keydown( function(evt) {
+        if (evt.keyCode == 13) {
+            do_login(evt);
+        }
+    });
+
 
     jQuery('#button_scan').click( function(evt) {
         app.send_message( { recipient: 'client', command: 'scan_clients' } );

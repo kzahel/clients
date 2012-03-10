@@ -282,7 +282,7 @@ var Client = Backbone.Model.extend({
     add_torrent: function(d) {
         var torrent = new Torrent( { id: d[0], data: d } );
         this.trigger('add_torrent', torrent);
-        if (this.cacheid) {
+        if (this.updates > 1) { // XXX RACE CONDITION
             // allow new torrents to be inserted in-order in an existing list (updates only)
             this.trigger('new_torrent', torrent);
         }
