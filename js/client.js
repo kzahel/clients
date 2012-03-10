@@ -401,7 +401,6 @@ var ClientCollection = Backbone.Collection.extend( {
 
         this.bind('add', function(client) {
             if (! _this.selected) {
-                debugger;
                 client.select();
             }
         });
