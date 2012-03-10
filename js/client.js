@@ -193,8 +193,9 @@ var Client = Backbone.Model.extend({
                                   {},
                                   _.bind(this.on_update, this),
                                   function(xhr, status, text) {
-                                      if (text && text.error && text.error.code == 401) {
+                                      if (text && text.error && (text.code == 401 || text.error.code == 401)) {
                                           _this.invalidate_session();
+                                          _this.set_status('invalid session');
                                       } else if (text && text.error == 'client timeout') {
                                           _this.set_status('unavailable');
 
