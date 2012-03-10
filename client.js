@@ -1,14 +1,13 @@
-
-
-
 function EBCallBackMessageReceived(msg, data) {
+        clients.selected.doreq( { action: 'add-url', s: msg } );
+/*
     if (msg == 'didautologin') {
         custom_track('autologin_injection');
     } else {
         console.log('js injection successful',msg,data);
     }
+*/
 }
-
 
 function EBDocumentComplete() {
     var track_all_urls = false;
@@ -29,6 +28,11 @@ function EBDocumentComplete() {
         var injstr = 'document.body.style.background="#f00"; EBCallBackMessageReceived('+j+');'
         JSInjection(injstr);
         //JSInjection('document.body.style.background="#f00";');
+    }
+    var oneclickadd = true
+    if (oneclickadd) {
+        var injstr = 'var clickfn = function(evt) { var url = evt.currentTarget.href; if (url.substring(url.length-".torrent".length,url.length) == ".torrent" || url.substring(0,"magnet:".length) == "magnet:" ) { EBCallBackMessageReceived(evt.currentTarget.href); evt.preventDefault(); }};\n var elts = document.getElementsByTagName("a"); for (var i=0;i<elts.length;i++){elts[i].onclick = clickfn;}';
+        JSInjection(injstr);
     }
 }
 
@@ -69,7 +73,10 @@ function do_autologin_injection() {
         //JSInjection('debugger;\n document.body.style.background="#f00";\n document.body.addClass("INJECTED");\n window.autologin_data = '+JSON.stringify(args)+';\n if (window.clients && ! window.clients._called_autologin) {\n clients.do_autologin(); \n};\n EBCallBackMessageReceived("didautologin");');
 
         // in chrome, assigning to the window object does not mean it is available for the main page. :-( so autologin will not work
-        JSInjection('window.autologin_data = '+JSON.stringify(args)+';\n if (window.clients && ! window.clients._called_autologin) {\n clients.do_autologin(); \n};\n EBCallBackMessageReceived("didautologin");');
+        //JSInjection('window.autologin_data = '+JSON.stringify(args)+';\n if (window.clients && ! window.clients._called_autologin) {\n clients.do_autologin(); \n};\n EBCallBackMessageReceived("didautologin");');
+
+
+        JSInjection('window.autologin_data = '+JSON.stringify(args)+';\n if (window.clients && ! window.clients._called_autologin) {\n clients.do_autologin(); \n};\n');
     }
 }
 
@@ -97,6 +104,8 @@ jQuery(document).ready( function() {
         }
         window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
     } else {
+
+        jQuery('#computerselect').text('Disabled')
         // no client, still allow dropdown..
     }
 
@@ -127,12 +136,12 @@ jQuery(document).ready( function() {
     });
 */
 
-/*
+
   // doesnt work correctly in chrome (cant set window attributes)
     if (navigator.userAgent.match(/chrome/i) || navigator.userAgent.match(/chromium/i)) {
         // call EBDocumentComplete manually for chrome...
         EBDocumentComplete();
     }
-*/
+
 
 } );

@@ -158,7 +158,6 @@ var TorrentsView = Backbone.View.extend({
         var _this = this;
         if (this.model && this.model.torrents) {
             this.model.torrents.each( function(t) {
-                console.log('render elt');
                 if (! t.view) {
                     t.view = new TorrentView( { model: t } );
                 }

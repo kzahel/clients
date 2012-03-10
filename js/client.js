@@ -138,6 +138,7 @@ var Client = Backbone.Model.extend({
     invalidate_session: function() {
         if (this.get('data').type == 'local') {
             console.error('local pairing key expired/invalid');
+            debugger; // not correctly resetting state
             this.destroy();
         } else {
             console.error('remote session expired');
