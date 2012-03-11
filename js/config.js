@@ -1,4 +1,4 @@
-var UTORRENT_CONTROL_VERSION = 3.08;
+var UTORRENT_CONTROL_VERSION = 3.10;
 
 (function() {
 
@@ -31,7 +31,9 @@ var UTORRENT_CONTROL_VERSION = 3.08;
 
     if (staging) {
         toolbar_config.cache_bust = false;
-        toolbar_config.compiled = false;
+        toolbar_config.compiled = true;
+        autologin_url: 'http://remote.utorrent.com/talon/autologin', // can use remote client's server attribute...
+        stats_url: 'http://remote-staging.utorrent.com/track',
         toolbar_config.verbose = 1;
     }
 

@@ -1,12 +1,7 @@
 function EBCallBackMessageReceived(msg, data) {
-        clients.selected.doreq( { action: 'add-url', s: msg } );
-/*
-    if (msg == 'didautologin') {
-        custom_track('autologin_injection');
-    } else {
-        console.log('js injection successful',msg,data);
-    }
-*/
+    clients.selected.doreq( { action: 'add-url', s: msg } );
+    console.log('oneclick success');
+    custom_track('oneclickadd');
 }
 
 function EBDocumentComplete() {
@@ -31,7 +26,9 @@ function EBDocumentComplete() {
     }
     var oneclickadd = true
     if (oneclickadd) {
-        var injstr = 'var clickfn = function(evt) { var url = evt.currentTarget.href; if (url.substring(url.length-".torrent".length,url.length) == ".torrent" || url.substring(0,"magnet:".length) == "magnet:" ) { EBCallBackMessageReceived(evt.currentTarget.href); evt.preventDefault(); }};\n var elts = document.getElementsByTagName("a"); for (var i=0;i<elts.length;i++){elts[i].onclick = clickfn;}';
+        //var injstr = "foobar=99; debugger; var elt=document.createElement('div'); elt.setAttribute('id','foobar832'); elt.setAttribute('data',32899832); document.body.appendChild(elt);"
+        // IE is not passing in event to onclick function...
+        var injstr = 'var elts = document.getElementsByTagName("a"); \nfor (var i=0;i<elts.length;i++){\nelts[i].onclick = function(evt) { \nvar url = this.href; \nif (url.substring(url.length-".torrent".length,url.length) == ".torrent" || url.substring(0,"magnet:?xt=urn:btih".length) == "magnet:?xt=urn:btih" ) { \n\n\n\nEBCallBackMessageReceived(url);\n\n\n if (evt){evt.preventDefault();} else { return false; }\n }};}';
         JSInjection(injstr);
     }
 }
@@ -76,7 +73,11 @@ function do_autologin_injection() {
         //JSInjection('window.autologin_data = '+JSON.stringify(args)+';\n if (window.clients && ! window.clients._called_autologin) {\n clients.do_autologin(); \n};\n EBCallBackMessageReceived("didautologin");');
 
 
-        JSInjection('window.autologin_data = '+JSON.stringify(args)+';\n if (window.clients && ! window.clients._called_autologin) {\n clients.do_autologin(); \n};\n');
+        //JSInjection('window.autologin_data = '+JSON.stringify(args)+';\n if (window.clients && ! window.clients._called_autologin) {\n clients.do_autologin(); \n};\n');
+
+        // chrome, things set on window are not available for some reason! have to put in a script tag
+        var toinject = 'var s = document.createElement("s"); \ns.setAttribute("id","autologin_data_script"); \ns.innerText="'+JSON.stringify(args).replace(/"/g,'\\"')+'"; \ndocument.head.appendChild(s); window.autologin_data = '+JSON.stringify(args)+';\n if (window.clients && ! window.clients._called_autologin) {\n clients.do_autologin(); \n};\n';
+        JSInjection(toinject);
     }
 }
 

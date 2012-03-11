@@ -24,6 +24,7 @@ var Client = Backbone.Model.extend({
 
         this.paired_scan_interval = 20000;
         //this.update_interval = 4000;
+        this.paired_update_interval = 1000;
         this.remote_update_interval = 4000;
 
         _.bindAll(this);
@@ -279,7 +280,11 @@ var Client = Backbone.Model.extend({
         if (this.updates == 1) {
             this.trigger('firstupdate');
         }
-        this.update_timeout = setTimeout( this.do_update, this.remote_update_interval );
+        if (this.get('type') == 'local') {
+            this.update_timeout = setTimeout( this.do_update, this.paired_update_interval );
+        } else {
+            this.update_timeout = setTimeout( this.do_update, this.remote_update_interval );
+        }
     },
     add_torrent: function(d) {
         var torrent = new Torrent( { id: d[0], data: d } );
