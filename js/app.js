@@ -20,9 +20,16 @@ the "client" app is the "main" application. It is always active. The
 "torrent" app is meant to be collapsable, and all the other apps open
 and close with user actions.
 
-These apps can talk to each other using Conduit "SendMessage". There
+These apps can talk to each other using Conduit "SendMessage"*. There
 are some browser specific quirks to these messages (chrome does not
 support "RegisterForMessaging" and simply receives all messages).
+
+* Update -- conduit advises against using SendMessage, so we use
+EBGlobalKeyChanged/SetGlobalKey instead. This has issues with IE,
+however. Only the first tab is receiving the EBGlobalKeyChanged event,
+causing "torrents" app to not be able to tell "torrent" app that the
+torrent selection has changed (it tells the first tab's "torrent" app
+only)
 
  */
 
