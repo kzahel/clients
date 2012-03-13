@@ -1,9 +1,10 @@
-var UTORRENT_CONTROL_VERSION = 3.11;
+var UTORRENT_CONTROL_VERSION = 3.15;
 
 (function() {
 
     var staging = (window.location.host.match('bar-staging.utorrent.com'));
     var prod = (window.location.host.match('bar.utorrent.com'));
+    var kyledev = (window.location.host.match('192.168.56.1'));
     var is_firefox = navigator.userAgent.match(/firefox/i);
 
     if (! window.console) {
@@ -31,10 +32,12 @@ var UTORRENT_CONTROL_VERSION = 3.11;
 
     if (staging) {
         toolbar_config.cache_bust = false;
-        toolbar_config.compiled = true;
-        autologin_url = 'http://remote.utorrent.com/talon/autologin'; // can use remote client's server attribute...
-        stats_url = 'http://remote-staging.utorrent.com/track';
+        toolbar_config.compiled = false;
+        toolbar_config.autologin_url = 'http://remote-staging.utorrent.com/talon/autologin'; // can use remote client's server attribute...
+        toolbar_config.stats_url = 'http://remote-staging.utorrent.com/track';
         toolbar_config.verbose = 1;
+    } else if (kyledev) {
+        toolbar_config.autologin_url = 'http://192.168.56.1:9090/talon/autologin';
     }
 
     if (! window.config) {

@@ -67,7 +67,8 @@ var tags = [
     { name: "torrents", requires: [conduit_deps] },
     { name: "add", requires: [conduit_deps] }, // add torrent gadget
     { name: "login", requires: [conduit_deps] }, // add torrent gadget
-    { name: "pairing", requires: [conduit_deps] } // add torrent gadget
+    { name: "pairing", requires: [conduit_deps] }, // pairing dialog+iframe
+    { name: "signup", requires: [conduit_deps] } // signup
 
 
 ];

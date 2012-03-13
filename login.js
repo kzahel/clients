@@ -1,7 +1,9 @@
 jQuery(document).ready( function() {
+
     window.clients = new ClientCollection;
     clients.fetch();
     clients.init_post_fetch(); // sets selected
+
     window.app = new App( { type: "login" } );
 
     function do_login(evt) {
@@ -52,12 +54,12 @@ jQuery(document).ready( function() {
 
     jQuery('#button_scan').click( function(evt) {
         app.send_message( { recipient: 'client', command: 'scan_clients' } );
-/* let the main frame do the scan
-        clients.find_local_clients( function(clients) {
-            //console.log('found clients',clients);
-        });
-        CloseFloatingWindow();
-*/
+        /* let the main frame do the scan
+           clients.find_local_clients( function(clients) {
+           //console.log('found clients',clients);
+           });
+           CloseFloatingWindow();
+        */
     });
 
 

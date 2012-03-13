@@ -23,8 +23,7 @@ var Client = Backbone.Model.extend({
         });
 
         this.paired_scan_interval = 20000;
-        //this.update_interval = 4000;
-        this.paired_update_interval = 1000;
+        this.paired_update_interval = 4000;
         this.remote_update_interval = 4000;
 
         _.bindAll(this);
@@ -184,8 +183,15 @@ var Client = Backbone.Model.extend({
                     error: function(xhr, status, text) {
                         console.log('paired client update failure',status,text);
                         _this.set_status('not running');
-                        if (_this.updates == 0) {
-                            console.error('never got an update from ut -- ut is not running. maybe pop up dialog asking to run...');
+                        if (status == 'parsererror') {
+                            // client probably just said "400 bad request"
+                            console.error('jsonp error parsing response');
+                            debugger;
+                            _this.invalidate_session();
+                        } else if (_this.updates == 0) {
+                            console.error('never got an update from ut!');
+                            debugger;
+                            _this.invalidate_session();
                         }
                     }
                 });
@@ -218,27 +224,47 @@ var Client = Backbone.Model.extend({
             }
         }
     },
-    doreq: function(params) {
+    doreq: function(params, success, error) {
         var client = this;
         if (client.get('type') == 'local') {
-            var parts = [];
-            for (var key in params) {
-                parts.push( key + '=' + encodeURIComponent(params[key]) );
+
+            if (typeof params == 'object') {
+                var parts = [];
+                for (var key in params) {
+                    parts.push( key + '=' + encodeURIComponent(params[key]) );
+                }
+                var qs = parts.join('&');
+            }  else {
+                var qs = params;
             }
+
+            var url = 'http://127.0.0.1:' + client.get('data').port + '/gui/?' + qs + '&pairing=' + client.get('data').key + '&token=' + client.get('data').key; // send token as the pairing key to save a roundtrip fetching the token
             jQuery.ajax({
-                url: 'http://127.0.0.1:' + client.get('data').port + '/gui/?' + parts.join('&') + '&pairing=' + client.get('data').key + '&token=' + client.get('data').key, // send token as the pairing key to save a roundtrip fetching the token,
+                url: url,
                 dataType: 'jsonp',
                 success: function(data, status, xhr) {
-                    if (data == 'invalid request') {
-                        debugger;
+                    if (success) {
+                        success(data, status, xhr);
+                    } else {
+                        if (data == 'invalid request') {
+                            debugger;
+                        }
+                        console.log('doreq success', params,data);
                     }
-                    console.log('doreq success', params,data);
                 },
                 error: function(xhr, status, text) {
-                    console.log('doreq error', text, params);
+                    if (error) {
+                        error(xhr, status, text);
+                    } else {
+                        console.log('doreq error', text, params);
+                        debugger;
+                    }
                 }
             });
         } else {
+            if (typeof params == 'string') {
+                debugger;
+            }
             client.api.request('/gui/',
                               {},
                               params,
@@ -464,6 +490,7 @@ var ClientCollection = Backbone.Collection.extend( {
     },
     init_post_fetch: function() {
         if (this.models.length == 0) {
+            debugger;
             if (app.get('type') == 'client') {
                 this.find_local_clients( function(clients) {
                     //console.log('found clients',clients);

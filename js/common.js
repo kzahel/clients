@@ -1,5 +1,16 @@
 function assert(v){if(!v){debugger;}}
 
+function decode_url_arguments() {
+  var query = window.location.search;
+  var parts = query.slice(1, query.length).split('&');
+  var d = {};
+  for (var i=0; i<parts.length; i++) {
+    var kv = parts[i].split('=');
+    d[kv[0]] = decodeURIComponent(kv[1]);
+  }
+    return d;
+}
+
 function to_file_size(size) {
   var precision = 1;
   var sz = ['b', 'kb', 'Mb', 'Gb', 'Tb', 'Pb', 'Eb'];
@@ -53,10 +64,11 @@ function BTOpenGadget(url, w, h, extra_opts) {
 
     var abs_url = make_url_relative(url);
 
+    var s = (abs_url.indexOf('?') == -1) ? '?' : '&';
     if (window.config && config.cache_bust) {
-        abs_url = abs_url + '?v=' + (new Date()).getTime();
+        abs_url = abs_url + s + 'v=' + (new Date()).getTime();
     } else if (window.config && config.cache_bust_version) {
-        abs_url = abs_url + '?v=' + config.cache_bust_version;
+        abs_url = abs_url + s + 'v=' + config.cache_bust_version;
     }
 
     OpenGadget(abs_url, w, h + ff_fudge, opts_str);

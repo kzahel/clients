@@ -143,6 +143,8 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                 var client = clients.selected; 
                 assert(client.collection);
                 client.fetch(); // fetches updated "active_hash" attribute
+            } else if (msg.command == 'setup_remote') {
+                BTOpenGadget('signup.html?id=' + msg.id, 286, 200, { openposition: 'offset:(0;30)' });
             } else if (msg.command == 'reload') {
                 BTReload();
             } else if (msg.command == 'pair') {
@@ -237,7 +239,7 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                 // likely supports new style pairing
                 BTOpenGadget('pairing.html', 286, 200, { openposition: 'offset:(0;30)' });
             } else {
-                BTOpenGadget('pairing_instructions.html', 286, 200, { openposition: 'offset:(0;30)' });
+                BTOpenGadget('pairing_instructions.html', 286, 265, { openposition: 'offset:(0;30)' });
                 client.pair_jsonp();
             }
         } else {

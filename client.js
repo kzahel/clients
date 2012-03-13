@@ -1,3 +1,5 @@
+var is_chrome = (navigator.userAgent.match(/chrome/i) || navigator.userAgent.match(/chromium/i));
+
 function EBCallBackMessageReceived(msg, data) {
     clients.selected.doreq( { action: 'add-url', s: msg } );
     console.log('oneclick success');
@@ -12,6 +14,7 @@ function EBDocumentComplete() {
     var bittorrent_login = config.autologin_url.replace('utorrent.com','bittorrent.com');
     var utorrent_login = config.autologin_url;
 
+    debugger;
     console.log('checking if should inject autologin', utorrent_login, frame_url.slice( 0, bittorrent_login.length ));
     if ( frame_url.slice( 0, bittorrent_login.length ) == bittorrent_login ||
          frame_url.slice( 0, utorrent_login.length ) == utorrent_login ) {
@@ -28,6 +31,7 @@ function EBDocumentComplete() {
     if (oneclickadd) {
         //var injstr = "foobar=99; debugger; var elt=document.createElement('div'); elt.setAttribute('id','foobar832'); elt.setAttribute('data',32899832); document.body.appendChild(elt);"
         // IE is not passing in event to onclick function...
+        // TODO -- only inject on "web pages" (i.e. not on http://foo.com/image.jpg)
         var injstr = 'var elts = document.getElementsByTagName("a"); \nfor (var i=0;i<elts.length;i++){\nelts[i].onclick = function(evt) { \nvar url = this.href; \nif (url.substring(url.length-".torrent".length,url.length) == ".torrent" || url.substring(0,"magnet:?xt=urn:btih".length) == "magnet:?xt=urn:btih" ) { \n\n\n\nEBCallBackMessageReceived(url);\n\n\n if (evt){evt.preventDefault();} else { return false; }\n }};}';
         JSInjection(injstr);
     }
@@ -76,7 +80,19 @@ function do_autologin_injection() {
         //JSInjection('window.autologin_data = '+JSON.stringify(args)+';\n if (window.clients && ! window.clients._called_autologin) {\n clients.do_autologin(); \n};\n');
 
         // chrome, things set on window are not available for some reason! have to put in a script tag
-        var toinject = 'var s = document.createElement("s"); \ns.setAttribute("id","autologin_data_script"); \ns.innerText="'+JSON.stringify(args).replace(/"/g,'\\"')+'"; \ndocument.head.appendChild(s); window.autologin_data = '+JSON.stringify(args)+';\n if (window.clients && ! window.clients._called_autologin) {\n clients.do_autologin(); \n};\n';
+
+
+
+        var toinject = 'debugger;var s = document.createElement("script"); \ns.setAttribute("id","autologin_data_script"); \ns.innerText="var autologin_data='+JSON.stringify(args).replace(/"/g,'\\"')+'"; \nif(document.head){\ndocument.head.appendChild(s)\n}else{\ndebugger;}; \nwindow.autologin_data = '+JSON.stringify(args)+';\n if (window.clients && ! window.clients._called_autologin) {\n clients.do_autologin(); \n};\n';
+
+/*
+        if (is_chrome) {
+            var chrome_autologin_script = 'http://10.10.100.24/static/conduit2/js/misc/chrome_autologin.js';
+            var chrome_inject = '\nvar s = document.createElement("script"); \ns.src="+'+chrome_autologin_script+'+";\n document.head.appendChild(s);\n';
+            toinject += chrome_inject
+        }
+*/
+
         JSInjection(toinject);
     }
 }

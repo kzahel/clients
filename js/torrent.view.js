@@ -101,36 +101,40 @@ var TorrentView = Backbone.View.extend({
         //this.bind_events();
     },
     render: function() {
-        var progress_width = Math.floor(1000 * this.model.get('downloaded')/this.model.get('size'))/10 + '%';
+        if (this.model) {
+            var progress_width = Math.floor(this.model.get('complete')/10) + '%';
 
-        if (this.model.get('selected')) {
-            this.$('.bt_torrent_list').addClass('selected_torrent');
-        } else {
-            this.$('.bt_torrent_list').removeClass('selected_torrent');
-        }
-
-        this.$('.torrent_info').html( this.model.get('name') );
-        this.$('.torrent_info_percent_complete').html( progress_width );
-
-        // format the down speed
-        this.$('.torrent_info_speed').html( to_file_size(this.model.get('down_speed')) + '/s' );
-        this.$('.color_calc').css('width', progress_width);
-
-        if (this.model.started()) {
-            this.$('.bt_button_play').css('display','none');
-            this.$('.bt_button_pause').css('display','block');
-        } else {
-            this.$('.bt_button_pause').css('display','none');
-            this.$('.bt_button_play').css('display','block');
-        }
-        if (this.model.started()) {
-            if (this.model.isCompleted()) {
-                this.$('.torrent_dl_color').css('background-color','#86c440');
+            if (this.model.get('selected')) {
+                this.$('.bt_torrent_list').addClass('selected_torrent');
             } else {
-                this.$('.torrent_dl_color').css('background-color','#3499ff');
+                this.$('.bt_torrent_list').removeClass('selected_torrent');
+            }
+
+            this.$('.torrent_info').html( this.model.get('name') );
+            this.$('.torrent_info_percent_complete').html( progress_width );
+
+            // format the down speed
+            this.$('.torrent_info_speed').html( to_file_size(this.model.get('down_speed')) + '/s' );
+            this.$('.color_calc').css('width', progress_width);
+
+            if (this.model.started()) {
+                this.$('.bt_button_play').css('display','none');
+                this.$('.bt_button_pause').css('display','block');
+            } else {
+                this.$('.bt_button_pause').css('display','none');
+                this.$('.bt_button_play').css('display','block');
+            }
+            if (this.model.started()) {
+                if (this.model.isCompleted()) {
+                    this.$('.torrent_dl_color').css('background-color','#86c440');
+                } else {
+                    this.$('.torrent_dl_color').css('background-color','#3499ff');
+                }
+            } else {
+                this.$('.torrent_dl_color').css('background-color','#cecece');
             }
         } else {
-            this.$('.torrent_dl_color').css('background-color','#cecece');
+            this.$('.torrent_info').html( 'no torrents' );
         }
         return this.$el;
     }
@@ -157,13 +161,17 @@ var TorrentsView = Backbone.View.extend({
         this.$el.html('');
         var _this = this;
         if (this.model && this.model.torrents) {
-            this.model.torrents.each( function(t) {
-                if (! t.view) {
-                    t.view = new TorrentView( { model: t } );
-                }
-                _this.$el.append( t.view.$el );
-                t.view.bind_events();
-            });
+            if (this.model.torrents.length == 0) {
+                debugger;
+            } else {
+                this.model.torrents.each( function(t) {
+                    if (! t.view) {
+                        t.view = new TorrentView( { model: t } );
+                    }
+                    _this.$el.append( t.view.$el );
+                    t.view.bind_events();
+                });
+            }
         }
     }
 });
@@ -175,16 +183,20 @@ var ActiveTorrentView = TorrentView.extend({
 	$('#torrent_controls').show();
         $('.default_container').hide();
         var _this = this;
-        this.model.bind('change', function(model,opts) {
-            // console.log('active torrent change',_this.model.get('name'),_this.model.changedAttributes());
-            _this.render();
-        });
-        this.bind_action_events();
+        if (this.model) {
+            this.model.bind('change', function(model,opts) {
+                // console.log('active torrent change',_this.model.get('name'),_this.model.changedAttributes());
+                _this.render();
+            });
+            this.bind_action_events();
+            this.model.collection.bind('new_torrent', function(t) {
+                console.log('may want to replace current acitve torrent view with new torrent',t.get('name'));
+                debugger;
+            });
+
+        }
         this.render();
 
-        this.model.collection.bind('new_torrent', function(t) {
-            console.log('may want to replace current acitve torrent view with new torrent',t.get('name'));
-        });
 
 
     }

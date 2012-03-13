@@ -100,12 +100,16 @@ var ClientView = Backbone.View.extend({
             _this.el.parentNode.removeChild( _this.el );
         });
 
+        this.model.bind('change:status', function(m) {
+            _this.render();
+        });
+
         this.model.bind('timeout', function(m) {
-            _this.set_status('offline');
+            _this.model.set_status('offline');
         });
 
         this.model.bind('preparing', function(m) {
-            _this.set_status('preparing...');
+            _this.model.set_status('preparing...');
         });
 
         this.model.bind('change', function(a,b,c) {
@@ -129,14 +133,24 @@ var ClientView = Backbone.View.extend({
         });
 
         this.$('.remote_computer').click( function(evt) {
-            console.log('login client', _this);
-            custom_track('autologin_computer');
-            debugger;
+            if (_this.model.get('status') != 'available') {
+                console.log('cannot setup... client not available');
+                debugger;
+            } else {
+                custom_track('setup_remote_click');
+                app.send_message({ recipient: 'client', command: 'setup_remote', id: _this.model.id });
+            }
         });
 
         this.render();
     },
     render: function() {
+        if (this.model.get('status') == 'available') {
+            this.$('.remote_computer').show();
+        } else {
+            this.$('.remote_computer').hide();
+        }
+
         this.$('.computer_name').html(this.model.get_name());
 		if (this.model.get('type') == 'local') {
 				this.$('.computer_location').html('(local)');

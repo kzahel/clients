@@ -12,7 +12,13 @@ jQuery(document).ready( function() {
         window.torrentsview = new TorrentsView( { el: $('#global_container'), model: client } );
         client.start_updating();
     }
-    
+/*
+    client.bind('firstupdate', function() {
+        if (client.torrents.length == 0) {
+
+        }
+    });
+*/
     
 
 } );
