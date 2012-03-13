@@ -1,4 +1,12 @@
 var is_chrome = (navigator.userAgent.match(/chrome/i) || navigator.userAgent.match(/chromium/i));
+var is_ie = navigator.userAgent.match(/MSIE/);
+
+window.addEventListener('storage', function(evt) {
+    console.log('storage event',evt);
+    // MSIE: browsercompapi is cludging this i think.
+});
+
+
 
 function EBCallBackMessageReceived(msg, data) {
     clients.selected.doreq( { action: 'add-url', s: msg } );

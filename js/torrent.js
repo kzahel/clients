@@ -69,7 +69,7 @@ var Torrent = Backbone.Model.extend({
             console.log('setting active hash',this.get('hash'));
             this.collection.client.save();
             // set this as selected torrent on the client model
-            app.send_message( { recipient: 'torrent', command: 'select_torrent' } );
+            app.send_message( { recipient: 'torrent', command: 'select_torrent', hash: this.get('hash') } );
         }, this));
 
     },

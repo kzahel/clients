@@ -141,10 +141,11 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
             if (this.get('type') == msg.recipient) {
                 console.log('app',this.get('type'),'handling toolbarapi message',k,JSON.stringify(msg));
                 if (msg.command == 'select_torrent') {
-                    // this logic is duplicated in the "torrent" frame script onready
-                    var client = clients.selected; 
-                    assert(client.collection);
-                    client.fetch(); // fetches updated "active_hash" attribute
+                    var client = clients.selected;
+                    client.set('active_hash', msg.hash);
+                    //assert(client.collection);
+                    //client.fetch(); // fetches updated "active_hash" attribute // XXX local storage not updating across IE tabs???  ???
+                    assert(client.get('active_hash') == msg.hash);
                 } else if (msg.command == 'setup_remote') {
                     BTOpenGadget('signup.html?id=' + msg.id, 286, 200, { openposition: 'offset:(0;30)' });
                 } else if (msg.command == 'reload') {
@@ -167,6 +168,7 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                 } else if (msg.command == 'switch_client') {
                     debugger;
                 } else if (msg.command == 'custom_track') {
+                    // don't do it this way. each IE tab will pick up the event
                     console.log('sending custom track event', msg.data.name, msg.data.mydata);
                     custom_track(msg.data.name, msg.data.mydata);
                 }
