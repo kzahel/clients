@@ -4,7 +4,7 @@ jQuery(document).ready( function() {
 
     clients.fetch();
 
-    jQuery('#button_upload').click( function() {
+    function do_add() {
         console.log('clicked upload button');
         var url = jQuery('#url_input').val();
         var msg = { 'command': 'add_by_url', 'url': url };
@@ -12,8 +12,10 @@ jQuery(document).ready( function() {
         jQuery('#url_input').val('');
         custom_track('add_torrent');
         BTCloseFloatingWindow();
-    });
+    }
 
+    $('#button_upload').click( do_add );
+    $('#url_input').click( do_add );
 
 
 } );
