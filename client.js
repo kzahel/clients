@@ -77,21 +77,20 @@ function do_autologin_injection() {
         //JSInjection('window.autologin_data = '+JSON.stringify(args)+';\n if (window.clients && ! window.clients._called_autologin) {\n clients.do_autologin(); \n};\n EBCallBackMessageReceived("didautologin");');
 
 
-        //JSInjection('window.autologin_data = '+JSON.stringify(args)+';\n if (window.clients && ! window.clients._called_autologin) {\n clients.do_autologin(); \n};\n');
-
-        // chrome, things set on window are not available for some reason! have to put in a script tag
+        
 
 
 
-        var toinject = 'debugger;var s = document.createElement("script"); \ns.setAttribute("id","autologin_data_script"); \ns.innerText="var autologin_data='+JSON.stringify(args).replace(/"/g,'\\"')+'"; \nif(document.head){\ndocument.head.appendChild(s)\n}else{\ndebugger;}; \nwindow.autologin_data = '+JSON.stringify(args)+';\n if (window.clients && ! window.clients._called_autologin) {\n clients.do_autologin(); \n};\n';
-
-/*
         if (is_chrome) {
-            var chrome_autologin_script = 'http://10.10.100.24/static/conduit2/js/misc/chrome_autologin.js';
-            var chrome_inject = '\nvar s = document.createElement("script"); \ns.src="+'+chrome_autologin_script+'+";\n document.head.appendChild(s);\n';
-            toinject += chrome_inject
+            // chrome, things set on window are not available for some reason! have to put in a script tag
+            var call_login = 'if (window.clients && ! window.clients._called_autologin) { debugger; \nclients.do_autologin();}';
+            var toinject = 'debugger;\nvar s = document.createElement("script"); \ns.setAttribute("id","autologin_data_script"); \ns.innerText="debugger;var autologin_data='+JSON.stringify(args).replace(/"/g,'\\"')+';setInterval(function(){'+call_login.replace(/\n/g,'\\n')+'},100)"; \nif(document.head){\ndocument.head.appendChild(s)\n}else{\ndebugger;};';
+
+        } else {
+            JSInjection('debugger;\nwindow.autologin_data = '+JSON.stringify(args)+';\n if (window.clients && ! window.clients._called_autologin) {\n clients.do_autologin(); \n};\n');
         }
-*/
+
+
 
         JSInjection(toinject);
     }

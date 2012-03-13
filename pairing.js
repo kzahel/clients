@@ -16,9 +16,12 @@ jQuery(document).ready( function() {
                 client.got_key(evt.data);
                 custom_track('pairing_iframe_allow');
                 //clients.add(client); // was already added on scan
-                app.broadcast( { message: 'pairing accepted', id: client.id } );
-                //clients.set_active(client)
+                
                 BTCloseFloatingWindow();
+                // need to delay sending this because closefloatingwindow is not working??
+                setTimeout( function() {
+                    app.broadcast( { message: 'pairing accepted', id: client.id } );
+                }, 200);
             } else {
                 debugger;
                 custom_track('pairing_iframe_deny');

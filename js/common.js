@@ -91,6 +91,7 @@ function BTCloseFloatingWindow(delay) {
 }
 
 function BTReload() {
+    app.broadcast('close floating windows');
     RefreshToolbar();
 }
 

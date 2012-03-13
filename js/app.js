@@ -137,35 +137,38 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
             return;
         }
 
-        if (msg.recipient && this.get('type') == msg.recipient) { // some messages are sent to specific windows
-            if (msg.command == 'select_torrent') {
-                // this logic is duplicated in the "torrent" frame script onready
-                var client = clients.selected; 
-                assert(client.collection);
-                client.fetch(); // fetches updated "active_hash" attribute
-            } else if (msg.command == 'setup_remote') {
-                BTOpenGadget('signup.html?id=' + msg.id, 286, 200, { openposition: 'offset:(0;30)' });
-            } else if (msg.command == 'reload') {
-                BTReload();
-            } else if (msg.command == 'pair') {
-                var client = clients.get_by_id(msg.id);
-                this.pair(client);
-            } else if (msg.command == 'scan_clients') {
-                clients.find_local_clients( function(clients) {
-                });
-            } else if (msg.command == 'update_client_status') {
-                var client = clients.get_by_id(msg.id);
-                client.fetch();
-                /*
-                  clients.each( function(client) {
-                  client.fetch(); // update status attribute on client
-                  });
-                */
-            } else if (msg.command == 'switch_client') {
-                debugger;
-            } else if (msg.command == 'custom_track') {
-                console.log('sending custom track event', msg.data.name, msg.data.mydata);
-                custom_track(msg.data.name, msg.data.mydata);
+        if (msg.recipient) { // some messages are sent to specific windows
+            if (this.get('type') == msg.recipient) {
+                console.log('app',this.get('type'),'handling toolbarapi message',k,JSON.stringify(msg));
+                if (msg.command == 'select_torrent') {
+                    // this logic is duplicated in the "torrent" frame script onready
+                    var client = clients.selected; 
+                    assert(client.collection);
+                    client.fetch(); // fetches updated "active_hash" attribute
+                } else if (msg.command == 'setup_remote') {
+                    BTOpenGadget('signup.html?id=' + msg.id, 286, 200, { openposition: 'offset:(0;30)' });
+                } else if (msg.command == 'reload') {
+                    BTReload();
+                } else if (msg.command == 'pair') {
+                    var client = clients.get_by_id(msg.id);
+                    this.pair(client);
+                } else if (msg.command == 'scan_clients') {
+                    clients.find_local_clients( function(clients) {
+                    });
+                } else if (msg.command == 'update_client_status') {
+                    var client = clients.get_by_id(msg.id);
+                    client.fetch();
+                    /*
+                      clients.each( function(client) {
+                      client.fetch(); // update status attribute on client
+                      });
+                    */
+                } else if (msg.command == 'switch_client') {
+                    debugger;
+                } else if (msg.command == 'custom_track') {
+                    console.log('sending custom track event', msg.data.name, msg.data.mydata);
+                    custom_track(msg.data.name, msg.data.mydata);
+                }
             }
             return;
         }
