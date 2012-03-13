@@ -5,9 +5,11 @@ jQuery(document).ready( function() {
 
     clients.fetch();
     clients.init_post_fetch(); // sets selected
-
-
+    
+    var logging_in = false;
     function do_login(evt) {
+        if (logging_in) { return; }
+        logging_in = true;
         var username = jQuery('#username').val();
         var password = jQuery('#password').val();
 
@@ -23,6 +25,7 @@ jQuery(document).ready( function() {
                 BTCloseFloatingWindow(); 
             },
             error: function(xhr, status, text) {
+                logging_in = false;
                 custom_track('login_error');
                 custom_track('login_error.' + text.error);
                 $('.spinner').html(JSON.stringify(text));
@@ -36,11 +39,12 @@ jQuery(document).ready( function() {
                     $('.spinner').html(data.message);
                 }
             },
-            timeout: 3000, // in case offline, need falcon-api to support timeout better...
+            timeout: 5000, // in case offline, need falcon-api to support timeout better...
         });
     }
 
     jQuery('#button_login').click( do_login );
+
     jQuery('#password').keydown( function(evt) {
         if (evt.keyCode == 13) {
             do_login(evt);
