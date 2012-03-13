@@ -102,6 +102,7 @@ var TorrentView = Backbone.View.extend({
     },
     render: function() {
         if (this.model) {
+
             var progress_width = Math.floor(this.model.get('complete')/10) + '%';
 
             if (this.model.get('selected')) {
@@ -114,7 +115,12 @@ var TorrentView = Backbone.View.extend({
             this.$('.torrent_info_percent_complete').html( progress_width );
 
             // format the down speed
-            this.$('.torrent_info_speed').html( to_file_size(this.model.get('down_speed')) + '/s' );
+            var speed = this.model.get('down_speed') + this.model.get('up_speed'); 
+            if (speed > 1) {
+                this.$('.torrent_info_speed').html( to_file_size(speed) + '/s' );
+            } else {
+                this.$('.torrent_info_speed').html( '' );
+            }
             this.$('.color_calc').css('width', progress_width);
 
             if (this.model.started()) {
@@ -133,6 +139,13 @@ var TorrentView = Backbone.View.extend({
             } else {
                 this.$('.torrent_dl_color').css('background-color','#cecece');
             }
+
+
+            if (this.model.get('message').match(/error/i)) { 
+                this.$('.torrent_dl_color').css('background-color','#ff2233');
+            }
+
+
         } else {
             this.$('.torrent_info').html( 'no torrents' );
         }

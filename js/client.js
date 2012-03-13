@@ -25,6 +25,7 @@ var Client = Backbone.Model.extend({
         this.paired_scan_interval = 20000;
         this.paired_update_interval = 4000;
         this.remote_update_interval = 4000;
+        this.server_fetch_count = 0; // for exponential backoff on remote server fetch
 
         _.bindAll(this);
         // sort by date added...
@@ -77,18 +78,21 @@ var Client = Backbone.Model.extend({
             dataType: 'jsonp',
             success: function(data) {
                 var d = _this.get('data');
-                if (d.host != data.rapton) {
+                if (data.rapton && d.host != data.rapton) {
                     console.warn('raptor changed address',d.host,'->',data.rapton);
                     d.host = data.rapton;
                     _this.set('data',d);
                     _this.save(); // update the model
                     _this.trigger('raptor_update');
+                    _this.server_fetch_count = 0;
+                } else if (data && data.error && data.error.code == '/no/user') {
+                    // user changed credentials
+                    _this.invalidate_session();
                 } else {
+                    _this.server_fetch_count += 1;
                     console.log(d.bt_user,'still offline', data.rapton);
                 }
 
-                //this.get('data')
-                //if data.rapton == 
             },
             error: function(xhr, status, text) {
                 debugger;
@@ -196,6 +200,7 @@ var Client = Backbone.Model.extend({
                     }
                 });
             } else if (this.api) {
+                assert( this.get('data').host );
                 this.api.request( '/gui/',
                                   {list:1, cid:this.cacheid},
                                   {},
@@ -208,13 +213,16 @@ var Client = Backbone.Model.extend({
                                           _this.set_status('unavailable');
 
                                           // was able to contact server, but request to client timed out.
+                                          var mult = 2 * Math.pow(2, _this.server_fetch_count);
+                                          // TODO -- exponential backoff on fetch server
+                                          var fetchin = _this.remote_update_interval * mult;
+                                          console.log('next server fetch at', fetchin);
                                           _this.fetch_server();
-                                          _this.update_timeout = setTimeout( _this.do_update, _this.remote_update_interval * 2 );
-                                          debugger;
+                                          _this.update_timeout = setTimeout( _this.do_update, fetchin );
                                       } else if (status == 'timeout') {
                                           _this.set_status('unavailable');
                                           // buggy server (or possibly lost internet connection)
-                                          _this.update_timeout = setTimeout( _this.do_update, _this.remote_update_interval * 10 );
+                                          _this.update_timeout = setTimeout( _this.do_update, _this.remote_update_interval * 4 );
                                           debugger;
                                       } else {
                                           debugger;

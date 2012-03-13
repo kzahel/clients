@@ -14,7 +14,7 @@ function EBDocumentComplete() {
     var bittorrent_login = config.autologin_url.replace('utorrent.com','bittorrent.com');
     var utorrent_login = config.autologin_url;
 
-    debugger;
+    if (navigator.userAgent.match(/MSIE/)) { debugger; }
     console.log('checking if should inject autologin', utorrent_login, frame_url.slice( 0, bittorrent_login.length ));
     if ( frame_url.slice( 0, bittorrent_login.length ) == bittorrent_login ||
          frame_url.slice( 0, utorrent_login.length ) == utorrent_login ) {

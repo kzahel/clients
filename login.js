@@ -1,10 +1,11 @@
 jQuery(document).ready( function() {
 
     window.clients = new ClientCollection;
+    window.app = new App( { type: "login" } );
+
     clients.fetch();
     clients.init_post_fetch(); // sets selected
 
-    window.app = new App( { type: "login" } );
 
     function do_login(evt) {
         var username = jQuery('#username').val();

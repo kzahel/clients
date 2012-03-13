@@ -157,7 +157,8 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                     });
                 } else if (msg.command == 'update_client_status') {
                     var client = clients.get_by_id(msg.id);
-                    client.fetch();
+                    client.fetch(); // should update status attribute... unfortunately does not seem to be triggering change+draw
+                    debugger;
                     /*
                       clients.each( function(client) {
                       client.fetch(); // update status attribute on client

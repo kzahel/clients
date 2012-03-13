@@ -1,4 +1,4 @@
-var UTORRENT_CONTROL_VERSION = 3.17;
+var UTORRENT_CONTROL_VERSION = 3.20;
 
 (function() {
 
@@ -38,7 +38,7 @@ var UTORRENT_CONTROL_VERSION = 3.17;
         toolbar_config.remotelog_server = 'http://remote-staging.utorrent.com',
         toolbar_config.verbose = 1;
     } else if (kyledev) {
-        toolbar_config.autologin_url = 'http://192.168.56.1:9090/talon/autologin';
+//        toolbar_config.autologin_url = 'http://192.168.56.1:9090/talon/autologin';
     }
 
     if (! window.config) {

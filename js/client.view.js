@@ -152,11 +152,12 @@ var ClientView = Backbone.View.extend({
         }
 
         this.$('.computer_name').html(this.model.get_name());
-		if (this.model.get('type') == 'local') {
-				this.$('.computer_location').html('(local)');
-			} else {
-				this.$('.computer_location').html('(remote)');
-		}
+	if (this.model.get('type') == 'local') {
+	    this.$('.computer_location').html('(local)');
+	} else {
+	    this.$('.computer_location').html('(remote)');
+	}
+
         if (app.get('type') == 'clients') {
             if (this.model.get('selected')) {
                 this.$('.indie_computer_wrapper').addClass('selected');
@@ -168,22 +169,21 @@ var ClientView = Backbone.View.extend({
             var status = this.model.get('status');
             if (status == 'available') {
                 this.$('.computer_state').addClass('computer_connected');
-				this.$('.computer_state').attr('title', 'Computer connected.');
+		this.$('.computer_state').attr('title', 'Computer connected.');
             } else {
                 if (this.model.get('type') == 'local') {
                     if (status == 'not running') {
                         this.$('.computer_state').addClass('computer_disconnected');
-						this.$('.computer_state').attr('title', 'Computer disconnected.');
+			this.$('.computer_state').attr('title', 'Computer disconnected.');
                     } else {
                         this.$('.computer_state').addClass('computer_unavailable');
-						this.$('.computer_state').attr('title', 'Computer unavailable.');
+			this.$('.computer_state').attr('title', 'Computer unavailable.');
                     }
                 } else {
                     this.$('.computer_state').addClass('computer_unavailable');
-					this.$('.computer_state').attr('title', 'Computer unavailable.');
+		    this.$('.computer_state').attr('title', 'Computer unavailable.');
                 }
             }
-
         }
     },
     destroy: function() {
