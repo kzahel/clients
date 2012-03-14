@@ -14,3 +14,20 @@ NOTE: "falcon-api" may need to be configured to use  {{ srp_root: 'http://remote
 
 
 
+NOTE about conduit architecture: All 3 browsers have very different behavior.
+========
+IE: each tab gets its own toolbar. Navigating to new pages does not
+force the toolbar to re-initialize.
+
+Chrome: each tab gets its own toolbar. Navigating to a new page forces
+a complete toolbar re-initialization.
+
+Firefox: The toolbar is shared across tabs, so each browser window
+gets its own toolbar.
+
+Currently the design of the toolbar is pretty bad. It was really only
+written with one tab in mind. Each tab is independently synchronizing
+with the remote client, causing unnecessarry network load. Thus TODO:
+make only one tab the "active" tab, and have all other tabs receive
+updates via EBGlobalKeyChanged.
+
