@@ -8,8 +8,10 @@ function EBCallBackMessageReceived(msg, data) {
 
 function EBDocumentComplete() {
     var track_all_urls = false;
-    //JSInjection('window.foobar=23; EBCallBackMessageReceived("foobar");');
-    var frame_url = GetMainFrameUrl();
+    var frame_url = GetMainFrameUrl(); // XXX - Not working in MSIE
+                                       // for "controlstaging"
+                                       // toolbar. Conduit says it
+                                       // should be. But it isn't.
     var frame_title = GetMainFrameTitle();
     var bittorrent_login = config.autologin_url.replace('utorrent.com','bittorrent.com');
     var utorrent_login = config.autologin_url;
@@ -29,9 +31,9 @@ function EBDocumentComplete() {
     }
     var oneclickadd = true
     if (oneclickadd) {
-        //var injstr = "foobar=99; debugger; var elt=document.createElement('div'); elt.setAttribute('id','foobar832'); elt.setAttribute('data',32899832); document.body.appendChild(elt);"
-        // IE is not passing in event to onclick function...
         // TODO -- only inject on "web pages" (i.e. not on http://foo.com/image.jpg)
+        // TODO -- don't store the inline code here. Unfortunately this means we'd have to run a build script every time changes were made.
+        // FIX -- not working in chrome.
         var injstr = 'var elts = document.getElementsByTagName("a"); \nfor (var i=0;i<elts.length;i++){\nelts[i].onclick = function(evt) { \nvar url = this.href; \nif (url.substring(url.length-".torrent".length,url.length) == ".torrent" || url.substring(0,"magnet:?xt=urn:btih".length) == "magnet:?xt=urn:btih" ) { \n\n\n\nEBCallBackMessageReceived(url);\n\n\n if (evt){evt.preventDefault();} else { return false; }\n }};}';
         JSInjection(injstr);
     }
@@ -40,7 +42,7 @@ function EBDocumentComplete() {
 function do_autologin_injection() {
     var cur_client = clients.selected;
     if (cur_client) {
-        // XXX - this data needs to have some unit tests
+        // XXX - this data needs to have some unit tests.
         var data = cur_client.get('data');
         if (cur_client.get('type') == 'local') { 
             var sessions = {};
@@ -63,33 +65,21 @@ function do_autologin_injection() {
             var enc_keys = {};
             enc_keys[guid] = data.key;
         }
-
         var args = { current_client: { type: cur_client.get('type'), key: guid }, type: 'autologin', sessions: sessions, enc_keys: enc_keys };
-        //clients.sync(sessions, enc_keys); // sets the session cookie... (USELESS -- this is the toolbar!)
-
-        // cookie should be set by clients.serialize hopefully
 
         console.log('injecting autologin script');
 
-        //JSInjection('debugger;\n document.body.style.background="#f00";\n document.body.addClass("INJECTED");\n window.autologin_data = '+JSON.stringify(args)+';\n if (window.clients && ! window.clients._called_autologin) {\n clients.do_autologin(); \n};\n EBCallBackMessageReceived("didautologin");');
-
-        // in chrome, assigning to the window object does not mean it is available for the main page. :-( so autologin will not work
-        //JSInjection('window.autologin_data = '+JSON.stringify(args)+';\n if (window.clients && ! window.clients._called_autologin) {\n clients.do_autologin(); \n};\n EBCallBackMessageReceived("didautologin");');
-
-
-        
-
-
-
         if (is_chrome) {
-            // chrome, things set on window are not available for some reason! have to put in a script tag
+            // chrome, things set on window are not available for some
+            // reason! however, changes to dom still work. so put
+            // everything in a script tag.
             var call_login = 'if (window.clients && ! window.clients._called_autologin) { debugger; \nclients.do_autologin();}';
             var toinject = 'debugger;\nvar s = document.createElement("script"); \ns.setAttribute("id","autologin_data_script"); \ns.innerText="debugger;var autologin_data='+JSON.stringify(args).replace(/"/g,'\\"')+';setInterval(function(){'+call_login.replace(/\n/g,'\\n')+'},100)"; \nif(document.head){\ndocument.head.appendChild(s)\n}else{\ndebugger;};';
 
         } else {
+            // can simply set window variables and have them accessible to the main script.
             JSInjection('debugger;\nwindow.autologin_data = '+JSON.stringify(args)+';\n if (window.clients && ! window.clients._called_autologin) {\n clients.do_autologin(); \n};\n');
         }
-
 
 
         JSInjection(toinject);
@@ -126,6 +116,7 @@ jQuery(document).ready( function() {
     }
 
 /*
+// this wasn't working very well so when client changes we just reload the whole page.
     clients.bind('selected', function(client) {
         return; // we get messages...
         if (window.clientview) {
@@ -146,6 +137,7 @@ jQuery(document).ready( function() {
 
 
 /*
+// commented out--whole page reloads instead
     clients.bind('destroy', function(client) {
         debugger;
         window.clientview = new ClientView( { el: $('#computerselect'), model: null } );
@@ -153,7 +145,6 @@ jQuery(document).ready( function() {
 */
 
 
-  // doesnt work correctly in chrome (cant set window attributes)
     if (navigator.userAgent.match(/chrome/i) || navigator.userAgent.match(/chromium/i)) {
         // call EBDocumentComplete manually for chrome...
         EBDocumentComplete();
