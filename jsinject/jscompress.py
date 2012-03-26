@@ -6,7 +6,7 @@ output_filename = 'default.out'
 
 print 'ARGV      :', sys.argv[1:]
 
-options, remainder = getopt.gnu_getopt(sys.argv[1:], 'o:v', ['input=',
+options, rem = getopt.gnu_getopt(sys.argv[1:], 'o:v', ['input=',
                                                              'output=', 
                                                              ])
 print 'OPTIONS   :', options
@@ -19,7 +19,6 @@ for opt, arg in options:
 
 print 'INPUT     :', input_file
 print 'OUTPUT    :', output_filename
-print 'REMAINING :', remainder
 
 linestring = open(input_file, 'r').read()
 f = open(output_filename, 'a')

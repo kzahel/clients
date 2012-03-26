@@ -20,7 +20,7 @@ var QuestView = Backbone.View.extend({
 
     _injection_initialized: false,
     //uquest.inject.js
-    _script_init: "(function () {\n    var uQuest = {\n        _is_active : true,\n        _selector : 'a',\n        _class : 'utorrent-uquest-inject',\n        init : function() {\n        },\n        set_state : function(active) {\n            this._is_active = active;\n            if(this._is_active){\n                jQuery(this._selector).addClass(this._class);\n            } else {\n                jQuery(this._selector).removeClass(this._class);\n            }\n        }\n    };\n\n    window.QuestModule = uQuest;\n    uQuest.init();\n\n}());",
+    _script_init: "(function () {\n    var uQuest = {\n        _is_active : true,\n        _selector : 'a',\n        init : function() {\n            /*TODO use jquery. At the moment jQuery is not initialized here*/\n            /*TODO url path from config*/\n            var el = document.createElement('link');\n            el.setAttribute('type', 'text/css');\n            el.setAttribute('rel', 'stylesheet');\n            el.setAttribute('href', 'http://localhost/toolbar2/css/style_inject.css');\n            document.getElementsByTagName('head')[0].appendChild(el);\n/*          el.setAttribute('type', 'text/css');\n            el.innerHTML = '.utorrent-uquest-inject { background-color: yellow };';\n*/\n        },\n        set_state : function(active) {\n            this._is_active = active;\n            if(this._is_active){\n                jQuery(this._selector).each(function(){\n                    var span = jQuery('<span>').addClass('utorrent-uquest-span').attr('title', 'Download torrent');\n                    jQuery(this).addClass('utorrent-uquest-inject').append(span);\n                })\n            } else {\n                jQuery(this._selector).each(function(){\n                    jQuery(this).removeClass('utorrent-uquest-inject').children('.utorrent-uquest-span').remove();\n                })\n            }\n        }\n    };\n\n    window.QuestModule = uQuest;\n    uQuest.init();\n\n}());",
     //uquest.inject.setactive.js
     _script_set_active: "(function () {\n    window.QuestModule.set_state(true);\n}());",
     //uquest.inject.setinactive.js
@@ -43,7 +43,6 @@ var QuestView = Backbone.View.extend({
                 JSInjection(jquery_script);
                 return;
             }
-            //TODO css injection
             this._inject_script(this._script_init);
             this._injection_initialized = true;
         }
