@@ -1,9 +1,9 @@
 (function () {
-    var uQuest = {
+    window.QuestModule = {
         _is_active : true,
         _selector : 'a',
         init : function() {
-            /*TODO use jquery. At the moment jQuery is not initialized here*/
+            /*TODO use jquery. At the moment jQuery may not be initialized here*/
             /*TODO url path from config*/
             var el = document.createElement('link');
             el.setAttribute('type', 'text/css');
@@ -29,7 +29,5 @@
         }
     };
 
-    window.QuestModule = uQuest;
-    uQuest.init();
-
+    window.QuestModule.init();
 }());

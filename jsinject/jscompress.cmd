@@ -1,4 +1,5 @@
 del output.js
+C:\Python27\python.exe jscompress.py --input=uquest.init_jquery.js --output=output.js
 C:\Python27\python.exe jscompress.py --input=uquest.inject.js --output=output.js
 C:\Python27\python.exe jscompress.py --input=uquest.inject.setactive.js --output=output.js
 C:\Python27\python.exe jscompress.py --input=uquest.inject.setinactive.js --output=output.js
