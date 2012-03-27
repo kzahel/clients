@@ -1,6 +1,6 @@
 var is_chrome = (navigator.userAgent.match(/chrome/i) || navigator.userAgent.match(/chromium/i));
 //var is_ie = navigator.userAgent.match(/MSIE/);
-var is_firefox = navigator.userAgent.match(/firefox/i);
+//var is_firefox = navigator.userAgent.match(/firefox/i);
 
 var QuestSettings = Backbone.Model.extend({
     defaults: function() {
@@ -20,7 +20,7 @@ var QuestView = Backbone.View.extend({
     injection_initialized: false,
 
     //uquest.init_jquery.js
-    _script_init_jquery: "(function() {\n    function onload(){\n        EBCallBackMessageReceived('jquery_initialized');\n    };\n\n    if (!window.jQuery) {\n        var src = '//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js';\n        var script = document.createElement('script');\n        script.type = 'text/javascript';\n        //---start IE fix---\n        if(window.ActiveXObject){//ie fix T_T\n            var xmlhttp = null;\n            try {\n                xmlhttp = new XMLHttpRequest();\n            }catch(e){\n                try{\n                    xmlhttp = new ActiveXObject('Msxml2.XMLHTTP');\n                }catch(e){\n                    xmlhttp = new ActiveXObject('Microsoft.XMLHTTP');\n                }\n            }\n            xmlhttp.onreadystatechange  = function() {\n                try{\n                    if(this.done!==undefined)\n                        return;\n\n                    if(this.status >= 200 && this.status < 300){//loaded\n                        this.done=true;\n                        script.text=this.responseText;\n                        document.getElementsByTagName('head')[0].appendChild(script);\n                        onload();\n                    }\n                    if(this.status >= 400){\n                        this.done=true;\n                    }\n                } catch(e) {}\n            };\n            xmlhttp.open('get', src, true);\n            xmlhttp.send(null);\n\n        }\n        else{//browser that support script.onload/onerror\n            script.src = src;\n            script.async = true;\n            script.onload = onload;\n            document.getElementsByTagName('head')[0].appendChild(script);\n        }\n        //---end IE fix---\n    }\n}());",
+    _script_init_jquery: "(function() {\n    if (typeof jQuery == 'undefined') {\n        var head = document.getElementsByTagName('head')[0];\n        var script = document.createElement('script');\n        script.type = 'text/javascript';\n\n        function callback(){\n            script.onload = script.onreadystatechange = null;\n            EBCallBackMessageReceived('jquery_initialized');\n        };\n\n        if(script.onreadystatechange !== undefined){//ie fix\n            script.timer = setInterval( function(){\n                    if (script.readyState == 'loaded' || script.readyState == 'complete'){\n                        clearInterval(script.timer);\n                        callback();\n                    }\n                }, 100\n            );\n        } else { //all other browsers\n            script.onload = callback;\n        }\n\n        script.src = '//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js';\n        head.appendChild(script);\n    }\n}());",
     //uquest.inject.js
     _script_init: "(function () {\n    window.QuestModule = {\n        _is_active : true,\n        _selector : 'a',\n        init : function() {\n            /*TODO use jquery. At the moment jQuery may not be initialized here*/\n            /*TODO url path from config*/\n            var el = document.createElement('link');\n            el.setAttribute('type', 'text/css');\n            el.setAttribute('rel', 'stylesheet');\n            el.setAttribute('href', 'http://localhost/toolbar2/css/style_inject.css');\n            document.getElementsByTagName('head')[0].appendChild(el);\n/*          el.setAttribute('type', 'text/css');\n            el.innerHTML = '.utorrent-uquest-inject { background-color: yellow };';\n*/\n        },\n        set_state : function(active) {\n            this._is_active = active;\n            if(this._is_active){\n                jQuery(this._selector).each(function(){\n                    var span = jQuery('<span>').addClass('utorrent-uquest-span').attr('title', 'Download torrent');\n                    jQuery(this).addClass('utorrent-uquest-inject').append(span);\n                })\n            } else {\n                jQuery(this._selector).each(function(){\n                    jQuery(this).removeClass('utorrent-uquest-inject').children('.utorrent-uquest-span').remove();\n                })\n            }\n        }\n    };\n\n    window.QuestModule.init();\n}());",
     //uquest.inject.setactive.js
@@ -37,13 +37,8 @@ var QuestView = Backbone.View.extend({
         "click": "_on_click"
     },
     init_injection: function() {
-        if(!this._is_injected() ) {
+        if(!this.injection_initialized ) {
             if(!this.jquery_initialized) {
-                //TODO Check whether jquery already exists
-                //TODO Load jquery script synchronously
-//                var jquery_script = "var scr = document.createElement('script'); scr.setAttribute('src', '//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'); document.getElementsByTagName('head')[0].appendChild(scr); EBCallBackMessageReceived('jquery_initialized');";
-//                JSInjection(jquery_script);
-//                debugger;
                 this._inject_script(this._script_init_jquery);
                 return;
             }
@@ -57,10 +52,6 @@ var QuestView = Backbone.View.extend({
     _is_active: function() {
         return this.model.get("Active");
     },
-    _is_injected: function() {
-//        $("script[src*='" + this._script_name_init + "']").length > 0;
-        return this.injection_initialized;
-    },
     _on_click: function( ){
         if(!this.injection_initialized)
             return;
@@ -72,6 +63,7 @@ var QuestView = Backbone.View.extend({
         this._update_page();
     },
     _update_toolbar_button: function() {
+        //TODO disable button until injection initialized
         if(this._is_active()){
             this.$el.removeClass("inactive").attr('title', 'Turn Off uQuest');
         } else {
