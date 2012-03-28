@@ -44,6 +44,7 @@ var QuestView = Backbone.View.extend({
             }
             this._inject_script(this._script_init);
             this.injection_initialized = true;
+            this._update_toolbar_button();
         }
     },
     _inject_script: function(script){
@@ -52,7 +53,7 @@ var QuestView = Backbone.View.extend({
     _is_active: function() {
         return this.model.get("Active");
     },
-    _on_click: function( ){
+    _on_click: function(){
         if(!this.injection_initialized)
             return;
 
@@ -63,7 +64,11 @@ var QuestView = Backbone.View.extend({
         this._update_page();
     },
     _update_toolbar_button: function() {
-        //TODO disable button until injection initialized
+        if(!this.injection_initialized) {
+            this.$el.addClass("inactive").attr('title', 'Initializing...');
+            return;
+        }
+
         if(this._is_active()){
             this.$el.removeClass("inactive").attr('title', 'Turn Off uQuest');
         } else {
