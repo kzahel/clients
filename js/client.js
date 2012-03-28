@@ -541,7 +541,7 @@ var ClientCollection = Backbone.Collection.extend( {
     },
     init_post_fetch: function() {
         if (this.models.length == 0) {
-            debugger;
+            //debugger;
             if (app.get('type') == 'client') {
                 this.find_local_clients( function(clients) {
                     //console.log('found clients',clients);

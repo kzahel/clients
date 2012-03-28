@@ -645,4 +645,16 @@ html, body {
 		}
 	}
 	.selected_torrent{background:#f0f0f0}
+	#uquest_button {
+		background: #f0f0f0 url('images/toolbar/quest_icon.png') no-repeat 2px 2px;
+		width: 26px;
+		height: 26px;
+		&:hover {
+			cursor: pointer;
+			background-color: darken(#f0f0f0, 20%);
+		}
+	}
+	#uquest_button.inactive {
+		background: #f0f0f0 url('images/toolbar/quest_icon.png') no-repeat 2px -20px;
+	}
 }

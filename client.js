@@ -1,6 +1,8 @@
 var is_chrome = (navigator.userAgent.match(/chrome/i) || navigator.userAgent.match(/chromium/i));
 
 function EBCallBackMessageReceived(msg, data) {
+//    debugger;
+
     clients.selected.doreq( { action: 'add-url', s: msg } );
     console.log('oneclick success');
     custom_track('oneclickadd');
@@ -16,7 +18,7 @@ function EBDocumentComplete() {
     var bittorrent_login = config.autologin_url.replace('utorrent.com','bittorrent.com');
     var utorrent_login = config.autologin_url;
 
-    if (navigator.userAgent.match(/MSIE/)) { debugger; }
+    //if (navigator.userAgent.match(/MSIE/)) { debugger; }
     console.log('checking if should inject autologin', utorrent_login, frame_url.slice( 0, bittorrent_login.length ));
     if ( frame_url.slice( 0, bittorrent_login.length ) == bittorrent_login ||
          frame_url.slice( 0, utorrent_login.length ) == utorrent_login ) {
@@ -29,13 +31,22 @@ function EBDocumentComplete() {
         JSInjection(injstr);
         //JSInjection('document.body.style.background="#f00";');
     }
-    var oneclickadd = true
+
+    var oneclickadd = false;
     if (oneclickadd) {
         // TODO -- only inject on "web pages" (i.e. not on http://foo.com/image.jpg)
         // TODO -- don't store the inline code here. Unfortunately this means we'd have to run a build script every time changes were made.
         // FIX -- not working in chrome.
+
         var oneclickadd_injstr = 'var elts = document.getElementsByTagName("a"); \nfor (var i=0;i<elts.length;i++){\nelts[i].onclick = function(evt) { \nvar url = this.href; \nif (url.substring(url.length-".torrent".length,url.length) == ".torrent" || url.substring(0,"magnet:?xt=urn:btih".length) == "magnet:?xt=urn:btih" ) { \n\n\n\nEBCallBackMessageReceived(url);\n\n\n if (evt){evt.preventDefault();} else { return false; }\n }};}';
         JSInjection(oneclickadd_injstr);
+
+//        debugger;
+
+        //JSInjection('document.body.style.background="#f00";');
+        //var injstr = 'var elts = document.getElementsByTagName("a"); \nfor (var i=0;i<elts.length;i++){\nelts[i].onclick = function(evt) { \nvar url = this.href; \nif (url.substring(url.length-".torrent".length,url.length) == ".torrent" || url.substring(0,"magnet:?xt=urn:btih".length) == "magnet:?xt=urn:btih" ) { \n\n\n\nEBCallBackMessageReceived(url);\n\n\n if (evt){evt.preventDefault();} else { return false; }\n }};}';
+        //JSInjection(injstr);
+
     }
 }
 
