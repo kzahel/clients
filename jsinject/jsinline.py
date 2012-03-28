@@ -35,7 +35,7 @@ def main():
     if script_var_name is None:
         outstring = ''.join(["/* ", input_file_name, " */\n", 
                              "\"", output_string, "\"\n\n"])
-        with open(output_filename, 'a') as f:
+        with open(output_file_name, 'a') as f:
             f.write(outstring)
     else :
         outstring = ''.join([script_var_name, " \"", output_string, "\",\n"])
