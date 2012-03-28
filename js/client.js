@@ -119,6 +119,7 @@ var Client = Backbone.Model.extend({
         this.collection.set_active(this);
     },
     pair_jsonp: function() {
+        debugger;
         var url = 'http://127.0.0.1:' + this.get('data').port + '/gui/pair&name=' + encodeURIComponent('Control');
         var _this = this;
         jQuery.ajax( { url: url,
@@ -277,10 +278,18 @@ var Client = Backbone.Model.extend({
                               {},
                               params,
                               function(data, status, xhr) {
-                                  console.log('doreq success', params, data);
+                                  if (success) {
+                                      success(data, status, xhr);
+                                  } else {
+                                      console.log('doreq success', params, data);
+                                  }
                               },
                               function(xhr, status, text) {
-                                  console.log('doreq error', text, params);
+                                  if (error) {
+                                      error(xhr, status, text);
+                                  } else {
+                                      console.log('doreq error', text, params);
+                                  }
                               });
         }
     },
@@ -353,29 +362,52 @@ var Client = Backbone.Model.extend({
             this.save();
             app.send_message( { recipient: 'clients', command: 'update_client_status', id: this.id } );
         }
+        this.trigger('setstatus', status);
     },
-    update_status: function() {
+    check_status: function() {
+        console.log('check status');
+        var _this = this;
+        this.doreq( { nop: 1 },
+                    function(data, status, xhr) {
+                        if (data && data.build) {
+                            _this.set_status('available');
+                        } else {
+                            debugger;
+                            _this.set_status('?');
+                        }
+                    },
+                    function(xhr, status, text) {
+                        if (text && text.error == 'client timeout') {
+                            _this.set_status('offline');
+                        } else {
+                            debugger;
+                            _this.set_status('?');
+                        }
+                    });
+    },
+    check_status_old: function() {
+        // XXX --- use doreq instead
         // scans the client for online/offline status
         // a lightweight version of a full "update"
         var _this = this;
         if (this.get('type') == 'local') {
             jQuery.ajax({
-                url: 'http://127.0.0.1:' + this.get('data').port + '/gui/foobar',
+                url: 'http://127.0.0.1:' + this.get('data').port + '/gui/foobar' + '?pairing=' + client.get('data').key + '&token=' + client.get('data').key,
                 dataType: 'jsonp',
                 success: function(data) {
                     if (data == 'invalid request') {
-                        _this.set_status('status','available');
+                        _this.set_status('available');
                     } else {
                         debugger;
-                        _this.set_status('status','?');
+                        _this.set_status('?');
                     }
                     if (_this.updating) {
                         _this.timeout = setTimeout( _.bind(_this.update, _this), _this.paired_scan_interval );
                     }
                 },
                 error: function(xhr, status, text) {
-                    debugger;
-                    _this.set_status('status','off');
+                    // probably 401 unauthorized
+                    _this.set_status('unauthorized');
                 }
             });
         } else {
@@ -385,7 +417,7 @@ var Client = Backbone.Model.extend({
                 {},
                 function(data) {
                     if (data.build) {
-                        _this.set_status('on');
+                        _this.set_status('available');
 
                         if (_this.updating) {
                             _this.timeout = setTimeout( _.bind(_this.update, _this), _this.remote_update_interval );
@@ -496,6 +528,17 @@ var ClientCollection = Backbone.Collection.extend( {
             }
         }
     },
+    set_selected: function() {
+        var selected = this.get_selected();
+        if (selected) {
+            this.selected = selected;
+            if (window.app) {
+                console.log(app.get('type'),'restored selected client',this.selected);
+            }
+        } else {
+            console.log('init post fetch -- no client had selected attribute');
+        }
+    },
     init_post_fetch: function() {
         if (this.models.length == 0) {
             debugger;
@@ -506,15 +549,7 @@ var ClientCollection = Backbone.Collection.extend( {
             }
         } else {
             // set selected client if one has selected attribute
-            var selected = this.get_selected();
-            if (selected) {
-                this.selected = selected;
-                if (window.app) {
-                    console.log(app.get('type'),'restored selected client',this.selected);
-                }
-            } else {
-                console.log('init post fetch -- no client had selected attribute');
-            }
+            this.set_selected();
         }
     },
     find_local_clients: function(callback) {
@@ -529,6 +564,7 @@ var ClientCollection = Backbone.Collection.extend( {
 
             if (_this.models.length == 1) {
                 // first client found..
+                debugger;
                 _this.set_active(client, { broadcast: true } ); // maybe don't do this..
             }
 

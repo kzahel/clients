@@ -5,7 +5,7 @@ jQuery(document).ready( function() {
     window.clientsview = new ClientsView( { el: $('#clients_view'), model: clients } );
     window.app = new App( { type: 'clients' } );
     clients.fetch();
-
+    clients.set_selected();
 
     var local_clients_count = 0;
     clients.each( function(c) {

@@ -61,7 +61,29 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
             //clients.fetch();
         });
 
-        if (window.EBGlobalKeyChanged) { myconsole.error('message received already defined!'); debugger; }
+
+        // local keys are sent only to the current tab
+/*
+        window.EBKeyChanged = function(k,v) {
+            // why do we have to define both? weird...
+            try {
+                var data = JSON.parse(v);
+            } catch(e) {
+                console.error('error parsing gadget message',v);
+                debugger;
+            }
+            if (_this.listen_key == k.slice( 0, _this.listen_key.length )) {
+                // local messages append a seemingly random numeric string to the end
+                _this.handle_message(k,data, {local:true});
+            } else {
+                //console.warn('ignoring message',k,'was listening for',_this.listen_key);
+            }
+
+        }
+*/
+
+        // global keys are sent to every tab
+        if (window.EBGlobalKeyChanged) { console.error('already defined!'); debugger; }
         window.EBGlobalKeyChanged = function(k,v) {
             try {
                 var data = JSON.parse(v);
@@ -95,7 +117,13 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
         }
 */
     },
-    handle_message: function(k,msg) {
+    handle_message: function(k, msg, opts) {
+        var local_message = false;
+        if (opts && opts.local) {
+            local_message = true;
+            console.log(this.get('type'),'receive local message',k,msg);
+            debugger;
+        }
 
         if (msg.type == 'broadcast') {
 
@@ -104,7 +132,11 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
             // reload everything)
             if (msg.message == 'new client selection') {
                 if (this.get('type') == 'client') {
-                    //clients.reset();
+                    return BTReload();
+
+                    // XXX -- the following (which would be better)
+                    // was not working... fetch() wasnt showing the
+                    // new models.
                     clients.fetch();
                     var client = clients.get_by_id( msg.id );
                     assert(client);
@@ -112,6 +144,7 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                         window.clientview.destroy();
                     }
                     window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
+                    client.check_status();
                 } else if (this.get('type') == 'torrent') {
                     BTReload();
                 }
@@ -146,6 +179,10 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                     //assert(client.collection);
                     //client.fetch(); // fetches updated "active_hash" attribute // XXX local storage not updating across IE tabs???  ???
                     assert(client.get('active_hash') == msg.hash);
+                } else if (msg.command == 'initialize') {
+                    app.initialize();
+                } else if (msg.command == 'notify') {
+                    app.notify({id:msg.id, status:msg.status});
                 } else if (msg.command == 'setup_remote') {
                     BTOpenGadget('signup.html?id=' + msg.id, 286, 200, { openposition: 'offset:(0;30)' });
                 } else if (msg.command == 'reload') {
@@ -266,8 +303,13 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
         var msg = { 'command': 'reset' }
         BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
     },
-    send_message: function(msg) {
-        BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
+    send_message: function(msg, opts) {
+        if (false && opts && opts.local) {
+            BTSendTabMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
+        } else {
+            BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
+        }
+
     },
     broadcast: function(msg) {
         // sends a message to all windows

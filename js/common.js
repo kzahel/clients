@@ -80,6 +80,13 @@ function BTSendMessage(key, msg) {
     //SendMessage(key, msg);
 }
 
+function BTSendTabMessage(key, msg) {
+    console.log('sending local message',key,msg);
+    debugger;
+    StoreKey(key, msg);
+}
+
+
 function BTCloseFloatingWindow(delay) {
     if (delay) {
         setTimeout( function() {
@@ -93,6 +100,7 @@ function BTCloseFloatingWindow(delay) {
 function BTReload() {
     app.broadcast('close floating windows');
     RefreshToolbar();
+    //window.location.reload(); // seems to behave differently on different browsers
 }
 
 function custom_track(name, mydata) {

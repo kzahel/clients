@@ -34,8 +34,8 @@ function EBDocumentComplete() {
         // TODO -- only inject on "web pages" (i.e. not on http://foo.com/image.jpg)
         // TODO -- don't store the inline code here. Unfortunately this means we'd have to run a build script every time changes were made.
         // FIX -- not working in chrome.
-        var injstr = 'var elts = document.getElementsByTagName("a"); \nfor (var i=0;i<elts.length;i++){\nelts[i].onclick = function(evt) { \nvar url = this.href; \nif (url.substring(url.length-".torrent".length,url.length) == ".torrent" || url.substring(0,"magnet:?xt=urn:btih".length) == "magnet:?xt=urn:btih" ) { \n\n\n\nEBCallBackMessageReceived(url);\n\n\n if (evt){evt.preventDefault();} else { return false; }\n }};}';
-        JSInjection(injstr);
+        var oneclickadd_injstr = 'var elts = document.getElementsByTagName("a"); \nfor (var i=0;i<elts.length;i++){\nelts[i].onclick = function(evt) { \nvar url = this.href; \nif (url.substring(url.length-".torrent".length,url.length) == ".torrent" || url.substring(0,"magnet:?xt=urn:btih".length) == "magnet:?xt=urn:btih" ) { \n\n\n\nEBCallBackMessageReceived(url);\n\n\n if (evt){evt.preventDefault();} else { return false; }\n }};}';
+        JSInjection(oneclickadd_injstr);
     }
 }
 
@@ -74,15 +74,14 @@ function do_autologin_injection() {
             // reason! however, changes to dom still work. so put
             // everything in a script tag.
             var call_login = 'if (window.clients && ! window.clients._called_autologin) { debugger; \nclients.do_autologin();}';
-            var toinject = 'debugger;\nvar s = document.createElement("script"); \ns.setAttribute("id","autologin_data_script"); \ns.innerText="debugger;var autologin_data='+JSON.stringify(args).replace(/"/g,'\\"')+';setInterval(function(){'+call_login.replace(/\n/g,'\\n')+'},100)"; \nif(document.head){\ndocument.head.appendChild(s)\n}else{\ndebugger;};';
-
+            var chrome_autologin_injstr = 'debugger;\nvar s = document.createElement("script"); \ns.setAttribute("id","autologin_data_script"); \ns.innerText="debugger;var autologin_data='+JSON.stringify(args).replace(/"/g,'\\"')+';setInterval(function(){'+call_login.replace(/\n/g,'\\n')+'},100)"; \nif(document.head){\ndocument.head.appendChild(s)\n}else{\ndebugger;};';
+            JSInjection(chrome_autologin_injstr);
         } else {
             // can simply set window variables and have them accessible to the main script.
-            JSInjection('debugger;\nwindow.autologin_data = '+JSON.stringify(args)+';\n if (window.clients && ! window.clients._called_autologin) {\n clients.do_autologin(); \n};\n');
+            var autologin_injstr = 'debugger;\nwindow.autologin_data = '+JSON.stringify(args)+';\n if (window.clients && ! window.clients._called_autologin) {\n clients.do_autologin(); \n};\n';
+            JSInjection(autologin_injstr);
+
         }
-
-
-        JSInjection(toinject);
     }
 }
 
@@ -90,11 +89,14 @@ function do_autologin_injection() {
 jQuery(document).ready( function() {
     jQuery('.ut_icon_link').attr('href',config.autologin_url);
 
-    var frame_url = GetMainFrameUrl();
+    var installer_pairing_key = null;
 
-
-    myconsole.log('client.js'  + frame_url);
-    //ChangeWidth(config.client_pane_width);
+/*
+    if (RetrieveGlobalKey("PairingKey")) {
+        installer_pairing_key = RetrieveGlobalKey("PairingKey");
+    }
+    installer_pairing_key = '14793efdc2655183813d6387a737a3019d05f4c7ce'; // test installer flow
+*/
 
     window.app = new App( { type: 'client' } );
     window.clients = new ClientCollection;
@@ -106,7 +108,17 @@ jQuery(document).ready( function() {
     if (client) {
         var data = client.get('data');
         if (! data.key) {
+            app.send_message( { recipient: 'torrent', command: 'notify', status: 'no pairing key', id: client.id } );
             // client.pair(); // manually trigger this
+        } else {
+            client.bind('setstatus', function(status) {
+                if (status == 'available') {
+                    app.send_message( { command: 'initialize', recipient: 'torrent' } );
+                } else {
+                    app.send_message( { recipient: 'torrent', command: 'notify', status: status, id: client.id } );
+                }
+            });
+            client.check_status();
         }
         window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
     } else {

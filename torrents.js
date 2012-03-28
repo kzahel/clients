@@ -11,6 +11,7 @@ jQuery(document).ready( function() {
     if (client) {
         window.torrentsview = new TorrentsView( { el: $('#global_container'), model: client } );
         client.start_updating();
+        console.log(client.get('data').key);
     }
 /*
     client.bind('firstupdate', function() {

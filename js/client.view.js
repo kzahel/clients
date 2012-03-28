@@ -184,6 +184,10 @@ var ClientView = Backbone.View.extend({
 		    this.$('.computer_state').attr('title', 'Computer unavailable.');
                 }
             }
+        } else {
+            // these things don't show in the active client view
+            this.$('.remote_computer').hide();
+            this.$('.remove_computer').hide();
         }
     },
     destroy: function() {
