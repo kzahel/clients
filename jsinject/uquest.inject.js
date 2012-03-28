@@ -1,33 +1,49 @@
-(function () {
+(function ($) {
+    var is_chrome = (navigator.userAgent.match(/chrome/i) || navigator.userAgent.match(/chromium/i));
+
     window.QuestModule = {
-        _is_active : true,
+        _is_active : false,
         _selector : 'a',
-        init : function() {
-            /*TODO use jquery. At the moment jQuery may not be initialized here*/
+        initialize : function() {
             /*TODO url path from config*/
-            var el = document.createElement('link');
-            el.setAttribute('type', 'text/css');
-            el.setAttribute('rel', 'stylesheet');
-            el.setAttribute('href', 'http://localhost/toolbar2/css/style_inject.css');
-            document.getElementsByTagName('head')[0].appendChild(el);
-/*          el.setAttribute('type', 'text/css');
-            el.innerHTML = '.utorrent-uquest-inject { background-color: yellow };';
-*/
+            var host = 'http://localhost/toolbar2/';
+
+            $('<link>').attr('type', 'text/css').attr('rel', 'stylesheet')
+                .attr('href', host + 'css/style_inject.css')
+                .appendTo('head');
+
+            /*TODO Remove this workaround after conduit fix chrome*/
+            if(is_chrome) {
+                this._chrome_callback('injection_initialized');
+            } else {
+                EBCallBackMessageReceived('injection_initialized');
+            }
         },
         set_state : function(active) {
             this._is_active = active;
             if(this._is_active){
-                jQuery(this._selector).each(function(){
+                $(this._selector).each(function(){
                     var span = jQuery('<span>').addClass('utorrent-uquest-span').attr('title', 'Download torrent');
                     jQuery(this).addClass('utorrent-uquest-inject').append(span);
                 })
             } else {
-                jQuery(this._selector).each(function(){
+                $(this._selector).each(function(){
                     jQuery(this).removeClass('utorrent-uquest-inject').children('.utorrent-uquest-span').remove();
                 })
+            }
+        },
+        _chrome_callback : function(msg) {
+            try {
+                var sendMessageEvent = {'name': 'sendMessage','data': {key:msg},'sourceAPI': 'ToolbarApi','targetAPI': 'BcApi'};
+                if (document && document.location && document.location.href.toUpperCase().indexOf('FACEBOOK.COM') === -1) {
+                    window.postMessage(JSON.stringify(sendMessageEvent), '*');
+                }
+            } catch(e) {
+                console.error('BCAPI ERROR: ', e, e.stack);
             }
         }
     };
 
-    window.QuestModule.init();
-}());
+    window.QuestModule.initialize();
+
+}(jQuery));
