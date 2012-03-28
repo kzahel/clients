@@ -18,15 +18,35 @@ jQuery(document).ready( function() {
         });
     }
 
+    function show_remote_setup(client, message) {
+        $('#torrent_controls').hide();
+	$('.default_container').text(message?message:'Click to login'); // insert iframe here instead?
+        $('.default_container').unbind();
+        $('.default_container').click( function() {
+            // XXX this sends the message to every TAB!!!
+            app.send_message( { command: 'open_gadget', name: 'login' } );
+            // send to client only
+        });
+    }
+
     app.notify = function(opts) {
         var client = clients.get_by_id( opts.id );
         var status = opts.status;
-        if (status == 'unauthorized') {
-            show_setup(client, 'Key invalid. Click to authorize');
-        } else if (status == 'no pairing key') {
-            show_setup(client);
+        if (client.get('type') == 'local') {
+            if (status == 'unauthorized') {
+                show_setup(client, 'Key invalid. Click to authorize');
+            } else if (status == 'no pairing key') {
+                show_setup(client);
+            } else {
+	        $('.default_container').text('Status: '+status);
+            }
         } else {
-	    $('.default_container').text('Status: '+status);
+            if (status == 'unauthorized guid') {
+                show_remote_setup(client, 'GUID invalid. Click to correct');
+            } else {
+	        $('.default_container').text('Status: '+status);
+            }
+
         }
     };
 

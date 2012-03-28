@@ -222,8 +222,7 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
 
         // older message types (before broadcast & send_message)
         console.log('app',this.get('type'),'handling toolbarapi message',k,JSON.stringify(msg));
-        if (this.get('type') == 'client') {
-            
+        if (this.get('type') == 'client') { // XXX -- refactor to use recipient message passing instead
             if (msg.command == 'switch_client') {
                 var prevclient = clients.selected;
                 clients.fetch(); // should get new selected attribute

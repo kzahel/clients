@@ -382,6 +382,9 @@ var Client = Backbone.Model.extend({
                     function(xhr, status, text) {
                         if (text && text.error == 'client timeout') {
                             _this.set_status('offline');
+                        } else if (text && text.code == 401) {
+                            // unauthorized key
+                            _this.set_status('unauthorized guid');
                         } else {
                             debugger;
                             _this.set_status('?');
