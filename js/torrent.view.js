@@ -147,7 +147,7 @@ var TorrentView = Backbone.View.extend({
 
 
         } else {
-            this.$('.torrent_info').html( 'no torrents' );
+            this.$('.torrent_info').html( 'No Torrents' );
         }
         return this.$el;
     }
@@ -175,7 +175,7 @@ var TorrentsView = Backbone.View.extend({
         var _this = this;
         if (this.model && this.model.torrents) {
             if (this.model.torrents.length == 0) {
-                debugger;
+                $('#global_container').html( 'No torrents' );
             } else {
                 this.model.torrents.each( function(t) {
                     if (! t.view) {
@@ -209,8 +209,5 @@ var ActiveTorrentView = TorrentView.extend({
 
         }
         this.render();
-
-
-
     }
 });

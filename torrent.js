@@ -69,7 +69,17 @@ jQuery(document).ready( function() {
                 if (! client.updating) {
                     client.bind('firstupdate', function(arg) {
                         var torrent = client.get_selected_torrent();
-                        window.torrentview = new ActiveTorrentView( { el: $('#torrent_template_container'), model: torrent } );
+                        if (true || torrent) {
+                            // TODO -- dont use torrentview with no model..?
+                            window.torrentview = new ActiveTorrentView( { el: $('#torrent_template_container'), model: torrent } );
+                        } else {
+                            // create a view specifically for "no torrent"
+                            $('.default_container').html('No Torrents');
+                            // listen for "add torrent"
+                            client.torrents.bind('add', function() {
+                                debugger;
+                            });
+                        }
                     });
                     client.start_updating();
                 }
