@@ -233,6 +233,21 @@ var Client = Backbone.Model.extend({
             }
         }
     },
+    set_settings: function( d, success, error ) {
+        var qs = 'action=setsetting';
+        for (var k in d) {
+            qs += ('&s=' + encodeURIComponent(k) + '&v=' + encodeURIComponent(d[k]));
+        }
+        this.doreq( qs, 
+                    function(data, status, xhr) {
+                        if (data && data.build) {
+                            success(data, status, xhr);
+                        } else {
+                            error(xhr, status, data);
+                        }
+                    },
+                    error );
+    },
     doreq: function(params, success, error) {
         var client = this;
         if (client.get('type') == 'local') {
@@ -486,6 +501,13 @@ var ClientCollection = Backbone.Collection.extend( {
     stop_all: function() {
         for (var i=0; i<this.models.length;i++) {
             this.models[i].stop_updating();
+        }
+    },
+    get_by_guid: function(guid) {
+        for (var i=0; i<this.models.length;i++) {
+            if (this.models[i].get('data').guid == guid) {
+                return this.models[i];
+            }
         }
     },
     get_by_id: function(id) {

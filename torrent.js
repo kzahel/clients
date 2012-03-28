@@ -24,7 +24,7 @@ jQuery(document).ready( function() {
         $('.default_container').unbind();
         $('.default_container').click( function() {
             // XXX this sends the message to every TAB!!!
-            app.send_message( { command: 'open_gadget', name: 'login' } );
+            app.send_message( { command: 'open_gadget', name: 'login', replace: client.get('data').guid } );
             // send to client only
         });
     }

@@ -32,7 +32,7 @@ jQuery(document).ready( function() {
 
 
     function onerr(msg) {
-        $('.progressbar_container').text(msg);
+        $('.progressbar_container').text(msg?msg:'Error. Try again');
     }
     function dostatus(msg) {
         $('.progressbar_container').text(msg);
@@ -46,7 +46,30 @@ jQuery(document).ready( function() {
         dostatus('checking username...');
         session.check_username( username, {
             success: function(data, status, xhr) {
+                // need to disable and then enable, I think...
+
                 if (data.code == '/ok' && data.exists === false) {
+                    client.set_settings( { 'webui.uconnect_username': username,
+                                           'webui.uconnect_password': password },
+                                         function() {
+                                             debugger;
+                                             client.set_settings( { 'webui.uconnect_enable': 0 },
+                                                                  function() {
+                                                                      debugger;
+                                                                      client.set_settings( { 'webui.uconnect_enable': 1 },
+                                                                                           function() {
+                                                                                               debugger;
+                                                                                               dostatus('done!');
+                                                                                               BTCloseFloatingWindow();
+                                                                                           },
+                                                                                           onerr
+                                                                                         );
+                                                                  },
+                                                                  onerr );
+                                         },
+                                         onerr );
+
+/*
                     client.doreq( 'action=setsetting&s=webui.uconnect_username&v=' + encodeURIComponent(username) +
                                   '&s=webui.uconnect_password&v=' + encodeURIComponent(password) +
                                   '&s=webui.uconnect_enable&v=1',
@@ -63,6 +86,7 @@ jQuery(document).ready( function() {
                                       debugger;
                                       onerr(text);
                                   });
+*/
                 } else {
                     onerr('username taken');
                 }

@@ -243,7 +243,12 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                 clients.set_active(null);
             } else if (msg.command == 'open_gadget') {
                 if (msg.name == 'login') {
-                    BTOpenGadget('login.html', 286, 200, { openposition: 'offset:(0;30)' });
+                    var url = 'login.html';
+                    if (msg.replace) {
+                        // this login is intended to replace an existing session
+                        url += '?replace=' + encodeURIComponent(msg.replace);
+                    }
+                    BTOpenGadget(url, 286, 200, { openposition: 'offset:(0;30)' });
                 } else {
                     console.error('unrecognized gadget');
                     debugger;

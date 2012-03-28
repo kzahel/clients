@@ -19,6 +19,17 @@ jQuery(document).ready( function() {
             success: function(session) {
                 var client = new Client( { type: 'remote', data: session.serialize() } );
                 custom_track('login_success');
+
+                var url_args = decode_url_arguments();
+                if (url_args.replace) {
+                    // this login is intended to replace a broken login
+                    var guid = url_args.replace;
+                    var old_client = clients.get_by_guid(guid);
+                    // clients.remove(old_client);
+                    // does this call sync? i don't think so
+                    old_client.destroy(); // this probably does the right thing though
+                }
+
                 clients.add(client); // adds to local collection
                 clients.set_active(client); // sets selected attribute, unsets on other clients
                 app.broadcast( { message: 'remote login', id: client.id } );
