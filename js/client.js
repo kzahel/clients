@@ -371,6 +371,9 @@ var Client = Backbone.Model.extend({
                     function(data, status, xhr) {
                         if (data && data.build) {
                             _this.set_status('available');
+                        } else if (_this.get('type') == 'local' && data == 'invalid request') {
+                            _this.set_status('invalid key');
+                            //_this.invalidate_session();
                         } else {
                             debugger;
                             _this.set_status('?');
