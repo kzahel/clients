@@ -142,7 +142,7 @@ var TorrentView = Backbone.View.extend({
 
 
             if (this.model.get('message').match(/error/i)) { 
-                this.$('.torrent_dl_color').css('background-color','#ff2233');
+                this.$('.torrent_dl_color').css('background-color','#8d1c10');
             }
 
 
