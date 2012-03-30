@@ -49,8 +49,6 @@
             }
         },
         _on_click : function(e) {
-//            debugger;
-            console.log('Download link ' + this.href);
             e.data._toolbar_callback('url_msg:' + this.href);
             e.preventDefault();
         },
