@@ -119,7 +119,10 @@ jQuery(document).ready( function() {
 
             client.bind('change:active_hash', function() {
                 if (window.torrentview) {
-                    torrentview.model.unbind(); // ? want to only unbind our method..
+                    if (torrentview.model) {
+                        torrentview.model.unbind(); // ? want to only unbind our method..
+                    }
+
                     var parent = torrentview.el.parentNode;
                     //torrentview.remove(); // this is removing the container the view attached to :-(
                     window.torrentview.destroy(); //not working correctly??
@@ -131,16 +134,24 @@ jQuery(document).ready( function() {
 
 
             client.bind('remove_torrent', function(torrent) {
+                // XXX -- this should be cleaned up.
                 if (window.torrentview) {
-                    if (torrentview.model.id == torrent.id) {
-                        var torrent = client.get_selected_torrent();
-                        if (torrent) {
-                            client.set('active_hash', torrent.get('hash'));
+                    if (torrentview.model) {
+                        if (torrentview.model.id == torrent.id) {
+                            var torrent = client.get_selected_torrent();
+                            if (torrent) {
+                                client.set('active_hash', torrent.get('hash'));
+                            } else {
+                                client.set('active_hash', null);
+                            }
+                            // removed current selected torrent ... need to change
                         } else {
-                            client.set('active_hash', null);
+                            // assert!
+                            debugger;
                         }
-                        // removed current selected torrent ... need to change
-                        
+                    } else {
+                        // no more torrents remain!
+                        client.set('active_hash', null);
                     }
                 }
             });
