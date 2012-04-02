@@ -252,7 +252,9 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                 } else {
                     console.error('unrecognized gadget');
                     debugger;
-                } 
+                }
+            } else if (msg.command == 'one_click_url') {
+                window.clients.selected.doreq( { action: 'add-url', s: msg.url } );
             } else {
                 console.error('unhandled message',msg);
             }

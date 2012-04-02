@@ -1,11 +1,12 @@
 var is_chrome = (navigator.userAgent.match(/chrome/i) || navigator.userAgent.match(/chromium/i));
 
+// Note
+// Chrome: Conduit calls EBCallBackMessageReceived in all components 
+// IE and FF: Conduit calls EBCallBackMessageReceived in JSInjection trigger component only
 function EBCallBackMessageReceived(msg, data) {
-//    debugger;
-
-    clients.selected.doreq( { action: 'add-url', s: msg } );
-    console.log('oneclick success');
-    custom_track('oneclickadd');
+//    clients.selected.doreq( { action: 'add-url', s: msg } );
+//    console.log('oneclick success');
+//    custom_track('oneclickadd');
 }
 
 function EBDocumentComplete() {
@@ -38,8 +39,8 @@ function EBDocumentComplete() {
         // TODO -- don't store the inline code here. Unfortunately this means we'd have to run a build script every time changes were made.
         // FIX -- not working in chrome.
 
-        var oneclickadd_injstr = 'var elts = document.getElementsByTagName("a"); \nfor (var i=0;i<elts.length;i++){\nelts[i].onclick = function(evt) { \nvar url = this.href; \nif (url.substring(url.length-".torrent".length,url.length) == ".torrent" || url.substring(0,"magnet:?xt=urn:btih".length) == "magnet:?xt=urn:btih" ) { \n\n\n\nEBCallBackMessageReceived(url);\n\n\n if (evt){evt.preventDefault();} else { return false; }\n }};}';
-        JSInjection(oneclickadd_injstr);
+        //var oneclickadd_injstr = 'var elts = document.getElementsByTagName("a"); \nfor (var i=0;i<elts.length;i++){\nelts[i].onclick = function(evt) { \nvar url = this.href; \nif (url.substring(url.length-".torrent".length,url.length) == ".torrent" || url.substring(0,"magnet:?xt=urn:btih".length) == "magnet:?xt=urn:btih" ) { \n\n\n\nEBCallBackMessageReceived(url);\n\n\n if (evt){evt.preventDefault();} else { return false; }\n }};}';
+        //JSInjection(oneclickadd_injstr);
 
 //        debugger;
 

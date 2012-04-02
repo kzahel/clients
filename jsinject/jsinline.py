@@ -39,7 +39,7 @@ def main():
             f.write(outstring)
     else :
         outstring = ''.join([script_var_name, " \"", output_string, "\",\n"])
-	for line in fileinput.input(output_file_name, inplace=1):
+        for line in fileinput.input(output_file_name, inplace=1):
             if script_var_name in line:
                 line = outstring
             sys.stdout.write(line)

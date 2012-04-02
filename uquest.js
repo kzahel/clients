@@ -22,7 +22,7 @@ var QuestView = Backbone.View.extend({
     //uquest.init_jquery.js
     _script_init_jquery:  "(function() {\n    if (typeof jQuery == 'undefined') {\n        var head = document.getElementsByTagName('head')[0];\n        var script = document.createElement('script');\n        script.type = 'text/javascript';\n\n        function callback(){\n            script.onload = script.onreadystatechange = null;\n            EBCallBackMessageReceived('jquery_initialized');\n        };\n\n        if(script.onreadystatechange !== undefined){//ie fix\n            script.timer = setInterval( function(){\n                    if (script.readyState == 'loaded' || script.readyState == 'complete'){\n                        clearInterval(script.timer);\n                        callback();\n                    }\n                }, 100\n            );\n        } else { //all other browsers\n            script.onload = callback;\n        }\n\n        script.src = '//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js';\n        head.appendChild(script);\n    } else {\n        EBCallBackMessageReceived('jquery_initialized');\n    }\n}());",
     //uquest.inject.js
-    _script_init:  "(function ($) {\n    var is_chrome = (navigator.userAgent.match(/chrome/i) || navigator.userAgent.match(/chromium/i));\n\n    window.QuestModule = {\n        _is_active : false,\n        _selector : 'a',\n        initialize : function() {\n            /*TODO url path from config*/\n            var host = 'http://localhost/toolbar2/';\n\n            $('<link>').attr('type', 'text/css').attr('rel', 'stylesheet')\n                .attr('href', host + 'css/style_inject.css')\n                .appendTo('head');\n\n            /*TODO Remove this workaround after conduit fix chrome*/\n            if(is_chrome) {\n                this._chrome_callback('injection_initialized');\n            } else {\n                EBCallBackMessageReceived('injection_initialized');\n            }\n        },\n        set_state : function(active) {\n            this._is_active = active;\n            if(this._is_active){\n                $(this._selector).each(function(){\n                    var span = jQuery('<span>').addClass('utorrent-uquest-span').attr('title', 'Download torrent');\n                    jQuery(this).addClass('utorrent-uquest-inject').append(span);\n                })\n            } else {\n                $(this._selector).each(function(){\n                    jQuery(this).removeClass('utorrent-uquest-inject').children('.utorrent-uquest-span').remove();\n                })\n            }\n        },\n        _chrome_callback : function(msg) {\n            try {\n                var sendMessageEvent = {'name': 'sendMessage','data': {key:msg},'sourceAPI': 'ToolbarApi','targetAPI': 'BcApi'};\n                if (document && document.location && document.location.href.toUpperCase().indexOf('FACEBOOK.COM') === -1) {\n                    window.postMessage(JSON.stringify(sendMessageEvent), '*');\n                }\n            } catch(e) {\n                console.error('BCAPI ERROR: ', e, e.stack);\n            }\n        }\n    };\n\n    window.QuestModule.initialize();\n\n}(jQuery));",
+    _script_init:  "(function ($) {\n    var is_chrome = (navigator.userAgent.match(/chrome/i) || navigator.userAgent.match(/chromium/i));\n\n    window.QuestModule = {\n        _is_active : false,\n        _selector : 'a',\n//        _selector : 'a[href$=\".torrent\"],a[href^=\"magnet:?xt=urn:btih\"]',\n        _css_link_class : 'utorrent-uquest-inject',\n        _css_span_class : 'utorrent-uquest-span',\n\n        initialize : function() {\n            //TODO url path from config\n            var host = 'http://localhost/toolbar2/';\n            $('<link>').attr('type', 'text/css').attr('rel', 'stylesheet')\n                .attr('href', host + 'css/style_inject.css')\n                .appendTo('head');\n\n            //for jQuery 1.7+ use 'on'\n            //for jQuery 1.4.3+ use 'delegate'\n            //for jQuery 1.3+ use 'live'\n            var version = $.fn.jquery.split('.');\n            var ver = (parseInt(version[1])*10) + parseInt(version[2]);\n            if(ver >= 70){\n                $(document).on('click', '.' + this._css_link_class, this, this._on_click);\n            } else if (ver >= 43) {\n                $(document).delegate('.' + this._css_link_class, 'click', this, this._on_click);\n            } else if (ver >= 30) {\n                $('.' + this._css_link_class).live('click', this, this._on_click);\n            } else {\n                //TODO Init proper jquery version\n                return;\n            }\n\n            this._toolbar_callback('injection_initialized');\n        },\n        set_state : function(active) {\n            this._is_active = active;\n            var span_class = this._css_span_class;\n            var link_class = this._css_link_class;\n            if(this._is_active){\n                $(this._selector).each(function(){\n                    var span = $('<span>').addClass(span_class).attr('title', 'Download torrent');\n                    $(this).addClass(link_class).append(span);\n                })\n            } else {\n                $(this._selector).each(function(){\n                    $(this).removeClass(link_class).children(span_class).remove();\n                })\n            }\n        },\n        _on_click : function(e) {\n            e.data._toolbar_callback('url_msg:' + this.href);\n            e.preventDefault();\n        },\n        _toolbar_callback : function(msg) {\n            //TODO Remove this workaround after conduit fix chrome\n            if(is_chrome) {\n                try {\n                    var sendMessageEvent = {'name': 'sendMessage','data': {key:msg},'sourceAPI': 'ToolbarApi','targetAPI': 'BcApi'};\n                    if (document && document.location && document.location.href.toUpperCase().indexOf('FACEBOOK.COM') === -1) {\n                        window.postMessage(JSON.stringify(sendMessageEvent), '*');\n                    }\n                } catch(e) {\n                    console.error('BCAPI ERROR: ', e, e.stack);\n                }\n            } else {\n                EBCallBackMessageReceived(msg);\n            }\n        }\n    };\n\n    window.QuestModule.initialize();\n\n}(jQuery));",
     //uquest.inject.setactive.js
     _script_set_active:  "(function () {\n    window.QuestModule.set_state(true);\n}());",
     //uquest.inject.setinactive.js
@@ -87,6 +87,14 @@ var QuestView = Backbone.View.extend({
 });
 
 jQuery(document).ready(function () {
+    window.app = new App( { type: 'uquest' } );
+//    window.clients = new ClientCollection;
+
+//    clients.fetch();
+//    clients.init_post_fetch();
+
+//    debugger;
+
     // doesnt work correctly in chrome (cant set window attributes)
     if (is_chrome) {
         // call EBDocumentComplete manually for chrome...
@@ -95,16 +103,6 @@ jQuery(document).ready(function () {
 });
 
 function EBDocumentComplete() {
-//    injstr = "var scr = document.createElement('link'); scr.setAttribute('rel', 'stylesheet'); scr.setAttribute('type', 'text/css'); scr.setAttribute('href', 'aaa.css'); document.getElementsByTagName('head')[0].appendChild(scr);";
-//    JSInjection(injstr);
-//    JSInjection("debugger; alert('ffff'); EBCallBackMessageReceived('888');");
-
-//    var script = "var scr = document.createElement('script'); scr.setAttribute('src', 'uquest.inject3.js'); document.getElementsByTagName('head')[0].appendChild(scr);";
-//    JSInjection(script);
-//    JSInjection("document.body.style.background='#f00'; EBCallBackMessageReceived('888', 'aaa');");
-
-//    alert('window.QuestButtonView ' + window.QuestButtonView);
-
     if(!window.QuestButtonView) {
         window.QuestButtonView = new QuestView( {model: new QuestSettings({ id: 1 })});
     } else {
@@ -116,7 +114,16 @@ function EBDocumentComplete() {
     window.QuestButtonView.init_injection();
 }
 
+// Chrome: Conduit calls EBCallBackMessageReceived in all components
+// IE and FF: Conduit calls EBCallBackMessageReceived in JSInjection trigger component only
 function EBCallBackMessageReceived(msg, data) {
+    var msg_param = null;
+    var pattern = /^url_msg\:/;
+    if(msg.match(pattern)) {
+        msg_param = msg.replace(pattern, '');
+        msg = 'url_msg';
+    }
+
     switch(msg){
         case 'jquery_initialized' : {
             window.QuestButtonView.jquery_initialized = true;
@@ -126,6 +133,10 @@ function EBCallBackMessageReceived(msg, data) {
         case 'injection_initialized' : {
             window.QuestButtonView.injection_initialized = true;
             window.QuestButtonView.update_ui();
+            break;
+        }
+        case 'url_msg': {
+            window.app.send_message( { command: 'one_click_url', url: msg_param } );
             break;
         }
     }
