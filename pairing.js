@@ -17,10 +17,11 @@ jQuery(document).ready( function() {
                 custom_track('pairing_iframe_allow');
                 //clients.add(client); // was already added on scan
                 
-                BTCloseFloatingWindow();
+                app.broadcast( { message: 'pairing accepted', id: client.id } );                
                 // need to delay sending this because closefloatingwindow is not working??
                 setTimeout( function() {
-                    app.broadcast( { message: 'pairing accepted', id: client.id } );
+                    BTCloseFloatingWindow();
+
                 }, 200);
             } else {
                 debugger;

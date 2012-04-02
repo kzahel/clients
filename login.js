@@ -6,6 +6,16 @@ jQuery(document).ready( function() {
     clients.fetch();
     clients.init_post_fetch(); // sets selected
     
+    var url_args = decode_url_arguments();
+    var guid = url_args.replace;
+
+    if (guid) {
+        var old_client = clients.get_by_guid(guid);
+        if (old_client) {
+            jQuery('#username').val( old_client.get('data').bt_user );
+        }
+    }
+
     var logging_in = false;
     function do_login(evt) {
         if (logging_in) { return; }
@@ -20,11 +30,11 @@ jQuery(document).ready( function() {
                 var client = new Client( { type: 'remote', data: session.serialize() } );
                 custom_track('login_success');
 
-                var url_args = decode_url_arguments();
                 if (url_args.replace) {
                     // this login is intended to replace a broken login
                     var guid = url_args.replace;
                     var old_client = clients.get_by_guid(guid);
+
                     // clients.remove(old_client);
                     // does this call sync? i don't think so
                     old_client.destroy(); // this probably does the right thing though

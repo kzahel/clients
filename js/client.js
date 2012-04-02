@@ -266,22 +266,32 @@ var Client = Backbone.Model.extend({
             jQuery.ajax({
                 url: url,
                 dataType: 'jsonp',
+                timeout: 2000, // local uT should return response speedily
                 success: function(data, status, xhr) {
+                    if (data == 'invalid request') {
+                        client.set_status('invalid pairing key');
+                        return error(xhr, status, data);
+                    } else if (data && data.build) {
+                        client.set_status('available');
+                    }
+                    
                     if (success) {
                         success(data, status, xhr);
                     } else {
-                        if (data == 'invalid request') {
-                            debugger;
-                        }
                         console.log('doreq success', params,data);
                     }
                 },
                 error: function(xhr, status, text) {
+                    if (status == 'timeout') {
+                        client.set_status('not responding');
+                    } else {
+                        client.set_status('doreq error');
+                    }
+
                     if (error) {
                         error(xhr, status, text);
                     } else {
                         console.log('doreq error', text, params);
-                        debugger;
                     }
                 }
             });
@@ -293,6 +303,15 @@ var Client = Backbone.Model.extend({
                               {},
                               params,
                               function(data, status, xhr) {
+                                  if (data && data.error == 'client timeout') {
+                                      _this.set_status('offline');
+                                      return error(xhr, status, data);
+                                  } else if (data && data.code == 401) {
+                                      // unauthorized key
+                                      _this.set_status('unauthorized guid');
+                                      return error(xhr, status, data);
+                                  }
+
                                   if (success) {
                                       success(data, status, xhr);
                                   } else {
@@ -300,6 +319,7 @@ var Client = Backbone.Model.extend({
                                   }
                               },
                               function(xhr, status, text) {
+                                  
                                   if (error) {
                                       error(xhr, status, text);
                                   } else {
@@ -380,102 +400,18 @@ var Client = Backbone.Model.extend({
         this.trigger('setstatus', status);
     },
     check_status: function() {
-        console.log('check status');
+        app.display_status('Checking status');
         var _this = this;
         this.doreq( { nop: 1 },
                     function(data, status, xhr) {
-                        if (data && data.build) {
-                            _this.set_status('available');
-                        } else if (_this.get('type') == 'local' && data == 'invalid request') {
-                            _this.set_status('invalid key');
-                            //_this.invalidate_session();
-                        } else {
-                            debugger;
-                            _this.set_status('?');
-                        }
+                        console.log('check status success:', _this.get('status'));
+                        app.send_message( { recipient: 'torrent', command: 'initialize' } );
                     },
                     function(xhr, status, text) {
-                        if (text && text.error == 'client timeout') {
-                            _this.set_status('offline');
-                        } else if (text && text.code == 401) {
-                            // unauthorized key
-                            _this.set_status('unauthorized guid');
-                        } else {
-                            debugger;
-                            _this.set_status('?');
-                        }
+                        console.log('check status error:', _this.get('status'));
+                        app.send_message( { recipient: 'torrent', command: 'notify_status', id: _this.id, status: _this.get('status') } );
                     });
-    },
-    check_status_old: function() {
-        // XXX --- use doreq instead
-        // scans the client for online/offline status
-        // a lightweight version of a full "update"
-        var _this = this;
-        if (this.get('type') == 'local') {
-            jQuery.ajax({
-                url: 'http://127.0.0.1:' + this.get('data').port + '/gui/foobar' + '?pairing=' + client.get('data').key + '&token=' + client.get('data').key,
-                dataType: 'jsonp',
-                success: function(data) {
-                    if (data == 'invalid request') {
-                        _this.set_status('available');
-                    } else {
-                        debugger;
-                        _this.set_status('?');
-                    }
-                    if (_this.updating) {
-                        _this.timeout = setTimeout( _.bind(_this.update, _this), _this.paired_scan_interval );
-                    }
-                },
-                error: function(xhr, status, text) {
-                    // probably 401 unauthorized
-                    _this.set_status('unauthorized');
-                }
-            });
-        } else {
-            _this.api.request( 
-                '/gui/',
-                {getmsg:1},
-                {},
-                function(data) {
-                    if (data.build) {
-                        _this.set_status('available');
-
-                        if (_this.updating) {
-                            _this.timeout = setTimeout( _.bind(_this.update, _this), _this.remote_update_interval );
-                        }
-                    } else {
-                        _this.set_status('off');
-                    }
-                },
-                function(xhr, status, text) {
-                    _this.set_status('off');
-                    if (text && text.error) {
-                        if (text.code == 401) {
-                            _this.invalidate_session();
-                        } else if (text.error == 'client timeout') {
-                            _this.trigger('timeout');
-                            // perhaps client changed to a different server
-                            // xxx -- every timeout causes database lookup.
-                            // do exponential backoff on fetch server
-                            _this.fetch_server();
-                            _this.timeout = setTimeout( _.bind(_this.update, _this), _this.remote_update_interval );
-                        } else {
-                            console.error(text, text.error);
-                            debugger;
-                        }
-                    } else if (status == 'timeout') {
-                        // toolbar/browser lost internet connectivity
-                        _this.set_status('check connection');
-                        _this.timeout = setTimeout( _.bind(_this.update, _this), _this.remote_update_interval );
-                    } else {
-                        debugger;
-                    }
-                }
-            );
-        }
-        //console.log('update',this);
     }
-
 });
 
 var ClientCollection = Backbone.Collection.extend( {

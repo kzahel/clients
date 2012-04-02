@@ -119,14 +119,15 @@ jQuery(document).ready( function() {
     if (client) {
         var data = client.get('data');
         if (! data.key) {
-            app.send_message( { recipient: 'torrent', command: 'notify', status: 'no pairing key', id: client.id } );
+            app.send_message( { recipient: 'torrent', command: 'notify_status', status: 'no pairing key', id: client.id } );
             // client.pair(); // manually trigger this
         } else {
             client.bind('setstatus', function(status) {
                 if (status == 'available') {
                     app.send_message( { command: 'initialize', recipient: 'torrent' } );
                 } else {
-                    app.send_message( { recipient: 'torrent', command: 'notify', status: status, id: client.id } );
+                    debugger;
+                    app.send_message( { recipient: 'torrent', command: 'notify_status', status: status, id: client.id } );
                 }
             });
             client.check_status();

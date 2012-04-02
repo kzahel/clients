@@ -1,5 +1,4 @@
 jQuery(document).ready( function() {
-
     window.clients = new ClientCollection;
     clients.fetch(); // don't fetch! we will receive messages...
 
@@ -29,7 +28,33 @@ jQuery(document).ready( function() {
         });
     }
 
-    app.notify = function(opts) {
+
+    jQuery('.arrow_collapse').live('click', function(evt) {
+        $(evt.target).addClass('arrow_expand');
+        $(evt.target).removeClass('arrow_collapse');
+        ChangeWidth(config.torrent_pane_collapsed_width);
+        if (clients.selected) {
+            clients.selected.stop_updating();
+        }
+        $('.torrent_wrapper').hide();
+    });
+
+    jQuery('.arrow_expand').live('click', function(evt) {
+        $(evt.target).addClass('arrow_collapse');
+        $(evt.target).removeClass('arrow_expand');
+        ChangeWidth(config.torrent_pane_width);
+        if (clients.selected) {
+            clients.selected.start_updating()
+        }
+        $('.torrent_wrapper').show();
+    });
+
+
+    app.display_status = function(status) {
+	$('.default_container').text(status);
+    }
+
+    app.notify_status = function(opts) {
         var client = clients.get_by_id( opts.id );
         var status = opts.status;
         if (client.get('type') == 'local') {
@@ -54,6 +79,9 @@ jQuery(document).ready( function() {
         clients.init_post_fetch();
 
         var client = clients.selected;
+        if (! client) {
+            debugger;
+        }
         if (client) {
 
             if (client.get('type') == 'local' && ! client.get('data').key) {
@@ -81,6 +109,7 @@ jQuery(document).ready( function() {
                             });
                         }
                     });
+                    app.display_status('Fetching data...');
                     client.start_updating();
                 }
             }
@@ -118,6 +147,7 @@ jQuery(document).ready( function() {
 
         }
 
+
         jQuery('#torrent_list').click( function(evt) {
             BTOpenGadget('torrents.html', 400, 344, { openposition: 'offset:(0;30)' });
         });
@@ -126,23 +156,6 @@ jQuery(document).ready( function() {
             BTOpenGadget('add.html', 395, 150, { openposition: 'offset:(25;30)' });
         });
 
-        jQuery('.arrow_collapse').live('click', function(evt) {
-            //BTOpenGadget('add.html', 395, 118, { openposition: 'offset:(25;30)' });
-            $(evt.target).addClass('arrow_expand');
-            $(evt.target).removeClass('arrow_collapse');
-            ChangeWidth(config.torrent_pane_collapsed_width);
-            clients.selected.stop_updating();
-            $('.torrent_wrapper').hide();
-        });
-
-        jQuery('.arrow_expand').live('click', function(evt) {
-            //BTOpenGadget('add.html', 395, 118, { openposition: 'offset:(25;30)' });
-            $(evt.target).addClass('arrow_collapse');
-            $(evt.target).removeClass('arrow_expand');
-            ChangeWidth(config.torrent_pane_width);
-            clients.selected.start_updating()
-            $('.torrent_wrapper').show();
-        });
-    };
+    }
 
 } );

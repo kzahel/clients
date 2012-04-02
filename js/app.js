@@ -181,8 +181,8 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                     assert(client.get('active_hash') == msg.hash);
                 } else if (msg.command == 'initialize') {
                     app.initialize();
-                } else if (msg.command == 'notify') {
-                    app.notify({id:msg.id, status:msg.status});
+                } else if (msg.command == 'notify_status') {
+                    app.notify_status({id:msg.id, status:msg.status});
                 } else if (msg.command == 'setup_remote') {
                     BTOpenGadget('signup.html?id=' + msg.id, 286, 200, { openposition: 'offset:(0;30)' });
                 } else if (msg.command == 'reload') {
@@ -261,6 +261,8 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                 BTReload(); // this works better than duplicating the init logic in torrent.js
             }
         }
+    },
+    display_status: function(msg) {
     },
     switch_to_client: function(client) {
         if (this.get('type') == 'client') {
