@@ -14,6 +14,8 @@ var UTORRENT_CONTROL_VERSION = 3.24;
     }
 
     var toolbar_config = {
+        timeout_remote: 15000, // ut remote request timeout
+        timeout_paired: 2000, // timeout for local jsonp call
         conduit_toolbar_message_key: 'ut_toolbar_main',
         //conduit_toolbar_message_key_slave: 'ut_toolbar_gadget',
         client_pane_width: 178,

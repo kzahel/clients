@@ -196,6 +196,18 @@ var ActiveTorrentView = TorrentView.extend({
 	$('#torrent_controls').show();
         $('.default_container').hide();
         var _this = this;
+
+        this.options.client.bind('setstatus', _.bind(function(status) {
+            // if a client goes offline, style this thing differently
+            if (status == 'available') {
+                // yay!
+            } else {
+                // frown :-(
+                console.log('active torrent view client status',status);
+                this.$('.bt_torrent_list').addClass('selected_torrent'); // want an "offline" class
+            }
+        }, this));
+
         if (this.model) {
             this.model.bind('change', function(model,opts) {
                 // console.log('active torrent change',_this.model.get('name'),_this.model.changedAttributes());

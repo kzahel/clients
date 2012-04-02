@@ -91,7 +91,7 @@ jQuery(document).ready( function() {
 
             var torrent = client.get_selected_torrent();
             if (torrent) {
-                window.torrentview = new ActiveTorrentView( { el: $('#torrent_template_container'), model: torrent } );
+                window.torrentview = new ActiveTorrentView( { el: $('#torrent_template_container'), model: torrent, client: client } );
             } else {
                 // $('#torrent_template_container').text('Loading view...');
                 if (! client.updating) {
@@ -99,7 +99,7 @@ jQuery(document).ready( function() {
                         var torrent = client.get_selected_torrent();
                         if (true || torrent) {
                             // TODO -- dont use torrentview with no model..?
-                            window.torrentview = new ActiveTorrentView( { el: $('#torrent_template_container'), model: torrent } );
+                            window.torrentview = new ActiveTorrentView( { el: $('#torrent_template_container'), model: torrent, client: client } );
                         } else {
                             // create a view specifically for "no torrent"
                             $('.default_container').html('No Torrents');
@@ -129,7 +129,7 @@ jQuery(document).ready( function() {
                     $(parent).append( $('<div id="torrent_template_container"></div>') );
                 }
                 var torrent = client.get_selected_torrent();
-                window.torrentview = new ActiveTorrentView( { el: $('#torrent_template_container'), model: torrent } );
+                window.torrentview = new ActiveTorrentView( { el: $('#torrent_template_container'), model: torrent, client: client } );
             });
 
 

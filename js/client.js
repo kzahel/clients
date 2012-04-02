@@ -9,7 +9,7 @@ var Client = Backbone.Model.extend({
         this.torrents = new TorrentCollection( [], { client: this } );
         this.torrents.client = this;
         if (this.get('type') == 'remote') {
-            this.api = new falcon.session( { client_data: this.data.data } );
+            this.api = new falcon.session( { client_data: this.data.data  } );
         }
         var _this = this;
         this.bind('raptor_update', function() {
@@ -141,6 +141,9 @@ var Client = Backbone.Model.extend({
         app.pair(this);
     },
     invalidate_session: function() {
+        debugger;
+        this.set_status('invalid');
+        return; // never automatically destroy the model
         if (this.get('data').type == 'local') {
             console.error('local pairing key expired/invalid');
             debugger; // not correctly resetting state
@@ -223,12 +226,13 @@ var Client = Backbone.Model.extend({
                                       } else if (status == 'timeout') {
                                           _this.set_status('unavailable');
                                           // buggy server (or possibly lost internet connection)
-                                          _this.update_timeout = setTimeout( _this.do_update, _this.remote_update_interval * 4 );
+                                          _this.update_timeout = setTimeout( _this.do_update, _this.remote_update_interval * 2 );
                                           debugger;
                                       } else {
                                           debugger;
                                       }
-                                  }
+                                  },
+                                  { timeout: config.timeout_remote }
                                 );
             }
         }
@@ -266,7 +270,7 @@ var Client = Backbone.Model.extend({
             jQuery.ajax({
                 url: url,
                 dataType: 'jsonp',
-                timeout: 2000, // local uT should return response speedily
+                timeout: config.timeout_paired, // local uT should return response speedily
                 success: function(data, status, xhr) {
                     if (data == 'invalid request') {
                         client.set_status('invalid pairing key');
