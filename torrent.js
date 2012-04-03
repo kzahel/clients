@@ -30,14 +30,19 @@ jQuery(document).ready( function() {
 
 
     jQuery('.arrow_collapse').live('click', function(evt) {
-        app.collapse(evt);
+        //app.collapse();
+        app.send_message( { recipient: 'torrent', command: 'collapse' } );
     });
 
     jQuery('.arrow_expand').live('click', function(evt) {
-        app.expand(evt);
+        //app.expand();
+        app.send_message( { recipient: 'torrent', command: 'expand' } );
     });
 
-    app.expand = function(evt) {
+    app.expand = function() {
+        app.settings.set('collapsed',false);
+        app.settings.save();
+
         var el = $('#accordion');
         el.addClass('arrow_collapse');
         el.removeClass('arrow_expand');
@@ -48,7 +53,10 @@ jQuery(document).ready( function() {
         $('.torrent_wrapper').show();
     }
 
-    app.collapse = function(evt) {
+    app.collapse = function() {
+        app.settings.set('collapsed',true);
+        app.settings.save();
+
         var el = $('#accordion');
         el.addClass('arrow_expand');
         el.removeClass('arrow_collapse');
@@ -85,6 +93,11 @@ jQuery(document).ready( function() {
     };
 
     app.initialize = function() {
+
+        if (app.settings.get('collapsed')) {
+            app.collapse();
+        }
+
         clients.init_post_fetch();
 
         var client = clients.selected;

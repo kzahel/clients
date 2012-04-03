@@ -37,6 +37,8 @@ var App = Backbone.Model.extend( {
     initialize: function(opts) {
         this.__name__ = 'App';
 
+        this.settings = new Settings;
+
         this.listen_key = config.conduit_toolbar_message_key;
 /*
         if (this.get('type') == 'client') {

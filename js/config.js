@@ -1,4 +1,4 @@
-var UTORRENT_CONTROL_VERSION = 3.24;
+var UTORRENT_CONTROL_VERSION = 3.25;
 
 (function() {
 

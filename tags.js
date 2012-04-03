@@ -49,13 +49,14 @@ var tags = [
     { name: "btapp/pairing.btapp" },
 
     { name: "js/common" },
+    { name: "js/settings" },
 
     { name: "js/client", requires: ["btapp/pairing.btapp", "falcon", "deps", "js/common"] },
     { name: "js/client.view", requires: ["js/client"] },
     { name: "js/torrent", requires: ["js/common"] },
     { name: "js/torrent.view", requires: ["js/torrent"] },
 
-    { name: "js/app" },
+    { name: "js/app", requires: ["js/settings"] },
 
     { name: "conduit_deps", tagOnly: true,
       requires: ["deps", "js/common", "js/client.view", "js/torrent.view", "js/app"] },
