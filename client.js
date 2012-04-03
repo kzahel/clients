@@ -120,7 +120,10 @@ jQuery(document).ready( function() {
     if (client) {
         var data = client.get('data');
         if (! data.key) {
+
             app.send_message( { recipient: 'torrent', command: 'notify_status', status: 'no pairing key', id: client.id } );
+            app.send_message( { recipient: 'torrent', command: 'collapse' } );
+
             // client.pair(); // manually trigger this
         } else {
             client.bind('setstatus', function(status) {
@@ -131,9 +134,14 @@ jQuery(document).ready( function() {
                     app.send_message( { recipient: 'torrent', command: 'notify_status', status: status, id: client.id } );
                 }
             });
-            client.check_status();
+            client.check_status( function() {
+                if (client.get('status') != 'available') {
+                    // ?
+                }
+            });
+
         }
-        window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
+        window.clientview = new ActiveClientView( { el: $('#computerselect'), model: client } );
     } else {
 
         jQuery('#computerselect').text('Disabled')
@@ -156,10 +164,13 @@ jQuery(document).ready( function() {
     });
 */
 
+
+/*
+// moved open gadget to active client view logic
     jQuery('#computerselect').live('click', function(evt) {
         BTOpenGadget('clients.html', 286, 160, { openposition: 'offset:(25;30)' });
     });
-
+*/
 
 /*
 // commented out--whole page reloads instead

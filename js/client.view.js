@@ -17,7 +17,6 @@ var ClientsView = Backbone.View.extend({
             }
         });
 */
-
         this.model.bind('reset', function(a,b,c) {
             _.each( _this.model.models, function(client) {
                 _this.add_client(client);
@@ -201,8 +200,20 @@ var ClientView = Backbone.View.extend({
 });
 
 
-var ActiveClientView = Backbone.View.extend( {
-    initialize: function() {
+var ActiveClientView = ClientView.extend( {
+    initialize: function(opts) {
+        this.template = _.template( $('#client_template').html() );
+        this.$el.html( this.template() );
+        var client = this.model;
+
+        this.$el.click( function(evt) {
+            if (client.get('type') == 'local' && ! client.get('data').key) {
+                app.send_message( { recipient: 'client', command: 'pair', id: client.id }, {local:true} );
+            } else {
+                BTOpenGadget('clients.html', 286, 160, { openposition: 'offset:(25;30)' });
+            }
+        });
+        this.render();
     }
 })
 

@@ -30,25 +30,34 @@ jQuery(document).ready( function() {
 
 
     jQuery('.arrow_collapse').live('click', function(evt) {
-        $(evt.target).addClass('arrow_expand');
-        $(evt.target).removeClass('arrow_collapse');
-        ChangeWidth(config.torrent_pane_collapsed_width);
-        if (clients.selected) {
-            clients.selected.stop_updating();
-        }
-        $('.torrent_wrapper').hide();
+        app.collapse(evt);
     });
 
     jQuery('.arrow_expand').live('click', function(evt) {
-        $(evt.target).addClass('arrow_collapse');
-        $(evt.target).removeClass('arrow_expand');
+        app.expand(evt);
+    });
+
+    app.expand = function(evt) {
+        var el = $('#accordion');
+        el.addClass('arrow_collapse');
+        el.removeClass('arrow_expand');
         ChangeWidth(config.torrent_pane_width);
         if (clients.selected) {
             clients.selected.start_updating()
         }
         $('.torrent_wrapper').show();
-    });
+    }
 
+    app.collapse = function(evt) {
+        var el = $('#accordion');
+        el.addClass('arrow_expand');
+        el.removeClass('arrow_collapse');
+        ChangeWidth(config.torrent_pane_collapsed_width);
+        if (clients.selected) {
+            clients.selected.stop_updating();
+        }
+        $('.torrent_wrapper').hide();
+    }
 
     app.display_status = function(status) {
 	$('.default_container').text(status);

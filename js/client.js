@@ -119,7 +119,6 @@ var Client = Backbone.Model.extend({
         this.collection.set_active(this);
     },
     pair_jsonp: function() {
-        debugger;
         var url = 'http://127.0.0.1:' + this.get('data').port + '/gui/pair&name=' + encodeURIComponent('Control');
         var _this = this;
         jQuery.ajax( { url: url,
@@ -407,16 +406,18 @@ var Client = Backbone.Model.extend({
         }
         this.trigger('setstatus', status);
     },
-    check_status: function() {
+    check_status: function(cb) {
         app.display_status('Checking status');
         var _this = this;
         this.doreq( { nop: 1 },
                     function(data, status, xhr) {
                         console.log('check status success:', _this.get('status'));
+                        if (cb) { cb(); }
                         app.send_message( { recipient: 'torrent', command: 'initialize' } );
                     },
                     function(xhr, status, text) {
                         console.log('check status error:', _this.get('status'));
+                        if (cb) { cb(); }
                         app.send_message( { recipient: 'torrent', command: 'notify_status', id: _this.id, status: _this.get('status') } );
                     });
     }
@@ -536,7 +537,6 @@ var ClientCollection = Backbone.Collection.extend( {
 
             if (_this.models.length == 1) {
                 // first client found..
-                debugger;
                 _this.set_active(client, { broadcast: true } ); // maybe don't do this..
             }
 

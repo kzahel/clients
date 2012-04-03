@@ -183,6 +183,10 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                     //assert(client.collection);
                     //client.fetch(); // fetches updated "active_hash" attribute // XXX local storage not updating across IE tabs???  ???
                     assert(client.get('active_hash') == msg.hash);
+                } else if (msg.command == 'expand') {
+                    app.expand();
+                } else if (msg.command == 'collapse') {
+                    app.collapse();
                 } else if (msg.command == 'add_by_url') {
                     clients.selected.doreq( { action: 'add-url', s: msg.url } );
                 } else if (msg.command == 'initialize') {
