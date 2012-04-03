@@ -136,7 +136,7 @@ function EBCallBackMessageReceived(msg, data) {
             break;
         }
         case 'url_msg': {
-            window.app.send_message( { command: 'one_click_url', url: msg_param } );
+            window.app.send_message( { recipient: 'client', command: 'one_click_url', url: msg_param } );
             break;
         }
     }

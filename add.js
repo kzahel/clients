@@ -1,18 +1,21 @@
 jQuery(document).ready( function() {
 
     window.clients = new ClientCollection;
-
+    window.app = new App( { type: 'add' } );
     clients.fetch();
 
     function do_add() {
         console.log('clicked upload button');
         var url = jQuery('#url_input').val();
         if (url) {
-            var msg = { 'command': 'add_by_url', 'url': url };
-            BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
+            app.send_message( { recipient: 'client', command: 'add_by_url', 'url': url } );
+            //var msg = { 'command': 'add_by_url', 'url': url };
+            //BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
             jQuery('#url_input').val('');
             custom_track('add_torrent');
-            BTCloseFloatingWindow();
+            setTimeout( function() {
+                BTCloseFloatingWindow();
+            }, 200);
         }
     }
 

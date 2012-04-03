@@ -146,8 +146,7 @@ jQuery(document).ready( function() {
                             }
                             // removed current selected torrent ... need to change
                         } else {
-                            // assert!
-                            debugger;
+                            // the removed torrent was not the one currently displayed... so do nothing
                         }
                     } else {
                         // no more torrents remain!

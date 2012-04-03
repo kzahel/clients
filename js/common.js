@@ -98,7 +98,7 @@ function BTCloseFloatingWindow(delay) {
 }
 
 function BTReload() {
-    app.broadcast('close floating windows');
+    app.broadcast( { message: 'close floating windows' } );
     RefreshToolbar();
     //window.location.reload(); // seems to behave differently on different browsers
 }

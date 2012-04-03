@@ -118,22 +118,23 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
 */
     },
     handle_message: function(k, msg, opts) {
+        var my_type = this.get('type');
         var local_message = false;
         if (opts && opts.local) {
+            // experiments with "tab-only" messages exposed conduit
+            // API problems which may or may not be fixed by now.
             local_message = true;
             console.log(this.get('type'),'receive local message',k,msg);
             debugger;
         }
 
         if (msg.type == 'broadcast') {
-
             // simple solution for state issues. when client changes
             // (due to login or pairing accept or whatever, just
             // reload everything)
             if (msg.message == 'new client selection') {
-                if (this.get('type') == 'client') {
+                if (my_type == 'client') {
                     return BTReload();
-
                     // XXX -- the following (which would be better)
                     // was not working... fetch() wasnt showing the
                     // new models.
@@ -145,28 +146,29 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                     }
                     window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
                     client.check_status();
-                } else if (this.get('type') == 'torrent') {
+                } else if (my_type == 'torrent') {
                     BTReload();
                 }
             } else if (msg.message == 'close floating windows') {
                 CloseFloatingWindow();
             } else if (msg.message == 'no clients') {
                 BTReload();
-
-/*
-                if (this.get('type') == 'client') {
-                    if (window.clientview) {
-                        window.clientview.destroy();
-                        // this should be putting the parent container back but isnt... ?
-                    }
-                }
-*/
             } else if (msg.message == 'pairing accepted') {
                 BTReload();
             } else if (msg.message == 'remote login') {
                 BTReload();
-            }
+            } else if (msg.message == 'switch_client') {
+                if (my_type == 'client') {
+                    var prevclient = clients.selected;
+                    clients.fetch(); // should get new selected attribute
+                    clients.selected = clients.get_selected();
+                    assert( clients.selected.id == msg.id ); // IE used to trigger this assert but isn't anymore??
+                    clients.trigger('selected', clients.selected); // triggers recreation of view
+                } else if (my_type == 'torrent') {
+                    BTReload();
+                }
 
+            }
             return;
         }
 
@@ -179,6 +181,8 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                     //assert(client.collection);
                     //client.fetch(); // fetches updated "active_hash" attribute // XXX local storage not updating across IE tabs???  ???
                     assert(client.get('active_hash') == msg.hash);
+                } else if (msg.command == 'add_by_url') {
+                    clients.selected.doreq( { action: 'add-url', s: msg.url } );
                 } else if (msg.command == 'initialize') {
                     app.initialize();
                 } else if (msg.command == 'notify_status') {
@@ -193,6 +197,30 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                 } else if (msg.command == 'scan_clients') {
                     clients.find_local_clients( function(clients) {
                     });
+                    /* the following are legacy messages ? */
+                } else if (msg.command == 'add_client') {
+                    var client = new Client( msg.data );
+                    clients.add( client );
+                    clients.set_active(client);
+                } else if (msg.command == 'remove_client') {
+                    var client = new Client( msg.data );
+                    debugger;
+                    clients.remove( client );
+                    clients.set_active(null);
+                } else if (msg.command == 'open_gadget') {
+                    if (msg.name == 'login') {
+                        var url = 'login.html';
+                        if (msg.replace) {
+                            // this login is intended to replace an existing session
+                            url += '?replace=' + encodeURIComponent(msg.replace);
+                        }
+                        BTOpenGadget(url, 286, 200, { openposition: 'offset:(0;30)' });
+                    } else {
+                        console.error('unrecognized gadget');
+                        debugger;
+                    }
+                } else if (msg.command == 'one_click_url') {
+                    window.clients.selected.doreq( { action: 'add-url', s: msg.url } );
                 } else if (msg.command == 'update_client_status') {
                     var client = clients.get_by_id(msg.id);
                     client.fetch(); // should update status attribute... unfortunately does not seem to be triggering change+draw
@@ -202,8 +230,6 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                       client.fetch(); // update status attribute on client
                       });
                     */
-                } else if (msg.command == 'switch_client') {
-                    debugger;
                 } else if (msg.command == 'custom_track') {
                     // don't do it this way. each IE tab will pick up the event
                     console.log('sending custom track event', msg.data.name, msg.data.mydata);
@@ -213,66 +239,21 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
             return;
         }
 
-        if (msg.command == 'reset') {
-            debugger;
-            //clients.models = [];
-            clients.reset();
-            return;
-        }
-
         // older message types (before broadcast & send_message)
-        console.log('app',this.get('type'),'handling toolbarapi message',k,JSON.stringify(msg));
-        if (this.get('type') == 'client') { // XXX -- refactor to use recipient message passing instead
-            if (msg.command == 'switch_client') {
-                var prevclient = clients.selected;
-                clients.fetch(); // should get new selected attribute
-                clients.selected = clients.get_selected();
-                assert( clients.selected.id == msg.id );
-                clients.trigger('selected', clients.selected); // triggers recreation of view
-
-            } else if (msg.command == 'add_by_url') {
-                clients.selected.doreq( { action: 'add-url', s: msg.url } );
-            } else if (msg.command == 'add_client') {
-                var client = new Client( msg.data );
-                clients.add( client );
-                clients.set_active(client);
-            } else if (msg.command == 'remove_client') {
-                var client = new Client( msg.data );
-                debugger;
-                clients.remove( client );
-                clients.set_active(null);
-            } else if (msg.command == 'open_gadget') {
-                if (msg.name == 'login') {
-                    var url = 'login.html';
-                    if (msg.replace) {
-                        // this login is intended to replace an existing session
-                        url += '?replace=' + encodeURIComponent(msg.replace);
-                    }
-                    BTOpenGadget(url, 286, 200, { openposition: 'offset:(0;30)' });
-                } else {
-                    console.error('unrecognized gadget');
-                    debugger;
-                }
-            } else if (msg.command == 'one_click_url') {
-                window.clients.selected.doreq( { action: 'add-url', s: msg.url } );
-            } else {
-                console.error('unhandled message',msg);
-            }
-        } else if (this.get('type') == 'torrent') {
-            if (msg.command == 'switch_client') {
-                BTReload(); // this works better than duplicating the init logic in torrent.js
-            }
-        }
+        console.log('app',this.get('type'),'legacy toolbarapi message',k,JSON.stringify(msg));
+        debugger;
     },
     display_status: function(msg) {
     },
     switch_to_client: function(client) {
+        // xxx -- should broadcast now?
         if (this.get('type') == 'client') {
             // mainly occurs after pairing found port
             window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
             this.send_message( { recipient: 'torrent', command: 'reload' } );
             // $('.computer_name').text( client.get_name() );
         } else {
+            // remove this cruft?
             debugger;
             var data = client.attributes;
             //console.log('click switch to computer',data);
@@ -281,8 +262,8 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
         }
     },
     open_gadget: function(name) {
-        var msg = { 'command': 'open_gadget', 'name': name };
-        BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
+        var msg = { recipient: 'client', command: 'open_gadget', name: name };
+        this.send_message( msg );
     },
     pair: function(client) {
         if (this.get('type') == 'client') {
@@ -298,18 +279,13 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
         }
     },
     add_client: function(client) {
-        var msg = { 'command': 'add_client', 'data': client.attributes };
-        BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
+        // is this necessary?
+        var msg = { recipient: 'client', command: 'add_client', data: client.attributes };
+        this.send_message( msg );
     },
     remove_client: function(client) {
-        debugger;
-        var msg = { 'command': 'remove_client', 'data': client.attributes };
-        BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
-    },
-    send_reset: function() {
-        // tell the main app to reset state..
-        var msg = { 'command': 'reset' }
-        BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
+        var msg = { recipient: 'client', command: 'remove_client', data: client.attributes };
+        this.send_message( msg );
     },
     send_message: function(msg, opts) {
         if (false && opts && opts.local) {
@@ -317,7 +293,6 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
         } else {
             BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
         }
-
     },
     broadcast: function(msg) {
         // sends a message to all windows

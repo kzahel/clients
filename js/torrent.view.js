@@ -103,7 +103,7 @@ var TorrentView = Backbone.View.extend({
     render: function() {
         if (this.model) {
 
-            var progress_width = Math.floor(this.model.get('complete')/10) + '%';
+            var progress_width = Math.floor(this.model.get('progress')/10) + '%';
 
             if (this.model.get('selected')) {
                 this.$('.bt_torrent_list').addClass('selected_torrent');
