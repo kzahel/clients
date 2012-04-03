@@ -149,6 +149,8 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                 } else if (my_type == 'torrent') {
                     BTReload();
                 }
+            } else if (msg.message == 'reset') {
+                BTReload();
             } else if (msg.message == 'close floating windows') {
                 CloseFloatingWindow();
             } else if (msg.message == 'no clients') {

@@ -59,8 +59,13 @@ jQuery(document).ready( function() {
                                                                       client.set_settings( { 'webui.uconnect_enable': 1 },
                                                                                            function() {
                                                                                                debugger;
+                                                                                               client.set('remote_username', username);
+                                                                                               client.save();
                                                                                                dostatus('done!');
-                                                                                               BTCloseFloatingWindow();
+                                                                                               setTimeout( function() {
+                                                                                                   app.broadcast( { message: 'reset' } );
+                                                                                                   BTCloseFloatingWindow();
+                                                                                               }, 200);
                                                                                            },
                                                                                            onerr
                                                                                          );

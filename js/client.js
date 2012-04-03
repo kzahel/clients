@@ -155,7 +155,11 @@ var Client = Backbone.Model.extend({
     },
     get_name: function() {
         if (this.get('type') == 'local') {
-            return escape(this.get('data').name);
+            if (this.get('remote_username')) {
+                return escape(this.get('remote_username'));
+            } else {
+                return escape(this.get('data').name);
+            }
         } else {
             return escape(this.get('data').bt_user);
         }

@@ -145,7 +145,7 @@ var ClientView = Backbone.View.extend({
         this.render();
     },
     render: function() {
-        if (this.model.get('status') == 'available') {
+        if (this.model.get('status') == 'available' && this.model.get('type') == 'local') {
             this.$('.remote_computer').show();
         } else {
             this.$('.remote_computer').hide();
