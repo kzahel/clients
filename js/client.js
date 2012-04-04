@@ -69,7 +69,7 @@ var Client = Backbone.Model.extend({
         this.collection.set_active(this);
         app.broadcast( { message: 'new client selection', id: this.id } ); // sends messages to other windows
     },
-    fetch_server: function() {
+    fetch_server: function(callback) {
         // fetches "raptor" from database
         var _this = this;
 
@@ -85,6 +85,8 @@ var Client = Backbone.Model.extend({
                     _this.save(); // update the model
                     _this.trigger('raptor_update');
                     _this.server_fetch_count = 0;
+                    if (callback) { callback({changed:true}); }
+                    return;
                 } else if (data && data.error && data.error.code == '/no/user') {
                     // user changed credentials
                     _this.invalidate_session();
@@ -92,10 +94,11 @@ var Client = Backbone.Model.extend({
                     _this.server_fetch_count += 1;
                     console.log(d.bt_user,'still offline', data.rapton);
                 }
-
+                if (callback) { callback({changed:false}); }
             },
             error: function(xhr, status, text) {
                 debugger;
+                if (callback) { callback({error:true}); }
             }
         });
     },
@@ -217,8 +220,8 @@ var Client = Backbone.Model.extend({
                                           _this.invalidate_session();
                                           _this.set_status('invalid session');
                                       } else if (text && text.error == 'client timeout') {
+                                          // XXX -- move this code into falcon javascript api ?
                                           _this.set_status('unavailable');
-
                                           // was able to contact server, but request to client timed out.
                                           var mult = 2 * Math.pow(2, _this.server_fetch_count);
                                           // TODO -- exponential backoff on fetch server
@@ -306,7 +309,7 @@ var Client = Backbone.Model.extend({
             if (typeof params == 'string') {
                 debugger;
             }
-            client.api.request('/gui/',
+            client.api.request('/gui/token.html',
                               {},
                               params,
                               function(data, status, xhr) {
@@ -318,7 +321,6 @@ var Client = Backbone.Model.extend({
                                       _this.set_status('unauthorized guid');
                                       return error(xhr, status, data);
                                   }
-
                                   if (success) {
                                       success(data, status, xhr);
                                   } else {
@@ -326,6 +328,25 @@ var Client = Backbone.Model.extend({
                                   }
                               },
                               function(xhr, status, text) {
+                                  if (status == 'timeout') {
+                                      client.set_status('timeout');
+                                  } else if (text && text.code == 401) {
+                                      client.set_status('unauthorized guid');
+                                  } else if (text && text.error == 'client timeout') {
+                                      // client is not connected to
+                                      // this specific saved server,
+                                      // perhaps ask the database if
+                                      // the client is still connected
+                                      // here...
+                                      client.fetch_server(function(info) {
+                                          if (info && info.changed) {
+                                              console.log('server changed');
+                                              // re-try the request?
+                                          } else {
+                                          }
+                                      });
+                                      client.set_status('doreq error: ' + JSON.stringify(text));
+                                  }
                                   
                                   if (error) {
                                       error(xhr, status, text);

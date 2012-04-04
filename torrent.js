@@ -23,7 +23,7 @@ jQuery(document).ready( function() {
         $('.default_container').unbind();
         $('.default_container').click( function() {
             // XXX this sends the message to every TAB!!!
-            app.send_message( { command: 'open_gadget', name: 'login', replace: client.get('data').guid } );
+            app.send_message( { recipient: 'client', command: 'open_gadget', name: 'login', replace: client.get('data').guid }, { local: true } );
             // send to client only
         });
     }
