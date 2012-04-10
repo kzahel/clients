@@ -42,7 +42,7 @@ jQuery(document).ready( function() {
 
         var iframe = document.createElement('iframe');
         iframe.src = url;
-        iframe.setAttribute('style','width:'+config.pairing_iframe_width+'px; height:'+config.pairing_iframe_height+'px; border: 0px; overflow:hidden;');
+        iframe.setAttribute('style','width:'+config.pairing_iframe_width+'; height:'+config.pairing_iframe_height+'; border: 0px; overflow:hidden;');
         iframe.id="pairing_frame";
         //var iframe = $('#pairing_frame')[0];
         document.getElementById('pairing_view').appendChild(iframe);
