@@ -557,8 +557,9 @@ var ClientCollection = Backbone.Collection.extend( {
             opts.attempt_authorization = false;
             var client = new Client( { type: 'local', data: opts } );
             // client.pair(); // dont pair automatically
-            
+            client.set('status','running');
             _this.add( client );
+
 
             if (_this.models.length == 1) {
                 // first client found..

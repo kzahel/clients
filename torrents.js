@@ -13,13 +13,4 @@ jQuery(document).ready( function() {
         client.start_updating();
         console.log(client.get('data').key);
     }
-/*
-    client.bind('firstupdate', function() {
-        if (client.torrents.length == 0) {
-
-        }
-    });
-*/
-    
-
 } );
