@@ -1,1 +1,16 @@
 // css here
+html {width:100%;height:100%}
+body {width:100%;height:100%;margin:0px;background:gainsboro;font-family:arial;text-align:center}
+h3 {margin:0px;padding:10px 20px;_width:286px;font-size:14px;color:white;background:#333;text-align:left}
+p {padding:0 20px ;font-size:14px;text-align:left}
+input {
+	background:#999;
+	border:0px;
+	margin:0 5px;
+	padding:6px 20px;
+	-webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius:5px;
+	font-weight:bold;
+}
+input:hover {background:#333;color:white}
