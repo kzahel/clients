@@ -42,6 +42,15 @@ jQuery(document).ready( function() {
     function do_signup(evt) {
         var username = $('#username').val();
         var password = $('#password').val();
+        if (! username) {
+            dostatus('Enter a name');
+            return;
+        }
+        if (! username) {
+            dostatus('Enter password name');
+            return;
+        }
+
         var session = new falcon.session;
         dostatus('checking username...');
         session.check_username( username, {
