@@ -1,4 +1,4 @@
-var UTORRENT_CONTROL_VERSION = 3.25;
+var UTORRENT_CONTROL_VERSION = 3.26;
 
 (function() {
 
@@ -45,6 +45,7 @@ var UTORRENT_CONTROL_VERSION = 3.25;
         toolbar_config.verbose = 1;
     } else if (kyledev) {
 //        toolbar_config.autologin_url = 'http://192.168.56.1:9090/talon/autologin';
+        //toolbar_config.fake_pairing = true;
     } else if (davedev) {
         toolbar_config.fake_pairing = true;
     }
