@@ -144,6 +144,10 @@ var ClientView = Backbone.View.extend({
         this.render();
     },
     render: function() {
+        if (! this.model) {
+            this.$('.computer_name').html("Setup");
+            return
+        }
         if (this.model.get('status') == 'available' && this.model.get('type') == 'local') {
             this.$('.remote_computer').show();
         } else {
@@ -207,7 +211,7 @@ var ActiveClientView = ClientView.extend( {
         var client = this.model;
 
         this.$el.click( function(evt) {
-            if (client.get('type') == 'local' && ! client.get('data').key) {
+            if (client && client.running() && client.get('type') == 'local' && ! client.get('data').key) {
                 app.send_message( { recipient: 'client', command: 'pair', id: client.id }, {local:true} );
             } else {
                 BTOpenGadget('clients.html', 286, 160, { openposition: 'offset:(25;30)' });

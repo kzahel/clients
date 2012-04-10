@@ -120,7 +120,6 @@ jQuery(document).ready( function() {
     if (client) {
         var data = client.get('data');
         if (! data.key) {
-
             app.send_message( { recipient: 'torrent', command: 'notify_status', status: 'no pairing key', id: client.id } );
             app.send_message( { recipient: 'torrent', command: 'collapse' } );
 
@@ -139,13 +138,10 @@ jQuery(document).ready( function() {
                     // ?
                 }
             });
-
         }
         window.clientview = new ActiveClientView( { el: $('#computerselect'), model: client } );
     } else {
-
-        jQuery('#computerselect').text('Disabled')
-        // no client, still allow dropdown..
+        window.clientview = new ActiveClientView( { el: $('#computerselect'), model: null } );
     }
 
 /*

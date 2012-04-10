@@ -30,6 +30,10 @@ var Client = Backbone.Model.extend({
         _.bindAll(this);
         // sort by date added...
     },
+    running: function() {
+        assert( this.get('type') == 'local');
+        return this.get('status') && this.get('status') != 'not running';
+    },
     get_selected_torrent: function() {
         if (this.torrents.models.length > 0) {
             var hash = this.get('active_hash');
