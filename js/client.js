@@ -31,9 +31,11 @@ var Client = Backbone.Model.extend({
         // sort by date added...
     },
     running: function() {
+        // actually means "clicking on client view should trigger pairing key dialog, if no pairing key yet"
         assert( this.get('type') == 'local');
         return !( this.get('status') == 'not running' ||
-                  this.get('status') == 'not responding'
+                  this.get('status') == 'not responding' ||
+                  this.get('status') == 'pairing denied'
                 );
     },
     get_selected_torrent: function() {

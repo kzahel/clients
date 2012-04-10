@@ -211,10 +211,9 @@ var ActiveClientView = ClientView.extend( {
         var client = this.model;
 
         this.$el.click( function(evt) {
-            if (client && client.running() && client.get('type') == 'local' && ! client.get('data').key) {
+            if (client && client.get('type') == 'local' && client.running() && ! client.get('data').key) {
+                // XXX -- the logic to determine whether to show which dialog is terrible...
                 app.send_message( { recipient: 'client', command: 'pair', id: client.id }, {local:true} );
-                client.check_status( function() {
-                });
             } else {
                 BTOpenGadget('clients.html', 286, 160, { openposition: 'offset:(25;30)' });
             }

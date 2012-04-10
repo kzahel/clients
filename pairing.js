@@ -24,9 +24,10 @@ jQuery(document).ready( function() {
 
                 }, 200);
             } else {
-                debugger;
+                client.set_status('pairing denied');
+                client.save();
                 custom_track('pairing_iframe_deny');
-                console.error('pairing DEnied');
+                console.error('pairing denied');
                 BTCloseFloatingWindow();
             }
             // $('#pairing_view').html('');
