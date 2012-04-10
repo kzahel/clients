@@ -277,7 +277,7 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
         if (this.get('type') == 'client') {
             if (client.get('data').name != 'unknown') {
                 // likely supports new style pairing
-                BTOpenGadget('pairing.html', 286, 200, { openposition: 'offset:(0;30)' });
+                BTOpenGadget('pairing.html', 286, 160, { openposition: 'offset:(0;30)' });
             } else {
                 BTOpenGadget('pairing_instructions.html', 286, 265, { openposition: 'offset:(0;30)' });
                 client.pair_jsonp();
