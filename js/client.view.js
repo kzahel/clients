@@ -212,6 +212,8 @@ var ActiveClientView = ClientView.extend( {
 
         this.$el.click( function(evt) {
             if (client && client.running() && client.get('type') == 'local' && ! client.get('data').key) {
+                client.check_status( function() {
+                });
                 app.send_message( { recipient: 'client', command: 'pair', id: client.id }, {local:true} );
             } else {
                 BTOpenGadget('clients.html', 286, 160, { openposition: 'offset:(25;30)' });

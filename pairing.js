@@ -35,6 +35,11 @@ jQuery(document).ready( function() {
 
         //var url = 'http://127.0.0.1:' + client.get('data').port + '/gui/pair';//?iframe=' + encodeURIComponent(window.location.href);
         var url = 'http://127.0.0.1:' + client.get('data').port + '/gui/pair?iframe=' + 'foobar'; // &style is broken
+
+        if (config.fake_pairing) {
+            url = 'client_html/pairing.html';
+        }
+
         var iframe = document.createElement('iframe');
         iframe.src = url;
         iframe.setAttribute('style','width:300px; height:250px; border: 0px; overflow:hidden;');

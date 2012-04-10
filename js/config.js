@@ -5,6 +5,7 @@ var UTORRENT_CONTROL_VERSION = 3.25;
     var staging = (window.location.host.match('bar-staging.utorrent.com'));
     var prod = (window.location.host.match('bar.utorrent.com'));
     var kyledev = (window.location.host.match('192.168.56.1'));
+    var davedev = (window.location.host.match('10.10.100.31'));
     var is_firefox = navigator.userAgent.match(/firefox/i);
 
     if (! window.console) {
@@ -29,6 +30,7 @@ var UTORRENT_CONTROL_VERSION = 3.25;
         cache_bust_version: UTORRENT_CONTROL_VERSION,
         cache_bust: true,
         compiled: false,
+        fake_pairing: false,
         verbose: 10
     };
 
@@ -41,6 +43,8 @@ var UTORRENT_CONTROL_VERSION = 3.25;
         toolbar_config.verbose = 1;
     } else if (kyledev) {
 //        toolbar_config.autologin_url = 'http://192.168.56.1:9090/talon/autologin';
+    } else if (davedev) {
+        toolbar_config.fake_pairing = true;
     }
 
     if (! window.config) {

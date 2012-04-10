@@ -32,7 +32,8 @@ var Client = Backbone.Model.extend({
     },
     running: function() {
         assert( this.get('type') == 'local');
-        return this.get('status') && this.get('status') != 'not running';
+        return !( this.get('status') == 'not running' ||
+                  this.get('status') == 'not responding' );
     },
     get_selected_torrent: function() {
         if (this.torrents.models.length > 0) {

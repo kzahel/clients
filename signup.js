@@ -52,7 +52,8 @@ jQuery(document).ready( function() {
         }
 
         var session = new falcon.session;
-        dostatus('checking username...');
+        dostatus('Checking username');
+        debugger;
         session.check_username( username, {
             success: function(data, status, xhr) {
                 // need to disable and then enable, I think...
