@@ -1,7 +1,7 @@
-.utorrent-uquest-inject {
+.utorrent-uquest-active {
     position:relative;
 }
-.utorrent-uquest-inject .utorrent-uquest-span {
+.utorrent-uquest-active .utorrent-uquest-span {
     position:absolute;
     width:26px;
     height:26px;
