@@ -228,7 +228,12 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                         debugger;
                     }
                 } else if (msg.command == 'one_click_url') {
-                    window.clients.selected.doreq( { action: 'add-url', s: msg.url } );
+                    if(clients.selected) {
+                        clients.selected.doreq( { action: 'add-url', s: msg.url } );
+                    } else {
+                        //open clients dialog
+                        clientview.$el.click();
+                    }
                 } else if (msg.command == 'update_client_status') {
                     var client = clients.get_by_id(msg.id);
                     client.fetch(); // should update status attribute... unfortunately does not seem to be triggering change+draw
