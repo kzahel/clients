@@ -136,7 +136,7 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
             // reload everything)
             if (msg.message == 'new client selection') {
                 if (my_type == 'client') {
-                    return BTReload();
+                    return BTReload(this);
                     // XXX -- the following (which would be better)
                     // was not working... fetch() wasnt showing the
                     // new models.
@@ -149,18 +149,18 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                     window.clientview = new ClientView( { el: $('#computerselect'), model: client } );
                     client.check_status();
                 } else if (my_type == 'torrent') {
-                    BTReload();
+                    BTReload(this);
                 }
             } else if (msg.message == 'reset') {
-                BTReload();
+                BTReload(this);
             } else if (msg.message == 'close floating windows') {
                 CloseFloatingWindow();
             } else if (msg.message == 'no clients') {
-                BTReload();
+                BTReload(this);
             } else if (msg.message == 'pairing accepted') {
-                BTReload();
+                BTReload(this);
             } else if (msg.message == 'remote login') {
-                BTReload();
+                BTReload(this);
             } else if (msg.message == 'switch_client') {
                 if (my_type == 'client') {
                     var prevclient = clients.selected;
@@ -169,7 +169,7 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                     assert( clients.selected.id == msg.id ); // IE used to trigger this assert but isn't anymore??
                     clients.trigger('selected', clients.selected); // triggers recreation of view
                 } else if (my_type == 'torrent') {
-                    BTReload();
+                    BTReload(this);
                 }
 
             }
@@ -198,7 +198,7 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                 } else if (msg.command == 'setup_remote') {
                     BTOpenGadget('signup.html?id=' + msg.id, 286, 200, { openposition: 'offset:(0;30)' });
                 } else if (msg.command == 'reload') {
-                    BTReload();
+                    BTReload(this);
                 } else if (msg.command == 'pair') {
                     var client = clients.get_by_id(msg.id);
                     this.pair(client);

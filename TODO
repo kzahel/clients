@@ -1,3 +1,3 @@
 after pairing "torrent" shows "Loading"
 deny pairing should allow login to remote
-removing the last client from the list causes n+1 reloads where n is number of tabs
+removing the last client from the list causes n+1 reloads where n is number of tabs (other messages cause this problem too?)

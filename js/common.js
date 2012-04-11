@@ -97,9 +97,12 @@ function BTCloseFloatingWindow(delay) {
     }
 }
 
-function BTReload() {
+function BTReload(app) {
     app.broadcast( { message: 'close floating windows' } );
-    RefreshToolbar();
+    if (app.get('type') == 'client') {
+        // only want this to be called by one component!
+        RefreshToolbar();
+    }
     //window.location.reload(); // seems to behave differently on different browsers
 }
 

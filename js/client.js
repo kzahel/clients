@@ -41,15 +41,19 @@ var Client = Backbone.Model.extend({
     get_selected_torrent: function() {
         if (this.torrents.models.length > 0) {
             var hash = this.get('active_hash');
-            if (hash) {
-                console.log('get selected torrent, hash',hash);
-                var torrent = this.torrents.get( hash );
-                if (torrent) {
-                    console.log('got torrent',torrent.get('name'));
-                    return torrent;
-                }
+            if (! hash) {
+                var t = this.torrents.models[0];
+                hash = t.get('hash');
+                this.set('active_hash', hash);
+                this.save();
             }
-            return this.torrents.models[0];
+            console.log('get selected torrent, hash',hash);
+            var torrent = this.torrents.get( hash );
+            if (torrent) {
+                console.log('got torrent',torrent.get('name'));
+                return torrent;
+            }
+
         } else {
             console.error('get selected torrent -- no torrent models fetched');
         }
@@ -68,7 +72,7 @@ var Client = Backbone.Model.extend({
             } else {
                 console.error('no clients left! broadcast no clients');
                 app.broadcast( { message: 'no clients' } );
-                BTCloseFloatingWindow();
+                // BTCloseFloatingWindow(); // redundant
             }
         }
 
