@@ -38,6 +38,11 @@ var Client = Backbone.Model.extend({
                   this.get('status') == 'pairing denied'
                 );
     },
+    set_selected_torrent: function(t) {
+        this.set('active_hash', t.get('hash'));
+        assert( this.get_selected_torrent() );
+        this.save();
+    },
     get_selected_torrent: function() {
         if (this.torrents.models.length > 0) {
             var hash = this.get('active_hash');
@@ -410,12 +415,12 @@ var Client = Backbone.Model.extend({
             torrent.set('selected',true);
         }
         this.trigger('add_torrent', torrent);
+        // if cacheid is outdated, adding here makes no sense...
+        this.torrents.add(torrent);
         if (this.updates > 1) { // XXX RACE CONDITION
             // allow new torrents to be inserted in-order in an existing list (updates only)
             this.trigger('new_torrent', torrent);
         }
-        // if cacheid is outdated, adding here makes no sense...
-        this.torrents.add(torrent);
     },
     change_torrent: function(d) {
         var torrent = this.torrents.get(d[0]);

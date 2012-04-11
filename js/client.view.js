@@ -137,7 +137,7 @@ var ClientView = Backbone.View.extend({
                 debugger;
             } else {
                 custom_track('setup_remote_click');
-                app.send_message({ recipient: 'client', command: 'setup_remote', id: _this.model.id });
+                app.send_message({ recipient: 'clients', command: 'setup_remote', id: _this.model.id }, {local:true});
             }
         });
 

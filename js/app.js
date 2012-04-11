@@ -64,9 +64,8 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
         });
 
 
-        // local keys are sent only to the current tab
-/*
-        window.EBKeyChanged = function(k,v) {
+        // local keys are sent only to the current gadget
+        window.EBLocalKeyChanged = window.EBKeyChanged = function(k,v) {
             // why do we have to define both? weird...
             try {
                 var data = JSON.parse(v);
@@ -82,9 +81,7 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
             }
 
         }
-*/
-
-        // global keys are sent to every tab
+        // global keys are sent to every tab, every component
         if (window.EBGlobalKeyChanged) { console.error('already defined!'); debugger; }
         window.EBGlobalKeyChanged = function(k,v) {
             try {
@@ -99,25 +96,6 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                 //console.warn('ignoring message',k,'was listening for',_this.listen_key);
             }
         }
-
-/*
-  conduit says to use EBGlobalKeyChanged instead
-        if (window.EBMessageReceived) { myconsole.error('message received already defined!'); debugger; }
-
-        window.EBMessageReceived = function(k,v) {
-            try {
-                var data = JSON.parse(v);
-            } catch(e) {
-                console.error('error parsing gadget message',v);
-                debugger;
-            }
-            if (_this.listen_key == k) {
-                _this.handle_message(k,data);
-            } else {
-                //console.warn('ignoring message',k,'was listening for',_this.listen_key);
-            }
-        }
-*/
     },
     handle_message: function(k, msg, opts) {
         var my_type = this.get('type');
@@ -127,7 +105,6 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
             // API problems which may or may not be fixed by now.
             local_message = true;
             console.log(this.get('type'),'receive local message',k,msg);
-            debugger;
         }
 
         if (msg.type == 'broadcast') {
@@ -279,7 +256,7 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
         this.send_message( msg );
     },
     pair: function(client) {
-        if (this.get('type') == 'client') {
+        if (true || this.get('type') == 'client') {
             if (client.get('data').name != 'unknown') {
                 // likely supports new style pairing
                 BTOpenGadget('pairing.html', 286, 155, { openposition: 'offset:(0;30)' });
@@ -301,7 +278,8 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
         this.send_message( msg );
     },
     send_message: function(msg, opts) {
-        if (false && opts && opts.local) {
+        if (opts && opts.local) {
+            // there is no such thing as a "tab" only message.
             BTSendTabMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
         } else {
             BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );

@@ -125,6 +125,13 @@ var TorrentCollection = Backbone.Collection.extend({
         this.bind('remove', function(torrent) {
             torrent.trigger('removed');
         });
+/*
+        this.bind('add', _.bind(function(torrent) {
+            debugger;
+
+        },this));
+*/
+
     },
     comparator: function(t) { return - t.attributes['added_on']; }
 });

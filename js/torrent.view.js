@@ -214,9 +214,10 @@ var ActiveTorrentView = TorrentView.extend({
                 _this.render();
             });
             this.bind_action_events();
-            this.model.collection.bind('new_torrent', function(t) {
-                console.log('may want to replace current acitve torrent view with new torrent',t.get('name'));
-                debugger;
+            var client = this.model.collection.client;
+            client.bind('new_torrent', function(t) {
+                client.set_selected_torrent(t);
+                //console.log('may want to replace current acitve torrent view with new torrent',t.get('name'));
             });
 
         }

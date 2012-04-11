@@ -12,8 +12,7 @@ jQuery(document).ready( function() {
 	$('.default_container').text(message?message:'Click to setup control'); // insert iframe here instead?
         $('.default_container').unbind();
         $('.default_container').click( function() {
-            // XXX this sends the message to every TAB!!!
-            app.send_message( { recipient: 'client', command: 'pair', id: client.id }, {local:true} );
+            app.send_message( { recipient: 'torrent', command: 'pair', id: client.id }, {local:true} );
         });
     }
 
@@ -22,8 +21,7 @@ jQuery(document).ready( function() {
 	$('.default_container').text(message?message:'Click to login'); // insert iframe here instead?
         $('.default_container').unbind();
         $('.default_container').click( function() {
-            // XXX this sends the message to every TAB!!!
-            app.send_message( { recipient: 'client', command: 'open_gadget', name: 'login', replace: client.get('data').guid }, { local: true } );
+            app.send_message( { recipient: 'torrent', command: 'open_gadget', name: 'login', replace: client.get('data').guid }, { local: true } );
             // send to client only
         });
     }

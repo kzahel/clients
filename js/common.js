@@ -82,7 +82,6 @@ function BTSendMessage(key, msg) {
 
 function BTSendTabMessage(key, msg) {
     console.log('sending local message',key,msg);
-    debugger;
     StoreKey(key, msg);
 }
 
