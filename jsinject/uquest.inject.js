@@ -13,8 +13,7 @@
             //console.log('window.QuestModule initialize');
             var _this = this;
 
-            //TODO url path from config
-            var css_url = 'http://localhost/toolbar2/css/style_inject.css';
+            var css_url = '%css_inject_url%';
             if($('head link[href=\"' + css_url + '\"]').length == 0) {
                 $('<link>').attr('type', 'text/css').attr('rel', 'stylesheet')
                     .attr('href', css_url)
@@ -26,14 +25,14 @@
                     var url_parts = item.href.split('?');
                     //is direct link?
                     if(url_parts[0].match(/\.torrent$|^magnet\:/i)) {
-                        console.log(''.concat('direct torrent link ', item.href, ' ', $(item).text()));
+//                        console.log(''.concat('direct torrent link ', item.href, ' ', $(item).text()));
                         $(item).addClass(_this._css_uquest_link);
                         if(_this._is_active) _this._show_active_link(_this, item);
                     //is contain torrent or download text, not exe and from the same origin?
                     } else if ($(item).text().match(/torrent|download/i) &&
                                !url_parts[0].match(/\.exe$|\.pdf$/i) &&
                                _this._is_same_origin(item)) {
-                        console.log(''.concat('before ajax ', item.href, ' ', $(item).text()));
+//                        console.log(''.concat('before ajax ', item.href, ' ', $(item).text()));
                         $.ajax({
                             type : 'HEAD',
                             url: item.href,
@@ -45,14 +44,14 @@
 //                                    console.log(''.concat('url= ', item.href, ' data.redirect = ', resp.getResponseHeader('Location')));
 //                                }
 
-                                console.log(''.concat('ResponseHeader: ', resp.getAllResponseHeaders(), ' url= ', item.href));
+//                                console.log(''.concat('ResponseHeader: ', resp.getAllResponseHeaders(), ' url= ', item.href));
                                 if(resp.getResponseHeader('Content-Type') == 'application/x-bittorrent') {
                                     $(item).addClass(_this._css_uquest_link);
                                     if(_this._is_active) _this._show_active_link(_this, item);
                                 }
                             },
                             error : function(jqXHR, textStatus, errorThrown) {
-                                console.log(''.concat('Error: url= ', item.href, ' textStatus = ', textStatus, 'jqXHR = ', JSON.stringify(jqXHR)));
+//                                console.log(''.concat('Error: url= ', item.href, ' textStatus = ', textStatus, 'jqXHR = ', JSON.stringify(jqXHR)));
                                 //TODO check content-type using conduit api
                             }
                         });
