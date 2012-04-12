@@ -29,7 +29,7 @@ var QuestView = Backbone.View.extend({
     _script_set_inactive:  "(function () {\n    window.QuestModule.set_state(false);\n}());",
 
     initialize: function(){
-        this._script_init = this._script_init.replace('%css_inject_url%', config.css_inject_url);
+        this._script_init = this._script_init.replace('%css_inject_url%', config.css_inject_url + '?v=' + config.cache_bust_version);
         this.model.fetch();
         this._update_toolbar_button();
         if(is_chrome) { this.jquery_initialized = true; }
