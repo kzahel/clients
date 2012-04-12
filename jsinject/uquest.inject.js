@@ -1,6 +1,4 @@
 (function ($) {
-    var is_chrome = (navigator.userAgent.match(/chrome/i) || navigator.userAgent.match(/chromium/i));
-
     window.QuestModule = {
         _is_active : false,
         _selector_new_link : 'a:not([data-uquest-processed])',
@@ -65,23 +63,20 @@
 
             //for jQuery 1.7+ use 'on'
             //for jQuery 1.4.3+ use 'delegate'
-            //for jQuery 1.3+ use 'live'
-            var version = $.fn.jquery.split('.');
-            var ver = (parseInt(version[1])*10) + parseInt(version[2]);
-            if(ver >= 70){
+            var ver = get_jQuery_version(window.jQueryInjected);
+            if(ver >= 170){
                 $(document).on('click', '.' + this._css_active_link_class, this, this._on_click);
                 //$(document).on('DOMSubtreeModified', 'body', this, init_links);
-            } else if (ver >= 43) {
+            } else if (ver >= 143) {
                 $(document).delegate('.' + this._css_active_link_class, 'click', this, this._on_click);
                 //$('body').bind('DOMSubtreeModified', init_links);
-            } else if (ver >= 30) {
-                $('.' + this._css_active_link_class).live('click', this, this._on_click);
             } else {
-                //TODO Init proper jquery version
+                debugger;
+                assert(false);
                 return;
             }
 
-            this._toolbar_callback('injection_initialized');
+            toolbar_callback('injection_initialized');
         },
         set_state : function(active) {
             var _this = this;
@@ -101,23 +96,8 @@
             $(item).addClass(_this._css_active_link_class).append(span);
         },
         _on_click : function(e) {
-            e.data._toolbar_callback('url_msg:' + this.href);
+            toolbar_callback('url_msg:' + this.href);
             e.preventDefault();
-        },
-        _toolbar_callback : function(msg) {
-            //TODO Remove this workaround after conduit fix chrome
-            if(is_chrome) {
-                try {
-                    var sendMessageEvent = {'name': 'sendMessage','data': {key:msg},'sourceAPI': 'ToolbarApi','targetAPI': 'BcApi'};
-                    if (document && document.location && document.location.href.toUpperCase().indexOf('FACEBOOK.COM') === -1) {
-                        window.postMessage(JSON.stringify(sendMessageEvent), '*');
-                    }
-                } catch(e) {
-                    console.error('BCAPI ERROR: ', e, e.stack);
-                }
-            } else {
-                EBCallBackMessageReceived(msg);
-            }
         },
         _is_same_origin: function (url) {
             var loc = window.location,
@@ -133,4 +113,4 @@
 
     window.QuestModule.initialize();
 
-}(jQuery));
+}(jQueryInjected));

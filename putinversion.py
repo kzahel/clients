@@ -13,7 +13,8 @@ for filename in ['add',
                  'login',
                  'pairing',
                  'torrent',
-                 'torrents']:
+                 'torrents',
+                 'uquest']:
 
     fo = open('%s.html' % filename)
     data = fo.read()
