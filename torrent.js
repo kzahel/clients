@@ -137,6 +137,11 @@ jQuery(document).ready( function() {
             // this client object is dead after a clients.fetch(). we did clients.fetch to get updated active_hash.
             // perhaps it would be better to store active_hash on the torrentcollection, but that way it would not be persisted... :-(
 
+            client.bind('new_torrent', function(t) {
+                client.set_selected_torrent(t);
+                //console.log('may want to replace current acitve torrent view with new torrent',t.get('name'));
+            });
+
             client.bind('change:active_hash', function() {
                 if (window.torrentview) {
                     if (torrentview.model) {

@@ -197,7 +197,11 @@ var ActiveTorrentView = TorrentView.extend({
         $('.default_container').hide();
         var _this = this;
 
+/*
         this.options.client.bind('setstatus', _.bind(function(status) {
+            // XXX -- when this view is destroyed, this function is still bound to the event... need a cleanup
+
+
             // if a client goes offline, style this thing differently
             if (status == 'available') {
                 // yay!
@@ -207,6 +211,7 @@ var ActiveTorrentView = TorrentView.extend({
                 this.$('.bt_torrent_list').addClass('selected_torrent'); // want an "offline" class
             }
         }, this));
+*/
 
         if (this.model) {
             this.model.bind('change', function(model,opts) {
@@ -214,12 +219,6 @@ var ActiveTorrentView = TorrentView.extend({
                 _this.render();
             });
             this.bind_action_events();
-            var client = this.model.collection.client;
-            client.bind('new_torrent', function(t) {
-                client.set_selected_torrent(t);
-                //console.log('may want to replace current acitve torrent view with new torrent',t.get('name'));
-            });
-
         }
         this.render();
     }

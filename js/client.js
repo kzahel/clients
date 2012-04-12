@@ -58,9 +58,10 @@ var Client = Backbone.Model.extend({
                 console.log('got torrent',torrent.get('name'));
                 return torrent;
             }
-
-        } else {
+        } else if (this.updates == 0) {
             console.error('get selected torrent -- no torrent models fetched');
+        } else {
+            console.log('get selected torrent -- no torrents in client!');
         }
     },
     remove: function() {
@@ -278,7 +279,6 @@ var Client = Backbone.Model.extend({
     doreq: function(params, success, error, opts) {
         var client = this;
         if (client.get('type') == 'local') {
-
             if (typeof params == 'object') {
                 var parts = [];
                 for (var key in params) {
@@ -288,7 +288,6 @@ var Client = Backbone.Model.extend({
             }  else {
                 var qs = params;
             }
-
             var url = 'http://127.0.0.1:' + client.get('data').port + '/gui/?' + qs + '&pairing=' + client.get('data').key + '&token=' + client.get('data').key; // send token as the pairing key to save a roundtrip fetching the token
             jQuery.ajax({
                 url: url,
