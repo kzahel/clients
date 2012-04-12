@@ -275,7 +275,7 @@ var Client = Backbone.Model.extend({
                     },
                     error );
     },
-    doreq: function(params, success, error) {
+    doreq: function(params, success, error, opts) {
         var client = this;
         if (client.get('type') == 'local') {
 
@@ -326,7 +326,8 @@ var Client = Backbone.Model.extend({
             if (typeof params == 'string') {
                 debugger;
             }
-            client.api.request('/gui/token.html',
+            var uri = (opts && opts.uri) ? opts.uri : '/gui/';
+            client.api.request(uri,
                               {},
                               params,
                               function(data, status, xhr) {
@@ -460,7 +461,9 @@ var Client = Backbone.Model.extend({
                         console.log('check status error:', _this.get('status'));
                         if (cb) { cb(); }
                         app.send_message( { recipient: 'torrent', command: 'notify_status', id: _this.id, status: _this.get('status') } );
-                    });
+                    },
+                    { uri: '/gui/token.html' }
+                  );
     }
 });
 

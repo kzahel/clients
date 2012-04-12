@@ -11,8 +11,8 @@ jQuery(document).ready( function() {
         var url = jQuery('#url_input').val();
         if (url) {
             // XXX -- this causes each browser tab to do the add.
-            //app.send_message( { recipient: 'client', command: 'add_by_url', 'url': url }, {local:true} );
-            app.send_message( { recipient: 'add', command: 'add_by_url', 'url': url }, {local:true} );
+            app.send_message( { recipient: 'client', command: 'add_by_url', 'url': url } );
+            //app.send_message( { recipient: 'add', command: 'add_by_url', 'url': url }, {local:true} );
             //var msg = { 'command': 'add_by_url', 'url': url };
             //BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
             jQuery('#url_input').val('');
