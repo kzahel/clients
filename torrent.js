@@ -1,22 +1,15 @@
-jQuery(document).ready( function() {
-    window.clients = new ClientCollection;
-    clients.fetch(); // don't fetch! we will receive messages...
-
-    window.app = new App( { type: 'torrent' } );
-    // this entire window is reloaded every time a client switch is initaited, to simplyfy the code
-
-    //ChangeWidth(config.torrent_pane_width);
-
-    function show_setup(client, message) {
+var TorrentApp = App.extend({
+    show_setup: function(client, message) {
+        var app = this;
         $('#torrent_controls').hide();
 	$('.default_container').text(message?message:'Click to setup control'); // insert iframe here instead?
         $('.default_container').unbind();
         $('.default_container').click( function() {
             app.send_message( { recipient: 'torrent', command: 'pair', id: client.id }, {local:true} );
         });
-    }
-
-    function show_remote_setup(client, message) {
+    },
+    show_remote_setup: function(client, message) {
+        var app = this;
         $('#torrent_controls').hide();
 	$('.default_container').text(message?message:'Click to login'); // insert iframe here instead?
         $('.default_container').unbind();
@@ -24,23 +17,10 @@ jQuery(document).ready( function() {
             app.send_message( { recipient: 'torrent', command: 'open_gadget', name: 'login', replace: client.get('data').guid }, { local: true } );
             // send to client only
         });
-    }
-
-
-    jQuery('.arrow_collapse').live('click', function(evt) {
-        //app.collapse();
-        app.send_message( { recipient: 'torrent', command: 'collapse' } );
-    });
-
-    jQuery('.arrow_expand').live('click', function(evt) {
-        //app.expand();
-        app.send_message( { recipient: 'torrent', command: 'expand' } );
-    });
-
-    app.expand = function() {
+    },
+    expand: function() {
         app.settings.set('collapsed',false);
         app.settings.save();
-
         var el = $('#accordion');
         el.addClass('arrow_collapse');
         el.removeClass('arrow_expand');
@@ -49,9 +29,8 @@ jQuery(document).ready( function() {
             clients.selected.start_updating()
         }
         $('.torrent_wrapper').show();
-    }
-
-    app.collapse = function() {
+    },
+    collapse: function() {
         app.settings.set('collapsed',true);
         app.settings.save();
 
@@ -63,35 +42,33 @@ jQuery(document).ready( function() {
             clients.selected.stop_updating();
         }
         $('.torrent_wrapper').hide();
-    }
-
-    app.display_status = function(status) {
+    },
+    display_status: function(status) {
 	$('.default_container').text(status);
-    }
-
-    app.notify_status = function(opts) {
+    },
+    notify_status: function(opts) {
+        debugger;
         var client = clients.get_by_id( opts.id );
         var status = opts.status;
         if (client.get('type') == 'local') {
             if (status == 'unauthorized') {
-                show_setup(client, 'Key invalid. Click to authorize');
+                this.show_setup(client, 'Key invalid. Click to authorize');
             } else if (status == 'no pairing key') {
-                show_setup(client);
+                this.show_setup(client);
             } else {
 	        $('.default_container').text('Status: '+status);
             }
         } else {
             if (status == 'unauthorized guid') {
-                show_remote_setup(client, 'GUID invalid. Click to correct');
+                this.show_remote_setup(client, 'GUID invalid. Click to correct');
             } else {
 	        $('.default_container').text('Status: '+status);
             }
 
         }
-    };
-
-    app.initialize = function() {
-
+    },
+    app_initialize: function(opts) {
+        
         if (app.settings.get('collapsed')) {
             app.collapse();
         }
@@ -101,11 +78,14 @@ jQuery(document).ready( function() {
         var client = clients.selected;
         if (! client) {
             debugger;
+            app.display_status('No client ready');
+            app.collapse();
+            return;
         }
         if (client) {
 
             if (client.get('type') == 'local' && ! client.get('data').key) {
-                show_setup(client);
+                this.show_setup(client);
                 return;
             }
 
@@ -179,18 +159,30 @@ jQuery(document).ready( function() {
                     }
                 }
             });
+            jQuery('#torrent_list').click( function(evt) {
+                BTOpenGadget('torrents.html', 400, 344, { openposition: 'offset:(0;30)' });
+            });
 
+            jQuery('#red_button').click( function(evt) {
+                BTOpenGadget('add.html', 395, 150, { openposition: 'offset:(25;30)' });
+            });
         }
-
-
-        jQuery('#torrent_list').click( function(evt) {
-            BTOpenGadget('torrents.html', 400, 344, { openposition: 'offset:(0;30)' });
-        });
-
-        jQuery('#red_button').click( function(evt) {
-            BTOpenGadget('add.html', 395, 150, { openposition: 'offset:(25;30)' });
-        });
-
     }
+});
 
+
+jQuery(document).ready( function() {
+    window.clients = new ClientCollection;
+    clients.fetch(); // don't fetch! we will receive messages...
+
+    window.app = new TorrentApp( { type: 'torrent' } );
+    // this entire window is reloaded every time a client switch is initaited, to simplify the code
+
+    jQuery('.arrow_collapse').live('click', function(evt) {
+        app.send_message( { recipient: 'torrent', command: 'collapse' } );
+    });
+
+    jQuery('.arrow_expand').live('click', function(evt) {
+        app.send_message( { recipient: 'torrent', command: 'expand' } );
+    });
 } );

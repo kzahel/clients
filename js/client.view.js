@@ -212,6 +212,7 @@ var ActiveClientView = ClientView.extend( {
 
         this.$el.click( function(evt) {
             if (client && client.get('type') == 'local' && client.running() && ! client.get('data').key) {
+                // re-check the status 
                 // XXX -- the logic to determine whether to show which dialog is terrible...
                 app.send_message( { recipient: 'client', command: 'pair', id: client.id }, {local:true} );
             } else {

@@ -1,3 +1,9 @@
 after pairing "torrent" shows "Loading"
 deny pairing should allow login to remote
 removing the last client from the list causes n+1 reloads where n is number of tabs (other messages cause this problem too?)
+"Loading" on the torrent app (initialize states)
+
+----
+
+major: allow switch client without refreshing whole toolbar
+major: only one gadget window communicates with ut updates other gadgets with SetGlobalKey

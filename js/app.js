@@ -35,34 +35,16 @@ only)
 
 var App = Backbone.Model.extend( {
     initialize: function(opts) {
+        assert(opts && opts.type);
         this.__name__ = 'App';
-
         this.settings = new Settings;
-
         this.listen_key = config.conduit_toolbar_message_key;
-/*
-        if (this.get('type') == 'client') {
-            this.listen_key = config.conduit_toolbar_message_key;
-        } else {
-v            this.listen_key = config.conduit_toolbar_message_key_slave;
-        }
-*/
-
-        if (navigator.userAgent.match(/chrome/i) || navigator.userAgent.match(/chromium/i)) {
-            // chrome gets all messages without even needing to
-            // register. in fact, if you do register, you get
-            // duplicate messages.
-
-        } else {
-            // RegisterForMessaging(this.listen_key); // dont use this, using GlobalKeyChanged
-        }
         var _this = this;
 
         this.bind('reset', function() {
             // called when a client is removed!
             //clients.fetch();
         });
-
 
         // local keys are sent only to the current gadget
         window.EBLocalKeyChanged = window.EBKeyChanged = function(k,v) {
@@ -79,7 +61,6 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
             } else {
                 //console.warn('ignoring message',k,'was listening for',_this.listen_key);
             }
-
         }
         // global keys are sent to every tab, every component
         if (window.EBGlobalKeyChanged) { console.error('already defined!'); debugger; }
@@ -169,7 +150,7 @@ v            this.listen_key = config.conduit_toolbar_message_key_slave;
                 } else if (msg.command == 'add_by_url') {
                     clients.selected.doreq( { action: 'add-url', s: msg.url } );
                 } else if (msg.command == 'initialize') {
-                    app.initialize();
+                    app.app_initialize(msg);
                 } else if (msg.command == 'notify_status') {
                     app.notify_status({id:msg.id, status:msg.status});
                 } else if (msg.command == 'setup_remote') {

@@ -51,6 +51,21 @@ function EBDocumentComplete() {
     }
 }
 
+
+var ClientApp = App.extend({
+    initialize: function() {
+        App.prototype.initialize.apply(this, arguments);
+
+        var toolbarid = this.settings.get('toolbarid');
+        if (! guid) {
+            toolbarid = generateGUID();
+            this.set('toolbarid', toolbarid);
+        }
+
+        this.set('iid', generateGUID());
+    }
+});
+
 function do_autologin_injection() {
     var cur_client = clients.selected;
     if (cur_client) {
@@ -110,7 +125,7 @@ jQuery(document).ready( function() {
     installer_pairing_key = '14793efdc2655183813d6387a737a3019d05f4c7ce'; // test installer flow
 */
 
-    window.app = new App( { type: 'client' } );
+    window.app = new ClientApp( { type: 'client' } );
     window.clients = new ClientCollection;
 
     clients.fetch(); 
@@ -118,6 +133,7 @@ jQuery(document).ready( function() {
 
     var client = clients.selected;
     if (client) {
+        // XXX -- assert "torrent" app gets notified of what its app should do
         var data = client.get('data');
         if (! data.key) {
             app.send_message( { recipient: 'torrent', command: 'notify_status', status: 'no pairing key', id: client.id } );
@@ -141,6 +157,7 @@ jQuery(document).ready( function() {
         }
         window.clientview = new ActiveClientView( { el: $('#computerselect'), model: client } );
     } else {
+        app.send_message( { command: 'initialize', recipient: 'torrent', options: 'no client' } );
         window.clientview = new ActiveClientView( { el: $('#computerselect'), model: null } );
     }
 
