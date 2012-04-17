@@ -143,6 +143,8 @@ var App = Backbone.Model.extend( {
                     //assert(client.collection);
                     //client.fetch(); // fetches updated "active_hash" attribute // XXX local storage not updating across IE tabs???  ???
                     assert(client.get('active_hash') == msg.hash);
+                } else if (msg.command == 'heartbeat') {
+                    app.siblings.register_heartbeat(msg);
                 } else if (msg.command == 'expand') {
                     app.expand();
                 } else if (msg.command == 'collapse') {

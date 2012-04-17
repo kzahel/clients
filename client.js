@@ -63,6 +63,8 @@ var ClientApp = App.extend({
         }
 
         this.set('iid', generateGUID());
+
+        this.siblings = new Siblings({app:this});
     }
 });
 
