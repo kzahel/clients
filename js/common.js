@@ -102,14 +102,20 @@ function BTOpenGadget(url, w, h, extra_opts) {
     OpenGadget(abs_url, w, h + ff_fudge, opts_str);
 }
 
-function BTSendMessage(key, msg) {
-    console.log('sending message',key,msg);
+function BTSendMessage(key, msg, opts) {
+    if (opts && opts.silent) {
+    } else {
+        console.log('sending message',key,msg);
+    }
     StoreGlobalKey(key, msg);
     //SendMessage(key, msg);
 }
 
-function BTSendTabMessage(key, msg) {
-    console.log('sending local message',key,msg);
+function BTSendTabMessage(key, msg, opts) {
+    if (opts && opts.silent) {
+    } else {
+        console.log('sending local message',key,msg);
+    }
     StoreKey(key, msg);
 }
 

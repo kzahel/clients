@@ -52,10 +52,8 @@ var Client = Backbone.Model.extend({
                 this.set('active_hash', hash);
                 this.save();
             }
-            console.log('get selected torrent, hash',hash);
             var torrent = this.torrents.get( hash );
             if (torrent) {
-                console.log('got torrent',torrent.get('name'));
                 return torrent;
             }
         } else if (this.updates == 0) {

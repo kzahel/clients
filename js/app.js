@@ -136,7 +136,10 @@ var App = Backbone.Model.extend( {
 
         if (msg.recipient) { // some messages are sent to specific windows
             if (this.get('type') == msg.recipient) {
-                console.log('app',this.get('type'),'handling toolbarapi message',k,JSON.stringify(msg));
+                if (msg && msg.command == 'heartbeat') {
+                } else {
+                    console.log('app',this.get('type'),'handling toolbarapi message',k,JSON.stringify(msg));
+                }
                 if (msg.command == 'select_torrent') {
                     var client = clients.selected;
                     client.set('active_hash', msg.hash);
@@ -263,9 +266,9 @@ var App = Backbone.Model.extend( {
     send_message: function(msg, opts) {
         if (opts && opts.local) {
             // there is no such thing as a "tab" only message.
-            BTSendTabMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
+            BTSendTabMessage(config.conduit_toolbar_message_key, JSON.stringify(msg), opts );
         } else {
-            BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
+            BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg), opts );
         }
     },
     broadcast: function(msg) {
