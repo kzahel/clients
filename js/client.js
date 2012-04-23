@@ -607,6 +607,7 @@ var ClientCollection = Backbone.Collection.extend( {
         var _this = this;
         pairing.bind('pairing:found', function(opts) {
             opts.attempt_authorization = false;
+            opts.authorize = false;
             var client = new Client( { type: 'local', data: opts } );
             // client.pair(); // dont pair automatically
             client.set('status','running');
