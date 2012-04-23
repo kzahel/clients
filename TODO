@@ -1,4 +1,5 @@
 deny pairing should allow login to remote
+port 10000 soshare/ut collision. reach state where unable to delete client and no pairing popup is happening. perhaps scan /version each time before triggering pair_iframe()
 
 --
 
