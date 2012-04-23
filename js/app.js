@@ -128,6 +128,11 @@ var App = Backbone.Model.extend( {
                 this.settings.set('collapsed',false);
                 this.settings.save();
                 BTReload(this);
+            } else if (msg.message == 'pairing denied') {
+                // user clicked no to the pairing dialog
+                var client = clients.get_by_id( msg.id );
+                client.fetch();
+                // storing the "pairing denied" status is handled by the sender
             } else if (msg.message == 'remote login') {
                 BTReload(this);
             } else if (msg.message == 'switch_client') {
@@ -256,14 +261,13 @@ var App = Backbone.Model.extend( {
         this.send_message( msg );
     },
     pair: function(client) {
-        if (this.get('type') == 'client') {
-            if (client.get('data').name != 'unknown') {
-                // likely supports new style pairing
-                BTOpenGadget('pairing.html', 286, 155, { openposition: 'offset:(0;30)' });
-            } else {
-                BTOpenGadget('pairing_instructions.html', 286, 265, { openposition: 'offset:(0;30)' });
-                client.pair_jsonp();
-            }
+        // XXX -- re-check /version before doing this? (some other program could run on this port after shutdown, etc)
+        if (client.get('data').name != 'unknown') {
+            // likely supports new style pairing
+            BTOpenGadget('pairing.html', 286, 155, { openposition: 'offset:(0;30)' });
+        } else {
+            BTOpenGadget('pairing_instructions.html', 286, 265, { openposition: 'offset:(0;30)' });
+            client.pair_jsonp();
         }
     },
     add_client: function(client) {

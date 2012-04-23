@@ -149,7 +149,10 @@ var Client = Backbone.Model.extend({
                        },
                        dataType: 'jsonp',
                        error: function(xhr, status, text) {
-                           app.broadcast( { message: 'close floating windows' } );
+                           _this.set_status('pairing denied');
+                           _this.save();
+                           
+                           app.broadcast( { message: 'pairing denied', id: _this.id } );
                            // likely a 401 unauthorized
                            // XXX -- handle allow login to remote
                        }
@@ -264,6 +267,24 @@ var Client = Backbone.Model.extend({
                                 );
             }
         }
+    },
+    check_version: function( cb ) {
+        // updates version for local client
+        assert( this.get('type') == 'local');
+        var _this = this;
+        var url = 'http://127.0.0.1:' + this.get('data').port + '/version/';
+        jQuery.ajax( { url: url,
+                       dataType: 'jsonp',
+                       timeout: 500,
+                       success: function(data, status, xhr) {
+                           cb();
+                       },
+                       error: function(xhr, status, text) {
+                           _this.set_status('unavailable');
+                           _this.save();
+                           cb();
+                       }
+                     });
     },
     set_settings: function( d, success, error ) {
         var qs = 'action=setsetting';

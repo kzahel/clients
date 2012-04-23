@@ -102,21 +102,59 @@ function BTOpenGadget(url, w, h, extra_opts) {
     OpenGadget(abs_url, w, h + ff_fudge, opts_str);
 }
 
-var _last_store = null;
-function BTSendMessage(key, msg, opts) {
-    var _this_store = new Date();
-    if (_last_store && _this_store - _last_store < 20) {
-        // WARNING!!! IE cannot handle multiple StoreGlobalKey in quick succession
-        // XXX - cannot guarantee other tabs are not also setting this key!
-        debugger;
-    }
-    _last_store = _this_store;
+function SpacedExecution(spacing) {
+    this.spacing = spacing;
+    this.last_call = null;
+    this.timer = null;
+    this.queue = [];
+}
+SpacedExecution.prototype = {
+    add: function(fn) {
+        if (this.last_call) {
+            this.queue.push( fn );
+            this.process_queue();
+        } else {
+            console.warn('SpacedExecution: immediate');
+            this.call(fn);
+        }
+    },
+    call: function(fn) {
+        this.last_call = new Date();
+        fn();
+    },
+    process_queue: function() {
+        if (this.timer) {
+            this.timer = null;
+        }
+        var now = new Date();
+        var delta = now - this.last_call;
 
+        if (delta < this.spacing) {
+            if (! this.timer) {
+                console.warn('SpacedExecution: enqueueing');
+                this.timer = setTimeout( _.bind(this.process_queue, this), this.spacing - delta );
+            }
+        } else {
+            var fn = this.queue.shift();
+            console.warn('SpacedExecution: popping');
+            this.call(fn);
+            if (this.queue.length > 0) {
+                this.timer = setTimeout( _.bind(this.process_queue, this), this.spacing );
+            }
+        }
+    }
+};
+
+var _bt_send_queue = new SpacedExecution(40);
+
+function BTSendMessage(key, msg, opts) {
     if (opts && opts.silent) {
     } else {
         console.log('sending message',key,msg);
     }
-    StoreGlobalKey(key, msg);
+    
+    var fn = function() { StoreGlobalKey(key, msg) };
+    _bt_send_queue.add( fn );
     //SendMessage(key, msg);
 }
 
@@ -140,7 +178,7 @@ function BTCloseFloatingWindow(delay) {
 }
 
 function BTReload(app) {
-    //app.broadcast( { message: 'close floating windows' } );
+    app.broadcast( { message: 'close floating windows' } );
     if (app.get('type') == 'client') {
         // only want this to be called by one component!
         RefreshToolbar();
