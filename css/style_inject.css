@@ -3,10 +3,10 @@
 }
 .utorrent-uquest-active .utorrent-uquest-span {
     position:absolute;
-    width:26px;
-    height:26px;
-    top:-20px;
+    width:24px;
+    height:33px;
+    top:-26px;
     left:40%;
-    background: url("images/toolbar/quest_icon.png") no-repeat 2px 2px;
+    background: url("images/toolbar/quest_page_icon.png") no-repeat;
     z-index:99999;
 }
