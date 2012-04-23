@@ -250,6 +250,11 @@ var Client = Backbone.Model.extend({
                                           // buggy server (or possibly lost internet connection)
                                           _this.update_timeout = setTimeout( _this.do_update, _this.remote_update_interval * 2 );
                                           debugger;
+                                      } else if (text && text.error == 'invalid JSON') {
+                                          // client bug, sometimes it sends bad data
+                                          _this.set_status('received bad data');
+                                          _this.update_timeout = setTimeout( _this.do_update, _this.remote_update_interval * 2 ); // simply try again
+                                          debugger;
                                       } else {
                                           debugger;
                                       }

@@ -124,6 +124,9 @@ var App = Backbone.Model.extend( {
             } else if (msg.message == 'no clients') {
                 BTReload(this);
             } else if (msg.message == 'pairing accepted') {
+                // set torrent view to expand
+                this.settings.set('collapsed',false);
+                this.settings.save();
                 BTReload(this);
             } else if (msg.message == 'remote login') {
                 BTReload(this);

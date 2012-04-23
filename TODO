@@ -3,6 +3,8 @@ deny pairing should allow login to remote
 removing the last client from the list causes n+1 reloads where n is number of tabs (other messages cause this problem too?)
 "Loading" on the torrent app (initialize states)
 
+when pairing key is authorized, expand the torrent view
+
 ----
 
 major: allow switch client without refreshing whole toolbar
