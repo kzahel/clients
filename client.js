@@ -122,14 +122,15 @@ jQuery(document).ready( function() {
 
     clients.fetch(); 
     clients.init_post_fetch();
-
     var client = clients.selected;
     if (client) {
         // XXX -- assert "torrent" app gets notified of what its app should do
         var data = client.get('data');
         if (! data.key) {
             app.send_message( { recipient: 'torrent', command: 'notify_status', status: 'no pairing key', id: client.id } );
-            app.send_message( { recipient: 'torrent', command: 'collapse' } );
+            setTimeout( function() {
+                app.send_message( { recipient: 'torrent', command: 'collapse' } );
+            }, 200);
 
             // client.pair(); // manually trigger this
         } else {

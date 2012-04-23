@@ -102,7 +102,14 @@ function BTOpenGadget(url, w, h, extra_opts) {
     OpenGadget(abs_url, w, h + ff_fudge, opts_str);
 }
 
+var _last_store = null;
 function BTSendMessage(key, msg, opts) {
+    var _this_store = new Date();
+    if (_this_store - _last_store < 10) {
+        // WARNING!!! IE cannot handle multiple StoreGlobalKey in quick succession
+        debugger;
+    }
+
     if (opts && opts.silent) {
     } else {
         console.log('sending message',key,msg);
