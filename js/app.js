@@ -78,6 +78,14 @@ var App = Backbone.Model.extend( {
             }
         }
     },
+    send_state_dump: function() {
+        if (clients.selected) {
+            var data = clients.selected.serialize()
+            var msg = {type:'broadcast', message:'state_dump', data:data};
+            debugger;
+            this.send_message(msg);
+        }
+    },
     handle_message: function(k, msg, opts) {
         var my_type = this.get('type');
         var local_message = false;
@@ -136,6 +144,9 @@ var App = Backbone.Model.extend( {
 
         if (msg.recipient) { // some messages are sent to specific windows
             if (this.get('type') == msg.recipient) {
+                if (msg && msg.recipient_iid && msg.recipient_iid != this.get('iid')) {
+                    return;
+                }
                 if (msg && msg.command == 'heartbeat') {
                 } else {
                     console.log('app',this.get('type'),'handling toolbarapi message',k,JSON.stringify(msg));

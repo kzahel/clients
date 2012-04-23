@@ -407,6 +407,15 @@ var Client = Backbone.Model.extend({
             this.update_timeout = setTimeout( this.do_update, this.remote_update_interval );
         }
     },
+    serialize: function() {
+        var torrents_array = [];
+        for (var i=0; i<this.torrents.models.length; i++) {
+            torrents_array.push( this.torrents.models[i].serialize() );
+        }
+        var data = { torrentc: this.cacheid,
+                     torrents: torrents_array };
+        return data;
+    },
     add_torrent: function(d) {
         var torrent = new Torrent( { id: d[0], data: d } );
         if (this.get('active_hash') == d[0]) {

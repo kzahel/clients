@@ -1,4 +1,17 @@
 var TorrentApp = App.extend({
+    initialize: function() {
+        App.prototype.initialize.apply(this, arguments);
+
+        var toolbarid = this.settings.get('toolbarid');
+        if (! guid) {
+            toolbarid = generateGUID();
+            this.settings.set('toolbarid', toolbarid);
+            // save!
+        }
+
+        this.set('iid', generateGUID());
+        this.siblings = new Siblings({app:this});
+    },
     show_setup: function(client, message) {
         var app = this;
         $('#torrent_controls').hide();
@@ -47,7 +60,6 @@ var TorrentApp = App.extend({
 	$('.default_container').text(status);
     },
     notify_status: function(opts) {
-        debugger;
         var client = clients.get_by_id( opts.id );
         var status = opts.status;
         if (client.get('type') == 'local') {
@@ -60,7 +72,7 @@ var TorrentApp = App.extend({
             }
         } else {
             if (status == 'unauthorized guid') {
-                this.show_remote_setup(client, 'GUID invalid. Click to correct');
+                this.show_remote_setup(client, 'Signed out. Click to login');
             } else {
 	        $('.default_container').text('Status: '+status);
             }

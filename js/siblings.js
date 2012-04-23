@@ -22,16 +22,26 @@ var Siblings = Backbone.Model.extend({
         this.app = opts.app;
 
         this.birth = new Date();
+        this.virgin = true;
         this.current_master = jQuery.jStorage.get('master');
         this.am_master = false;
-
+ 
         this.data = {};
 
-        this.heartbeat_interval = setInterval( _.bind(this.send_heartbeat, this) , this.heartbeat);
+        if (this.get('type') == 'torrent') {
+            this.send_heartbeat();
+            this.heartbeat_interval = setInterval( _.bind(this.send_heartbeat, this) , this.heartbeat);
+        }
+
+        if (this.virgin && this.current_master) {
+            app.send_message({recipient_iid:this.current_master, recipient:'torrent',command:'state_dump'});
+            this.virgin = false;
+        }
     },
     set_master: function(new_master) {
         var stored_master = jQuery.jStorage.get('master');
         this.current_master = new_master;
+        this.app.trigger('master');
         if (new_master != stored_master) {
             jQuery.jStorage.set('master', new_master);
         }
@@ -42,7 +52,7 @@ var Siblings = Backbone.Model.extend({
         this.am_master = true;
     },
     send_heartbeat: function() {
-        var msg = {'recipient':'client', 'command':'heartbeat', 'iid':this.app.get('iid')};
+        var msg = {'recipient':'torrent', 'command':'heartbeat', 'iid':this.app.get('iid')};
         if (this.am_master) {
             msg.master = true;
         }
@@ -78,6 +88,10 @@ var Siblings = Backbone.Model.extend({
             this.data[msg.iid] = data;
             if (data.master) {
                 this.set_master(msg.iid);
+            }
+
+            if (msg.virgin) {
+                if (this.am_master) { this.app.send_state_dump(); }
             }
         }
 
