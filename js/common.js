@@ -105,10 +105,12 @@ function BTOpenGadget(url, w, h, extra_opts) {
 var _last_store = null;
 function BTSendMessage(key, msg, opts) {
     var _this_store = new Date();
-    if (_this_store - _last_store < 10) {
+    if (_last_store && _this_store - _last_store < 20) {
         // WARNING!!! IE cannot handle multiple StoreGlobalKey in quick succession
+        // XXX - cannot guarantee other tabs are not also setting this key!
         debugger;
     }
+    _last_store = _this_store;
 
     if (opts && opts.silent) {
     } else {
@@ -138,7 +140,7 @@ function BTCloseFloatingWindow(delay) {
 }
 
 function BTReload(app) {
-    app.broadcast( { message: 'close floating windows' } );
+    //app.broadcast( { message: 'close floating windows' } );
     if (app.get('type') == 'client') {
         // only want this to be called by one component!
         RefreshToolbar();

@@ -19,6 +19,8 @@ var Siblings = Backbone.Model.extend({
     initialize: function(opts) {
         // keeps track of other tabs.
         assert(opts && opts.app);
+        return; // this module not being used
+
         this.app = opts.app;
 
         this.birth = new Date();

@@ -150,7 +150,8 @@ var Client = Backbone.Model.extend({
                        dataType: 'jsonp',
                        error: function(xhr, status, text) {
                            app.broadcast( { message: 'close floating windows' } );
-                           debugger;
+                           // likely a 401 unauthorized
+                           // XXX -- handle allow login to remote
                        }
                      }
                    );

@@ -256,7 +256,7 @@ var App = Backbone.Model.extend( {
         this.send_message( msg );
     },
     pair: function(client) {
-        if (true || this.get('type') == 'client') {
+        if (this.get('type') == 'client') {
             if (client.get('data').name != 'unknown') {
                 // likely supports new style pairing
                 BTOpenGadget('pairing.html', 286, 155, { openposition: 'offset:(0;30)' });
@@ -264,8 +264,6 @@ var App = Backbone.Model.extend( {
                 BTOpenGadget('pairing_instructions.html', 286, 265, { openposition: 'offset:(0;30)' });
                 client.pair_jsonp();
             }
-        } else {
-            console.error('must pair from client frame');
         }
     },
     add_client: function(client) {
