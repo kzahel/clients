@@ -205,6 +205,9 @@ var App = Backbone.Model.extend( {
                             url += '?replace=' + encodeURIComponent(msg.replace);
                         }
                         BTOpenGadget(url, 286, 200, { openposition: 'offset:(0;30)' });
+                    } else if (msg.name == 'files') {
+                        var url = 'files.html';
+                        BTOpenGadget(url, 286, 200, { openposition: 'offset:(0;30)' });
                     } else {
                         console.error('unrecognized gadget');
                         debugger;

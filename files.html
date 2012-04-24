@@ -1,0 +1,88 @@
+<!DOCTYPE html>  
+<!--[if lt IE 7 ]><html lang="en" class="ie ie6"><![endif]-->
+<!--[if IE 7 ]><html lang="en" class="ie ie7"><![endif]-->
+<!--[if IE 8 ]><html lang="en" class="ie ie8"><![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--> <html lang="en"><!--<![endif]-->
+<head>
+<link rel="stylesheet" href="css/style_robv.css?v=3.33">
+<script src="js/config.js?v=3.33"></script>
+<script src="lib/jsload.js?v=3.33"></script>
+<script src="tags.js?v=3.33"></script>
+<script>
+  (new JSLoad(tags)).load( ["files"], function() {
+  });
+</script>
+<script src="lib/BrowserCompApi.js"></script>
+
+<script type="text/template" id="torrent_template">
+  <div class="flt_lft relative bt_torrent_list">
+    <div class="absolute clearfix torrent_item_container">
+      <div class="flt_lft bt_button_play" title="Resume torrent dl/seeding.">
+	Resume
+      </div>
+      <div class="flt_lft bt_button_pause" title="Stop torrent dl/seeding">
+	Stop
+      </div>
+      <div class="current_torrent  absolute torrent_name torrent_info">
+	Loading...
+      </div>
+      <div class="absolute bt_button_x" title="Remove torrent from dl/seed list.">
+	Remove
+      </div>
+      <div class="absolute bt_info_container"> 
+	<div class="absolute clearfix bt_state_container" title="% of download complete.">
+	  <div class="torrent_info_percent_complete  flt_rt bt_torrent_state">
+	    0%
+	  </div>
+	  <div class="icon_torrent_state  flt_rt bt_icon_torrent_state">
+	  </div>
+	</div>
+	<div class="absolute clearfix bt_state-dl_container" title="Download speed in Killobytes per second.">
+	  <div class="torrent_info_speed  flt_rt bt_info_kbs">
+	    kb/s
+	  </div>
+	  <div class="torrent_state  flt_rt bt_torrent_speed dl_speed">
+	  </div>
+	</div>
+      </div>
+    </div>
+    <div class="torrent_color_container torrent_dl_color">
+      <div class="torrent_color_bg"></div>
+      <div class="color_calc  clearfix torrent_dl_color"> </div>
+    </div>
+  </div>
+</script>
+
+
+
+
+
+
+
+</head>
+
+  <body class="bg_dialog" style="overflow-x: hidden;">
+
+
+    <div class="help_row ">
+      <a href="http://www.utorrent.com/help/faq/utorrent-control" target="_blank" class="help_link torrent_fudge" onclick="sendmsg('close_gadgets');">Need help with torrent controls?</a>
+    </div>
+
+
+    <div class="dialog_head head_connect">
+      <h2>Files</h2>
+    </div>
+
+    <div id="global_container" class="board_container torrent_list_dd">
+
+      Loading...
+
+    </div>
+
+
+
+
+
+
+</body>
+</html>

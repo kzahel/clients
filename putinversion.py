@@ -10,6 +10,7 @@ print 'version found',v
 for filename in ['add',
                  'client',
                  'clients',
+                 'files',
                  'login',
                  'pairing',
                  'torrent',
