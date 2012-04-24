@@ -10,7 +10,10 @@ jQuery(document).ready( function() {
     var client = clients.selected;
     if (client) {
 
-        // window.torrentsview = new TorrentsView( { el: $('#global_container'), model: client } );
+        var url_args = decode_url_arguments();
+        var hash = url_args.hash;
+        debugger;
+        window.filesview = new FilesView( { el: $('#global_container'), model: client, hash: hash } );
         client.start_updating();
         console.log(client.get('data').key);
     }
