@@ -1,0 +1,166 @@
+<!DOCTYPE html>  
+<!--[if lt IE 7 ]><html lang="en" class="ie ie6"><![endif]-->
+<!--[if IE 7 ]><html lang="en" class="ie ie7"><![endif]-->
+<!--[if IE 8 ]><html lang="en" class="ie ie8"><![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--> <html lang="en"><!--<![endif]-->
+<head>
+<script>
+if (!window.console) {
+  window.console = { log: function(){}, error: function(){}, warn: function(){} };
+}
+</script>
+<style>
+#clients_container {
+  width: 200px;
+  border: 1px dashed black;
+}
+
+.add_client_container {
+  border: 1px solid black;
+  width: 300px;
+}
+
+.active_torrent_container {
+  position: absolute;
+  left: 320px;
+  width: 350px;
+  border: 2px solid red;
+}
+
+.torrent_container {
+  width: 325px;
+  border: 1px solid blue;
+}
+
+.torrents_container {
+  position: absolute;
+  left: 320px;
+  top: 60px;
+  width: 350px;
+  border: 1px solid yellow;
+}
+
+.new_torrent_view {
+  position: absolute;
+  top: 300px;
+  width: 350px;
+  border: 1px solid green;
+}
+</style>
+<link rel="stylesheet" href="css/style_robv.css">
+
+
+<script type="text/template" id="client_template">
+  <span class="status">-</span>
+  <span class="name">name</span>
+  <span class="close">x</span>
+</script>
+
+
+<script type="text/template" id="torrent_template">
+  <div class="torrent_container">
+    <div class="click_container">
+      <span class="name">torrent name</span>
+      <span class="status">(status)</span>
+      <span class="remove">x</span>
+    </div>
+  </div>
+</script>
+
+<script type="text/template" id="active_torrent_template">
+  <span class="active_torrent_container">
+
+    <span class="name">torrent name</span>
+    <span class="status">(status)</span>
+    <span class="actions">x</span>
+    <span class="add">+</span>
+
+  </span>
+</script>
+
+<script type="text/template" id="add_client_template">
+  <div class="add_client_container">
+    <form class="form">
+      <input name="username" type="text" value="kzahel" />
+      <input name="password" type="password" value="" />
+      <input type="button" class="add" value="add" />
+    </form>
+    <span class="spinner"></span>
+  </div>
+</script>
+
+<script type="text/template" id="clients_template">
+  <div class="container">
+    <div class="clients">
+    </div>
+    <div class="add">add a client</div>
+  </div>
+</script>
+
+
+<script type="text/template" id="torrents_template">
+  <div class="torrents_container">
+    <div class="list">
+    </div>
+
+
+    <div class="info">those are the torrents</div>
+  </div>
+</script>
+
+
+<script type="text/template" id="add_torrent_template">
+  <div class="add_torrent_container">
+    <form class="form">
+      <input name="url" type="text" value="http://www.clearbits.net/get/561-xlrg01---dresc---mulle-meeldib-rongiga-s6ita.torrent" />
+      <input type="button" class="add" value="add" />
+    </form>
+    <span class="spinner"></span>
+  </div>
+</script>
+
+
+</head>
+<body>
+
+
+<div style="position:absolute">
+  <div id="clients_view">
+  </div>
+
+  <div id="new_client_view">
+  </div>
+
+  <div id="new_torrent_view">
+  </div>
+
+  <div id="pairing_view">
+  </div>
+
+</div>
+
+<div id="active_torrent_view">
+</div>
+
+<div id="torrents_view">
+</div>
+
+
+<script src="lib/jsload.js"></script>
+<script src="tags.js"></script>
+<script>
+(new JSLoad(tags)).load( ["web"], function() {
+
+/*
+  jQuery(document).ready( function() {
+
+  });
+*/
+});
+</script>
+<script src="lib/BrowserCompApi.js"></script>
+<script src="lib/ToolbarApi.js"></script>
+
+
+</body>
+</html>

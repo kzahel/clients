@@ -1,0 +1,98 @@
+<!DOCTYPE html>  
+<!--[if lt IE 7 ]><html lang="en" class="ie ie6"><![endif]-->
+<!--[if IE 7 ]><html lang="en" class="ie ie7"><![endif]-->
+<!--[if IE 8 ]><html lang="en" class="ie ie8"><![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--> <html lang="en"><!--<![endif]-->
+<head>
+<link rel="stylesheet" href="css/style_robv.css?v=3.32">
+<script src="js/config.js?v=3.32"></script>
+<script src="lib/jsload.js?v=3.32"></script>
+<script src="tags.js?v=3.32"></script>
+<script>
+(new JSLoad(tags)).load( ["torrent"], function() {
+});
+</script>
+<script src="lib/BrowserCompApi.js"></script>
+
+<script type="text/template" id="torrent_template">
+  <div class="flt_lft relative bt_torrent_list selected_torrent" style="background:#f0f0f0">
+    <div class="absolute clearfix torrent_item_container">
+      <div class="flt_lft bt_button_play" title="Resume torrent dl/seeding.">
+	Resume
+      </div>
+      <div class="bt_button_pause" title="Stop torrent dl/seeding">
+	Stop
+      </div>
+      <div class="current_torrent  absolute torrent_name torrent_info selected_name">
+	Loading...
+      </div>
+      <div class="absolute bt_button_x" title="Remove torrent from dl/seed list.">
+	Remove
+      </div>
+      <div class="absolute bt_info_container"> 
+	<div class="absolute clearfix bt_state_container" title="% of download complete.">
+	  <div class="torrent_info_percent_complete  flt_rt bt_torrent_state">
+	    0%
+	  </div>
+	  <div class="icon_torrent_state  flt_rt bt_icon_torrent_state">
+	  </div>
+	</div>
+	<div class="absolute clearfix bt_state-dl_container" title="Download speed in Killobytes per second.">
+	  <div class="torrent_info_speed  flt_rt bt_info_kbs">
+	    kb/s
+	  </div>
+	  <div class="torrent_state  flt_rt bt_torrent_speed dl_speed">
+	  </div>
+	</div>
+      </div>
+    </div>
+    <div class="torrent_color_container torrent_dl_color selected_color">
+      <div class="torrent_color_bg"></div>
+      <div class="color_calc  clearfix torrent_dl_color"> </div>
+    </div>
+  </div>
+</script>
+</head>
+
+<body>
+
+<!-- show the torrent view stuff by default first -->
+<div id="page_wrapper">
+    <!-- Torrent List -->
+    <div class="torrent_wrapper">
+
+        <div class="default_container">Loading...</div>
+
+        <div id="torrent_controls">
+          <div id="red_button" class="flt_lft button_add-torrent" title="Add Torrent" tabindex="2">+</div>
+          <div class="double_tap"><div class="tap">&nbsp;</div></div>
+          <div id="torrent_container" class="absolute board_container control_torrent_container">
+              <!--
+              <div id="blue_button" class="flt_lft button_pairing" title="Connection Settings" tabindex="6">Resize</div>
+              -->
+              <div id="jsonp" class="flt_lft">
+                <script type="text/javascript" id="uTdata"></script>
+              </div>
+
+              <div id="jsona" class="flt_lft">
+                <script type="text/javascript" id="uTaction"></script>
+              </div>
+              <!-- torrent_template.html gets inserted here -->
+              <div class="flt_lft relative bt_torrent_box">
+                  <div id="torrent_template_container"></div>
+              </div>
+          </div>
+          <div class="triple_tap"><div class="tap">&nbsp;</div></div>
+          <div id="torrent_list" class="button_open" tabindex="4" title="Display torrent list.">Display List</div>
+        </div>
+    </div>
+    <div id="accordion" class="arrow_collapse" title="Show/hide torrent list.">Show/Hide Torrent List</div>
+</div>
+
+
+
+
+
+
+</body>
+</html>

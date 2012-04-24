@@ -1,0 +1,598 @@
+@import url(ut_foundation.css);
+.cleardiv {
+  clear: both;
+  font-size: 0px; }
+
+.block_pad {
+  height: 10px; }
+
+html, body {
+  background: transparent;
+  color: #333; }
+
+*:focus {
+  outline: none !important; }
+
+#page_wrapper {
+  position: relative;
+  height: 26px;
+  overflow: hidden; }
+
+#torrent_controls {
+  display: none; }
+
+.default_container {
+  height: 21px;
+  width: 334px;
+  background: #f0f0f0;
+  padding: 5px 0 0 10px;
+  color: #666666; }
+
+.control_torrent_container {
+  margin: 0 53px 0 26px; }
+
+.torrent_wrapper {
+  position: relative; }
+  .torrent_wrapper .button_add-torrent {
+    display: block;
+    position: absolute;
+    z-index: 22222;
+    width: 25px;
+    height: 26px;
+    left: 0px;
+    top: 0px;
+    text-indent: -9999px;
+    background: #f0f0f0 url("images/toolbar/action_sprite.png") no-repeat 5px -91px;
+    overflow: hidden; }
+    .torrent_wrapper .button_add-torrent:hover {
+      background: #f0f0f0 url("images/toolbar/action_sprite.png") no-repeat -59px -91px; }
+  .torrent_wrapper .double_tap {
+    position: absolute;
+    left: 25px;
+    top: 1px;
+    padding: 4px 0;
+    width: 1px;
+    height: 16px;
+    background: #f0f0f0; }
+    .torrent_wrapper .double_tap .tap {
+      height: 17px;
+      width: 1px;
+      background: #dcdcdc;
+      font-size: 0px; }
+  .torrent_wrapper .triple_tap {
+    position: absolute;
+    right: 52px;
+    top: 1px;
+    padding: 4px 0;
+    width: 1px;
+    height: 16px;
+    background: #f0f0f0; }
+    .torrent_wrapper .triple_tap .tap {
+      height: 17px;
+      width: 1px;
+      background: #dcdcdc;
+      font-size: 0px; }
+  .torrent_wrapper .button_open {
+    display: block;
+    position: absolute;
+    z-index: 444;
+    width: 26px;
+    height: 26px;
+    right: 26px;
+    top: 0;
+    text-indent: -9999px;
+    overflow: hidden;
+    background: #f0f0f0 url("images/toolbar/action_sprite.png") no-repeat 5px -157px; }
+    .torrent_wrapper .button_open:hover {
+      background: black url("images/toolbar/action_sprite.png") no-repeat -59px -157px; }
+
+.arrow_collapse {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 26px;
+  height: 26px;
+  overflow: hidden;
+  text-indent: -9999px;
+  background: transparent url("images/toolbar/action_sprite.png") no-repeat 5px -219px; }
+  .arrow_collapse:hover {
+    background: black url("images/toolbar/action_sprite.png") no-repeat -59px -219px; }
+
+.arrow_expand {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 26px;
+  height: 26px;
+  overflow: hidden;
+  text-indent: -9999px;
+  background: transparent url("images/toolbar/action_sprite.png") no-repeat 5px -251px; }
+  .arrow_expand:hover {
+    background: black url("images/toolbar/action_sprite.png") no-repeat -59px -251px; }
+
+.dialog_head {
+  background-color: #333;
+  color: #fff;
+  padding: 10px; }
+  .dialog_head h2 {
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0;
+    padding: 0; }
+
+.bg_dialog {
+  background: #dcdcdc; }
+
+.dialog_tip {
+  height: 19px;
+  color: #666;
+  padding: 0 0 7px 0; }
+
+.dialog_container {
+  padding: 10px 20px 20px 20px; }
+
+.form_row label {
+  display: block;
+  float: left;
+  width: 70px;
+  padding: 2px 0 0;
+  color: #666;
+  font-weight: bold; }
+.form_row .bt_input {
+  border: 1px solid #ccc;
+  background: #fff;
+  height: 20px;
+  padding: 2px 6px 0 6px;
+  *height: 18px;
+  *padding: 5px 6px 2px 6px;
+  vertical-align: baseline;
+  float: right;
+  width: 144px; }
+  .form_row .bt_input.url_field {
+    width: 254px; }
+.form_row .button_upload {
+  padding: 5px 17px;
+  border: 0;
+  background: #333;
+  color: #fff;
+  margin-left: 10px;
+  -webkit-border-radius: 8px 8px 8px 8px;
+  -moz-border-radius: 8px 8px 8px 8px;
+  border-radius: 8px 8px 8px 8px; }
+  .form_row .button_upload:focus {
+    background: #000; }
+  .form_row .button_upload:hover {
+    background: #000; }
+
+.button_upload {
+  padding: 5px 17px;
+  border: 0;
+  background: #333;
+  color: #fff;
+  margin-right: 10px;
+  -webkit-border-radius: 8px 8px 8px 8px;
+  -moz-border-radius: 8px 8px 8px 8px;
+  border-radius: 8px 8px 8px 8px; }
+  .button_upload:focus {
+    background: #000; }
+  .button_upload:hover {
+    background: #000; }
+
+.link_grp .button {
+  position: absolute;
+  display: block;
+  padding: 5px 7px;
+  border: 0;
+  background: #00843E;
+  color: #fff;
+  -webkit-border-radius: 8px 8px 8px 8px;
+  -moz-border-radius: 8px 8px 8px 8px;
+  border-radius: 8px 8px 8px 8px;
+  text-align: center;
+  width: 70px; }
+.link_grp p {
+  padding-left: 100px;
+  font-size: 11px; }
+
+.radio_wrap {
+  width: 40%;
+  height: 50px;
+  float: left; }
+  .radio_wrap label {
+    padding: 0 10px; }
+
+.help_row {
+  width: 20px;
+  height: 20px;
+  overflow: hidden;
+  position: absolute;
+  right: 10px;
+  top: 10px; }
+  .help_row a {
+    display: block;
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    overflow: hidden;
+    text-indent: -99999px;
+    background: url("images/toolbar/help.png") no-repeat 0 0; }
+
+.client_list_container {
+  height: 89px;
+  overflow-x: hidden;
+  overflow-y: auto; }
+
+.button_footer {
+  position: relative;
+  background-color: #a9a9a9;
+  height: 34px;
+  padding: 10px 10px 0 10px;
+  text-align: right; }
+
+.text_footer {
+  position: absolute;
+  top: 131px;
+  width: 100%;
+  background-color: #a9a9a9;
+  padding: 5px 0 5px 26px;
+  text-align: left;
+  color: #666;
+  font-weight: bold; }
+
+.progressbar_container {
+  position: absolute;
+  left: 18px;
+  top: 17px;
+  width: 170px;
+  height: 14px;
+  border: 0px solid black;
+  z-index: 333; }
+
+.progressbar_fill {
+  width: 0%;
+  height: 14px;
+  background: #888888; }
+
+.spinner {
+  position: absolute;
+  left: 5px;
+  top: -1px;
+  width: 170px;
+  color: #111;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  text-align: left; }
+
+.add_computer {
+  position: absolute;
+  top: 0px;
+  left: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #666666; }
+
+.computer_selection_wrapper {
+  position: relative;
+  background: #dcdcdc;
+  color: #222; }
+  .computer_selection_wrapper .indie_computer_wrapper {
+    position: relative; }
+  .computer_selection_wrapper .computer_name {
+    float: left;
+    padding: 5px 5px 5px 26px;
+    font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    color: #666; }
+  .computer_selection_wrapper .computer_location {
+    float: left;
+    font-style: normal;
+    font-size: 10px;
+    color: #666;
+    padding-top: 7px; }
+  .computer_selection_wrapper .remove_computer {
+    position: absolute;
+    top: 7px;
+    right: 5px;
+    width: 16px;
+    height: 16px;
+    overflow: hidden;
+    text-indent: -9999px;
+    background: url("images/toolbar/action_sprite.png") no-repeat 0 -64px; }
+    .computer_selection_wrapper .remove_computer:hover {
+      background: url("images/toolbar/action_sprite.png") no-repeat -64px -64px; }
+  .computer_selection_wrapper .remote_computer {
+    position: absolute;
+    top: 7px;
+    right: 27px;
+    width: 16px;
+    height: 16px;
+    overflow: hidden;
+    text-indent: -9999px;
+    background: url("images/toolbar/action_sprite.png") no-repeat 0 -192px; }
+    .computer_selection_wrapper .remote_computer:hover {
+      background: url("images/toolbar/action_sprite.png") no-repeat -64px -192px; }
+  .computer_selection_wrapper .computer_state {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    width: 12px;
+    height: 12px;
+    overflow: hidden;
+    text-indent: -9999px; }
+  .computer_selection_wrapper .computer_connected {
+    background: url("images/toolbar/action_sprite.png") no-repeat -2px -323px; }
+  .computer_selection_wrapper .computer_unavailable {
+    background: url("images/toolbar/action_sprite.png") no-repeat -2px -355px; }
+  .computer_selection_wrapper .computer_disconnected {
+    background: url("images/toolbar/action_sprite.png") no-repeat -2px -387px; }
+
+.selected {
+  background: #f0f0f0; }
+
+#computerselect {
+  position: absolute;
+  left: 26px;
+  top: 0;
+  z-index: 9999;
+  width: 150px;
+  color: #fff;
+  background: #999999 url("images/toolbar/action_sprite.png") no-repeat 128px -285px; }
+  #computerselect:hover {
+    background-color: #000; }
+  #computerselect .computer_name {
+    float: left;
+    width: 70px;
+    padding: 0 5px 0 8px;
+    font-weight: bold;
+    text-align: left;
+    color: white;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -o-text-overflow: ellipsis; }
+    #computerselect .computer_name strong {
+      display: block; }
+    #computerselect .computer_name em {
+      color: #ccc;
+      font-size: 10px;
+      font-style: normal; }
+  #computerselect .computer_location {
+    float: left;
+    font-style: normal;
+    font-size: 10px;
+    color: #ccc; }
+  #computerselect .remove_computer {
+    display: none;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 16px;
+    height: 16px;
+    overflow: hidden;
+    text-indent: -9999px;
+    background: url("images/toolbar/action_sprite.png") no-repeat 0 -64px; }
+    #computerselect .remove_computer:hover {
+      background: url("images/toolbar/action_sprite.png") no-repeat -64px -64px; }
+  #computerselect .remote_computer {
+    display: none;
+    position: absolute;
+    top: 5px;
+    right: 27px;
+    width: 16px;
+    height: 16px;
+    overflow: hidden;
+    text-indent: -9999px;
+    background: url("images/toolbar/action_sprite.png") no-repeat 0 -203px; }
+    #computerselect .remote_computer:hover {
+      background: url("images/toolbar/action_sprite.png") no-repeat -64px -203px; }
+
+.board_container {
+  text-align: center;
+  height: 26px;
+  overflow: hidden;
+  line-height: 26px;
+  color: #fff;
+  position: relative;
+  padding: 0 !important; }
+  .board_container.greenie {
+    background-color: #00853F;
+    color: #fff; }
+  .board_container a.main {
+    display: block;
+    background: #999999 url("images/toolbar/toolbar_logo.png") no-repeat 2px 2px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 12px;
+    line-height: 26px; }
+    .board_container a.main:link, .board_container a.main:active, .board_container a.main:visited {
+      background: #999999 url("images/toolbar/toolbar_logo.png") no-repeat 2px 2px;
+      color: #fff;
+      font-weight: bold;
+      font-size: 12px;
+      line-height: 26px; }
+    .board_container a.main:hover {
+      background-color: #000;
+      color: #fff; }
+  .board_container input {
+    border: 0;
+    padding: 2px 6px 0 6px;
+    margin: 0 0 0 5px;
+    height: 22px; }
+    .board_container input.first_field {
+      margin-left: 10px !important; }
+    .board_container input.bt_input {
+      background: #339D65;
+      width: 110px;
+      margin-left: 5px;
+      color: #fff;
+      height: 20px; }
+      .board_container input.bt_input::-webkit-input-placeholder {
+        color: #B1DAC4; }
+      .board_container input.bt_input:-moz-placeholder {
+        color: #B1DAC4; }
+      .board_container input.bt_input:focus {
+        outline: 0; }
+    .board_container input.bt_submit {
+      background: #fff;
+      color: #00853F;
+      font-weight: bold;
+      padding: 2px 12px; }
+      .board_container input.bt_submit:hover {
+        background: #000;
+        color: #fff; }
+      .board_container input.bt_submit:focus {
+        background: #000;
+        color: #fff;
+        outline: 0; }
+  .board_container .ut_icon {
+    width: 26px;
+    height: 26px;
+    position: absolute;
+    left: 0;
+    margin: 0;
+    top: 0; }
+    .ie7 .board_container .ut_icon {
+      left: -10px; }
+    .ie6 .board_container .ut_icon {
+      left: -10px; }
+    .board_container .ut_icon a {
+      display: block;
+      position: absolute;
+      width: 26px;
+      height: 26px;
+      background: #777777 url("images/toolbar/toolbar_logo.png") no-repeat 2px 2px; }
+  .board_container .button_pairing {
+    display: block;
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    right: 10px;
+    top: 5px;
+    text-indent: -9999px;
+    background: url("images/toolbar/action_sprite.png") no-repeat 0 -128px;
+    overflow: hidden; }
+    .board_container .button_pairing:hover {
+      background: url("images/toolbar/action_sprite.png") no-repeat -64px -128px; }
+  .board_container.torrent_list_dd {
+    overflow: visible; }
+    .board_container.torrent_list_dd .bt_torrent_list {
+      margin: 0 5px !important;
+      border-bottom: 1px solid #fff; }
+  .board_container .bt_torrent_list {
+    background: #dcdcdc;
+    margin: 0px;
+    color: #666;
+    position: relative;
+    height: 26px;
+    overflow: hidden; }
+    .board_container .bt_torrent_list .torrent_color_container {
+      position: absolute;
+      height: 4px;
+      left: 5px;
+      right: 47px;
+      bottom: 4px;
+      background: #ccc;
+      overflow: hidden;
+      -webkit-border-radius: 2px 2px 2px 2px;
+      -moz-border-radius: 2px 2px 2px 2px;
+      border-radius: 2px 2px 2px 2px; }
+      .board_container .bt_torrent_list .torrent_color_container .torrent_color_bg {
+        background: url("images/toolbar/loading_bg.gif");
+        opacity: .5;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        position: absolute;
+        -webkit-border-radius: 2px 2px 2px 2px;
+        -moz-border-radius: 2px 2px 2px 2px;
+        border-radius: 2px 2px 2px 2px; }
+      .board_container .bt_torrent_list .torrent_color_container .color_calc {
+        height: 4px;
+        position: relative;
+        -webkit-border-radius: 2px 2px 2px 2px;
+        -moz-border-radius: 2px 2px 2px 2px;
+        border-radius: 2px 2px 2px 2px; }
+    .board_container .bt_torrent_list .torrent_item_container {
+      position: relative; }
+      .board_container .bt_torrent_list .torrent_item_container .flt_lft {
+        position: absolute; }
+      .board_container .bt_torrent_list .torrent_item_container .torrent_name {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 4px;
+        margin-right: 120px;
+        padding-left: 5px;
+        text-align: left;
+        font-size: 11px;
+        line-height: 11px;
+        white-space: nowrap;
+        height: 15px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        -o-text-overflow: ellipsis; }
+      .board_container .bt_torrent_list .torrent_item_container .bt_button_pause {
+        display: block;
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        text-indent: -9999px;
+        top: 5px;
+        right: 25px;
+        background: url("images/toolbar/action_sprite.png") no-repeat 0 0;
+        overflow: hidden; }
+        .board_container .bt_torrent_list .torrent_item_container .bt_button_pause:hover {
+          background: url("images/toolbar/action_sprite.png") no-repeat -64px 0; }
+      .board_container .bt_torrent_list .torrent_item_container .bt_button_play {
+        display: block;
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        text-indent: -9999px;
+        top: 5px;
+        right: 25px;
+        background: url("images/toolbar/action_sprite.png") no-repeat 0 -32px;
+        overflow: hidden; }
+        .board_container .bt_torrent_list .torrent_item_container .bt_button_play:hover {
+          background: url("images/toolbar/action_sprite.png") no-repeat -64px -32px; }
+      .board_container .bt_torrent_list .torrent_item_container .bt_button_x {
+        display: block;
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        text-indent: -9999px;
+        top: 5px;
+        right: 5px;
+        background: url("images/toolbar/action_sprite.png") no-repeat 0 -64px;
+        overflow: hidden; }
+        .board_container .bt_torrent_list .torrent_item_container .bt_button_x:hover {
+          background: url("images/toolbar/action_sprite.png") no-repeat -64px -64px; }
+      .board_container .bt_torrent_list .torrent_item_container .bt_info_container {
+        position: absolute;
+        right: 47px;
+        top: 4px;
+        line-height: 10px;
+        font-size: 10px;
+        color: #888; }
+        .board_container .bt_torrent_list .torrent_item_container .bt_info_container .bt_state_container {
+          display: none; }
+  .board_container .selected_torrent {
+    background: #f0f0f0; }
+  .board_container #uquest_button {
+    background: #f0f0f0 url("images/toolbar/quest_icon.png") no-repeat 4px 1px;
+    width: 26px;
+    height: 26px; }
+    .board_container #uquest_button:hover {
+      cursor: pointer;
+      background-color: #bdbdbd; }
+  .board_container #uquest_button.inactive {
+    background: #f0f0f0 url("images/toolbar/quest_icon.png") no-repeat 4px -24px; }
+    .board_container #uquest_button.inactive:hover {
+      cursor: pointer;
+      background-color: #bdbdbd; }

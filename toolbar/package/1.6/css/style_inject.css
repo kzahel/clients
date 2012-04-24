@@ -1,0 +1,12 @@
+.utorrent-uquest-active {
+    position:relative;
+}
+.utorrent-uquest-active .utorrent-uquest-span {
+    position:absolute;
+    width:24px;
+    height:33px;
+    top:-26px;
+    left:40%;
+    background: url("images/toolbar/quest_page_icon.png") no-repeat;
+    z-index:99999;
+}
