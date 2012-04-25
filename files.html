@@ -9,18 +9,10 @@
 <script src="lib/jsload.js?v=3.33"></script>
 <script src="tags.js?v=3.33"></script>
 <script>
-  (new JSLoad(tags)).load( ["torrents"], function() {
+  (new JSLoad(tags)).load( ["files"], function() {
   });
 </script>
 <script src="lib/BrowserCompApi.js"></script>
-
-<script type="text/template" id="client_template">
-  <div class="remove_computer">Remove</div>
-  <div class="remote_computer">uTorrent Remote</div>
-  <div class="computer_name">
-    Local
-  </div>
-</script>
 
 <script type="text/template" id="torrent_template">
   <div class="flt_lft relative bt_torrent_list">
@@ -78,7 +70,7 @@
 
 
     <div class="dialog_head head_connect">
-      <h2>Active Torrents</h2>
+      <h2>Files</h2>
     </div>
 
     <div id="global_container" class="board_container torrent_list_dd">

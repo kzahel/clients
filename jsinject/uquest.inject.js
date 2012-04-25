@@ -1,5 +1,25 @@
-window.QuestModule = (function ($) {
+var is_chrome = (navigator.userAgent.match(/chrome/i) || navigator.userAgent.match(/chromium/i));
+
+function toolbar_callback(msg) {
+    //TODO Remove this workaround after conduit fix chrome
+    if(is_chrome) {
+        try {
+            var sendMessageEvent = {'name': 'sendMessage','data': {key:msg},'sourceAPI': 'ToolbarApi','targetAPI': 'BcApi'};
+            if (document && document.location && document.location.href.toUpperCase().indexOf('FACEBOOK.COM') === -1) {
+                window.postMessage(JSON.stringify(sendMessageEvent), '*');
+            }
+        } catch(e) {
+            console.error('BCAPI ERROR: ', e, e.stack);
+        }
+    } else {
+        EBCallBackMessageReceived(msg);
+    }
+}
+
+window.QuestModule = (function () {
     //private properties
+    var _$ = null;
+    var _css_url = '';
     var _is_active = false;
     var _selector_new_link = 'a:not([data-uquest-processed])';
 //        _selector_direct_link : 'a[href$=\".torrent\"],a[href^=\"magnet:?xt=urn:btih\"]',
@@ -8,29 +28,100 @@ window.QuestModule = (function ($) {
     var _css_span_class = 'utorrent-uquest-span';
 
     //private methods
+    function _initialize(){
+        _css_url = QuestModuleInitSettings.css_inject_url;
+        _is_active = QuestModuleInitSettings.is_active;
+
+        _init_jQuery(function(){
+            _init_css();
+            _init_links();
+            _init_event_handlers();
+            if(_is_active)
+                _set_state(_is_active);
+            debugger;
+            toolbar_callback('injection_initialized');
+        });
+    }
+
+    function _set_state(active) {
+        _is_active = active;
+        if(_is_active){
+            _$('.' + _css_uquest_link).each(function(index, item){
+                _show_active_link(item);
+            })
+        } else {
+            _$('.' + _css_uquest_link).each(function(index, item){
+                _$(item).removeClass(_css_active_link_class).children('.' + _css_span_class).remove();
+            })
+        }
+    }
+
+    function _init_jQuery(jQuery_initialized_callback) {
+        if (_get_jQuery_version() < 151) {
+            var head = document.getElementsByTagName('head')[0];
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
+
+            function script_loaded_callback(){
+                script.onload = script.onreadystatechange = null;
+                _$ = jQuery.noConflict(true);
+                jQuery_initialized_callback();
+            }
+
+            if(script.onreadystatechange !== undefined){//ie fix
+                script.timer = setInterval( function(){
+                        if (script.readyState == 'loaded' || script.readyState == 'complete'){
+                            clearInterval(script.timer);
+                            script_loaded_callback();
+                        }
+                    }, 100
+                );
+            } else { //all other browsers
+                script.onload = script_loaded_callback;
+            }
+
+            script.src = '//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js';
+            head.appendChild(script);
+        } else {
+            _$ = window.jQuery;
+            jQuery_initialized_callback();
+        }
+    }
+
+    function _get_jQuery_version(jQueryObj) {
+        var version;
+        if (typeof jQuery == 'undefined' && jQueryObj == undefined) {
+            return -1;
+        } else if(jQueryObj){
+            version = jQueryObj.fn.jquery.split('.');
+        } else {
+            version = window.jQuery.fn.jquery.split('.');
+        }
+        return (parseInt(version[0])*100) + (parseInt(version[1])*10) + parseInt(version[2]);
+    }
+
     function _init_css() {
-        var css_url = '%css_inject_url%';
-        if($('head link[href=\"' + css_url + '\"]').length == 0) {
-            $('<link>').attr('type', 'text/css').attr('rel', 'stylesheet')
-                .attr('href', css_url)
+        if(_$('head link[href=\"' + _css_url + '\"]').length == 0) {
+            _$('<link>').attr('type', 'text/css').attr('rel', 'stylesheet')
+                .attr('href', _css_url)
                 .appendTo('head');
         }
     }
 
     function _init_links() {
-        $(_selector_new_link).each(function(index, item){
+        _$(_selector_new_link).each(function(index, item){
             var url_parts = item.href.split('?');
             //is direct link?
             if(url_parts[0].match(/\.torrent$|^magnet\:/i)) {
-//                        console.log(''.concat('direct torrent link ', item.href, ' ', $(item).text()));
-                $(item).addClass(_css_uquest_link);
+//                        console.log(''.concat('direct torrent link ', item.href, ' ', _$(item).text()));
+                _$(item).addClass(_css_uquest_link);
                 if(_is_active) _show_active_link(item);
                 //is contain torrent or download text, not exe and from the same origin?
-            } else if ($(item).text().match(/torrent|download/i) &&
+            } else if (_$(item).text().match(/torrent|download/i) &&
                 !url_parts[0].match(/\.exe$|\.pdf$/i) &&
                 _is_same_origin(item)) {
-//                        console.log(''.concat('before ajax ', item.href, ' ', $(item).text()));
-                $.ajax({
+//                        console.log(''.concat('before ajax ', item.href, ' ', _$(item).text()));
+                _$.ajax({
                     type : 'HEAD',
                     url: item.href,
                     dataType: 'json',
@@ -43,7 +134,7 @@ window.QuestModule = (function ($) {
 
 //                                console.log(''.concat('ResponseHeader: ', resp.getAllResponseHeaders(), ' url= ', item.href));
                         if(resp.getResponseHeader('Content-Type') == 'application/x-bittorrent') {
-                            $(item).addClass(_css_uquest_link);
+                            _$(item).addClass(_css_uquest_link);
                             if(_is_active) _show_active_link(item);
                         }
                     },
@@ -54,20 +145,20 @@ window.QuestModule = (function ($) {
                 });
             }
 
-            $(item).attr('data-uquest-processed', '');
+            _$(item).attr('data-uquest-processed', '');
         });
     }
 
     function _init_event_handlers() {
         //for jQuery 1.7+ use 'on'
         //for jQuery 1.4.3+ use 'delegate'
-        var ver = get_jQuery_version(window.jQueryInjected);
+        var ver = _get_jQuery_version(_$);
         if(ver >= 170){
-            $(document).on('click', '.' + _css_active_link_class, this, _on_click);
-            //$(document).on('DOMSubtreeModified', 'body', this, init_links);
+            _$(document).on('click', '.' + _css_active_link_class, this, _on_click);
+            //_$(document).on('DOMSubtreeModified', 'body', this, init_links);
         } else if (ver >= 143) {
-            $(document).delegate('.' + _css_active_link_class, 'click', this, _on_click);
-            //$('body').bind('DOMSubtreeModified', init_links);
+            _$(document).delegate('.' + _css_active_link_class, 'click', this, _on_click);
+            //_$('body').bind('DOMSubtreeModified', init_links);
         } else {
             debugger;
             assert(false);
@@ -76,8 +167,8 @@ window.QuestModule = (function ($) {
     }
 
     function _show_active_link(item) {
-        var span = $('<span>').addClass(_css_span_class).attr('title', 'Download torrent');
-        $(item).addClass(_css_active_link_class).append(span);
+        var span = _$('<span>').addClass(_css_span_class).attr('title', 'Download torrent');
+        _$(item).addClass(_css_active_link_class).append(span);
     }
 
     function _on_click(e) {
@@ -98,25 +189,9 @@ window.QuestModule = (function ($) {
 
     return {
         //public section
-        initialize : function() {
-            _init_css();
-            _init_links();
-            _init_event_handlers();
-            toolbar_callback('injection_initialized');
-        },
-        set_state : function(active) {
-            _is_active = active;
-            if(_is_active){
-                $('.' + _css_uquest_link).each(function(index, item){
-                    _show_active_link(item);
-                })
-            } else {
-                $('.' + _css_uquest_link).each(function(index, item){
-                    $(item).removeClass(_css_active_link_class).children('.' + _css_span_class).remove();
-                })
-            }
-        }
+        initialize : _initialize,
+        set_state : _set_state
     };
-}(jQueryInjected));
+}());
 
 window.QuestModule.initialize();

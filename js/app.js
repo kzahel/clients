@@ -205,6 +205,13 @@ var App = Backbone.Model.extend( {
                             url += '?replace=' + encodeURIComponent(msg.replace);
                         }
                         BTOpenGadget(url, 286, 200, { openposition: 'offset:(0;30)' });
+                    } else if (msg.name == 'files') {
+                        var url = 'files.html';
+                        if (msg.hash) {
+                            // this login is intended to replace an existing session
+                            url += '?hash=' + encodeURIComponent(msg.hash);
+                        }
+                        BTOpenGadget(url, 286, 200, { openposition: 'offset:(0;30)' });
                     } else {
                         console.error('unrecognized gadget');
                         debugger;
