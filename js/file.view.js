@@ -96,10 +96,6 @@ var FileView = Backbone.View.extend({
             }
 
 
-            if (this.model.get('message').match(/error/i)) { 
-                this.$('.torrent_dl_color').css('background-color','#8d1c10');
-            }
-
 
         } else {
             this.$('.torrent_info').html( 'No Torrents' );
@@ -112,14 +108,10 @@ var FilesView = Backbone.View.extend({
     initialize: function() {
         var _this = this;
 
-        this.model.bind('firstupdate', function() {
-            _this.render();
-        });
-
-        this.model.bind('new_torrent', function(t) {
+        this.model.bind('add', function(t) {
             console.log('add new torrent',t);
             if (! t.view) {
-                t.view = new TorrentView( { model: t } );
+                t.view = new FileView( { model: t } );
             }
             _this.$el.prepend( t.view.render() );
         });

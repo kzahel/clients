@@ -90,6 +90,9 @@ var Torrent = Backbone.Model.extend({
         this.status_array = this.get_status(d.status); // XXX -- this needs to happen before the "set" so that the change events get triggered
         this.set( d );
     },
+    get_files: function() {
+        return new FileCollection( [], { torrent: this } );
+    },
     doreq: function(type) {
         var client = this.collection.client;
         if (client.get('type') == 'local') {

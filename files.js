@@ -12,9 +12,15 @@ jQuery(document).ready( function() {
 
         var url_args = decode_url_arguments();
         var hash = url_args.hash;
-        debugger;
-        window.filesview = new FilesView( { el: $('#global_container'), model: client, hash: hash } );
-        client.start_updating();
-        console.log(client.get('data').key);
+        var d = [ hash ];
+        var torrent = new Torrent( { id: d[0], data: d } );
+        var torrents = new TorrentCollection( [ torrent ], { client: client } );
+
+        var files = torrent.get_files();
+
+        window.filesview = new FilesView( { el: $('#global_container'), model: files } );
+        files.fetch();
+
+
     }
 } );
