@@ -14,6 +14,8 @@ var tags = [
     { name: "lib/underscore" },
     { name: "lib/backbone" },
     { name: "lib/backbone.localStorage" },
+    { name: "lib/jquery.cookie", requires : ["lib/jqeury"]},
+    { name: "js/_stats", requires : ["lib/jquery.cookie"]},
 
     { name: "deps", tagOnly:true,
       requires: [
@@ -22,7 +24,8 @@ var tags = [
         "lib/jstorage",
         "lib/underscore",
         "lib/backbone",
-        "lib/backbone.localStorage"
+        "lib/backbone.localStorage",
+        "js/_stats"
     ]},
 
     { name: "falcon-api/js/deps/SHA-1" },
