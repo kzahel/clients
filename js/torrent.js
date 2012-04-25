@@ -31,6 +31,14 @@ var Torrent = Backbone.Model.extend({
             { name: 'directory' },
             { name: 'webseed_enabled' }
     ],
+    serialize: function() {
+        var arr = [];
+        for (var i=0; i<this.meta.length; i++) {
+            var k = this.meta[i];
+            arr.push( this.get(k) );
+        }
+        return arr;
+    },
     get_status: function(opt_status) {
         var _this = this;
         var status = [];

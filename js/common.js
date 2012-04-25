@@ -102,14 +102,67 @@ function BTOpenGadget(url, w, h, extra_opts) {
     OpenGadget(abs_url, w, h + ff_fudge, opts_str);
 }
 
-function BTSendMessage(key, msg) {
-    console.log('sending message',key,msg);
-    StoreGlobalKey(key, msg);
+function SpacedExecution(spacing) {
+    this.spacing = spacing;
+    this.last_call = null;
+    this.timer = null;
+    this.queue = [];
+}
+SpacedExecution.prototype = {
+    add: function(fn) {
+        if (this.last_call) {
+            this.queue.push( fn );
+            this.process_queue();
+        } else {
+            console.warn('SpacedExecution: immediate');
+            this.call(fn);
+        }
+    },
+    call: function(fn) {
+        this.last_call = new Date();
+        fn();
+    },
+    process_queue: function() {
+        if (this.timer) {
+            this.timer = null;
+        }
+        var now = new Date();
+        var delta = now - this.last_call;
+
+        if (delta < this.spacing) {
+            if (! this.timer) {
+                console.warn('SpacedExecution: enqueueing');
+                this.timer = setTimeout( _.bind(this.process_queue, this), this.spacing - delta );
+            }
+        } else {
+            var fn = this.queue.shift();
+            console.warn('SpacedExecution: popping');
+            this.call(fn);
+            if (this.queue.length > 0) {
+                this.timer = setTimeout( _.bind(this.process_queue, this), this.spacing );
+            }
+        }
+    }
+};
+
+var _bt_send_queue = new SpacedExecution(40);
+
+function BTSendMessage(key, msg, opts) {
+    if (opts && opts.silent) {
+    } else {
+        console.log('sending message',key,msg);
+    }
+    
+    var fn = function() { StoreGlobalKey(key, msg) };
+    _bt_send_queue.add( fn );
     //SendMessage(key, msg);
 }
 
-function BTSendTabMessage(key, msg) {
-    console.log('sending local message',key,msg);
+function BTSendTabMessage(key, msg, opts) {
+    if (opts && opts.silent) {
+    } else {
+        console.log('sending local message',key,msg);
+    }
     StoreKey(key, msg);
 }
 

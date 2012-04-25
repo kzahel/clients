@@ -78,6 +78,14 @@ var App = Backbone.Model.extend( {
             }
         }
     },
+    send_state_dump: function() {
+        if (clients.selected) {
+            var data = clients.selected.serialize()
+            var msg = {type:'broadcast', message:'state_dump', data:data};
+            debugger;
+            this.send_message(msg);
+        }
+    },
     handle_message: function(k, msg, opts) {
         var my_type = this.get('type');
         var local_message = false;
@@ -116,7 +124,15 @@ var App = Backbone.Model.extend( {
             } else if (msg.message == 'no clients') {
                 BTReload(this);
             } else if (msg.message == 'pairing accepted') {
+                // set torrent view to expand
+                this.settings.set('collapsed',false);
+                this.settings.save();
                 BTReload(this);
+            } else if (msg.message == 'pairing denied') {
+                // user clicked no to the pairing dialog
+                var client = clients.get_by_id( msg.id );
+                client.fetch();
+                // storing the "pairing denied" status is handled by the sender
             } else if (msg.message == 'remote login') {
                 BTReload(this);
             } else if (msg.message == 'switch_client') {
@@ -136,13 +152,21 @@ var App = Backbone.Model.extend( {
 
         if (msg.recipient) { // some messages are sent to specific windows
             if (this.get('type') == msg.recipient) {
-                console.log('app',this.get('type'),'handling toolbarapi message',k,JSON.stringify(msg));
+                if (msg && msg.recipient_iid && msg.recipient_iid != this.get('iid')) {
+                    return;
+                }
+                if (msg && msg.command == 'heartbeat') {
+                } else {
+                    console.log('app',this.get('type'),'handling toolbarapi message',k,JSON.stringify(msg));
+                }
                 if (msg.command == 'select_torrent') {
                     var client = clients.selected;
                     client.set('active_hash', msg.hash);
                     //assert(client.collection);
                     //client.fetch(); // fetches updated "active_hash" attribute // XXX local storage not updating across IE tabs???  ???
                     assert(client.get('active_hash') == msg.hash);
+                } else if (msg.command == 'heartbeat') {
+                    app.siblings.register_heartbeat(msg);
                 } else if (msg.command == 'expand') {
                     app.expand();
                 } else if (msg.command == 'collapse') {
@@ -179,6 +203,13 @@ var App = Backbone.Model.extend( {
                         if (msg.replace) {
                             // this login is intended to replace an existing session
                             url += '?replace=' + encodeURIComponent(msg.replace);
+                        }
+                        BTOpenGadget(url, 286, 200, { openposition: 'offset:(0;30)' });
+                    } else if (msg.name == 'files') {
+                        var url = 'files.html';
+                        if (msg.hash) {
+                            // this login is intended to replace an existing session
+                            url += '?hash=' + encodeURIComponent(msg.hash);
                         }
                         BTOpenGadget(url, 286, 200, { openposition: 'offset:(0;30)' });
                     } else {
@@ -237,16 +268,13 @@ var App = Backbone.Model.extend( {
         this.send_message( msg );
     },
     pair: function(client) {
-        if (true || this.get('type') == 'client') {
-            if (client.get('data').name != 'unknown') {
-                // likely supports new style pairing
-                BTOpenGadget('pairing.html', 286, 155, { openposition: 'offset:(0;30)' });
-            } else {
-                BTOpenGadget('pairing_instructions.html', 286, 265, { openposition: 'offset:(0;30)' });
-                client.pair_jsonp();
-            }
+        // XXX -- re-check /version before doing this? (some other program could run on this port after shutdown, etc)
+        if (client.get('data').name != 'unknown') {
+            // likely supports new style pairing
+            BTOpenGadget('pairing.html', 286, 155, { openposition: 'offset:(0;30)' });
         } else {
-            console.error('must pair from client frame');
+            BTOpenGadget('pairing_instructions.html', 286, 265, { openposition: 'offset:(0;30)' });
+            client.pair_jsonp();
         }
     },
     add_client: function(client) {
@@ -261,9 +289,9 @@ var App = Backbone.Model.extend( {
     send_message: function(msg, opts) {
         if (opts && opts.local) {
             // there is no such thing as a "tab" only message.
-            BTSendTabMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
+            BTSendTabMessage(config.conduit_toolbar_message_key, JSON.stringify(msg), opts );
         } else {
-            BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
+            BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg), opts );
         }
     },
     broadcast: function(msg) {

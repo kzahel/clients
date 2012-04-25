@@ -9,7 +9,10 @@ function EBCallBackMessageReceived(msg, data) {
 //    custom_track('oneclickadd');
 }
 
-function EBDocumentComplete() {
+function EBNavigateComplete() {
+}
+
+function EBDocumentComplete(url, tabid) {
     var track_all_urls = false;
     var frame_url = GetMainFrameUrl(); // XXX - Not working in MSIE
                                        // for "controlstaging"
@@ -53,17 +56,6 @@ function EBDocumentComplete() {
 
 
 var ClientApp = App.extend({
-    initialize: function() {
-        App.prototype.initialize.apply(this, arguments);
-
-        var toolbarid = this.settings.get('toolbarid');
-        if (! guid) {
-            toolbarid = generateGUID();
-            this.set('toolbarid', toolbarid);
-        }
-
-        this.set('iid', generateGUID());
-    }
 });
 
 function do_autologin_injection() {
@@ -130,24 +122,28 @@ jQuery(document).ready( function() {
 
     clients.fetch(); 
     clients.init_post_fetch();
-
     var client = clients.selected;
     if (client) {
         // XXX -- assert "torrent" app gets notified of what its app should do
         var data = client.get('data');
         if (! data.key) {
             app.send_message( { recipient: 'torrent', command: 'notify_status', status: 'no pairing key', id: client.id } );
-            app.send_message( { recipient: 'torrent', command: 'collapse' } );
+            setTimeout( function() {
+                app.send_message( { recipient: 'torrent', command: 'collapse' } );
+            }, 200);
 
             // client.pair(); // manually trigger this
         } else {
             client.bind('setstatus', function(status) {
+                // js/client.js will handle this
+/*
                 if (status == 'available') {
                     app.send_message( { command: 'initialize', recipient: 'torrent' } );
                 } else {
                     debugger;
                     app.send_message( { recipient: 'torrent', command: 'notify_status', status: status, id: client.id } );
                 }
+*/
             });
             client.check_status( function() {
                 if (client.get('status') != 'available') {

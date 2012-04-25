@@ -52,10 +52,8 @@ var Client = Backbone.Model.extend({
                 this.set('active_hash', hash);
                 this.save();
             }
-            console.log('get selected torrent, hash',hash);
             var torrent = this.torrents.get( hash );
             if (torrent) {
-                console.log('got torrent',torrent.get('name'));
                 return torrent;
             }
         } else if (this.updates == 0) {
@@ -151,8 +149,12 @@ var Client = Backbone.Model.extend({
                        },
                        dataType: 'jsonp',
                        error: function(xhr, status, text) {
-                           app.broadcast( { message: 'close floating windows' } );
-                           debugger;
+                           _this.set_status('pairing denied');
+                           _this.save();
+                           
+                           app.broadcast( { message: 'pairing denied', id: _this.id } );
+                           // likely a 401 unauthorized
+                           // XXX -- handle allow login to remote
                        }
                      }
                    );
@@ -252,6 +254,11 @@ var Client = Backbone.Model.extend({
                                           // buggy server (or possibly lost internet connection)
                                           _this.update_timeout = setTimeout( _this.do_update, _this.remote_update_interval * 2 );
                                           debugger;
+                                      } else if (text && text.error == 'invalid JSON') {
+                                          // client bug, sometimes it sends bad data
+                                          _this.set_status('received bad data');
+                                          _this.update_timeout = setTimeout( _this.do_update, _this.remote_update_interval * 2 ); // simply try again
+                                          debugger;
                                       } else {
                                           debugger;
                                       }
@@ -260,6 +267,24 @@ var Client = Backbone.Model.extend({
                                 );
             }
         }
+    },
+    check_version: function( cb ) {
+        // updates version for local client
+        assert( this.get('type') == 'local');
+        var _this = this;
+        var url = 'http://127.0.0.1:' + this.get('data').port + '/version/';
+        jQuery.ajax( { url: url,
+                       dataType: 'jsonp',
+                       timeout: 500,
+                       success: function(data, status, xhr) {
+                           cb();
+                       },
+                       error: function(xhr, status, text) {
+                           _this.set_status('unavailable');
+                           _this.save();
+                           cb();
+                       }
+                     });
     },
     set_settings: function( d, success, error ) {
         var qs = 'action=setsetting';
@@ -408,6 +433,15 @@ var Client = Backbone.Model.extend({
         } else {
             this.update_timeout = setTimeout( this.do_update, this.remote_update_interval );
         }
+    },
+    serialize: function() {
+        var torrents_array = [];
+        for (var i=0; i<this.torrents.models.length; i++) {
+            torrents_array.push( this.torrents.models[i].serialize() );
+        }
+        var data = { torrentc: this.cacheid,
+                     torrents: torrents_array };
+        return data;
     },
     add_torrent: function(d) {
         var torrent = new Torrent( { id: d[0], data: d } );
@@ -573,6 +607,7 @@ var ClientCollection = Backbone.Collection.extend( {
         var _this = this;
         pairing.bind('pairing:found', function(opts) {
             opts.attempt_authorization = false;
+            opts.authorize = false;
             var client = new Client( { type: 'local', data: opts } );
             // client.pair(); // dont pair automatically
             client.set('status','running');

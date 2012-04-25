@@ -50,22 +50,26 @@ var tags = [
 
     { name: "js/common" },
     { name: "js/settings" },
+    { name: "js/siblings" },
 
     { name: "js/client", requires: ["btapp/pairing.btapp", "falcon", "deps", "js/common"] },
     { name: "js/client.view", requires: ["js/client"] },
-    { name: "js/torrent", requires: ["js/common"] },
+    { name: "js/torrent", requires: ["js/common", "js/client"] },
     { name: "js/torrent.view", requires: ["js/torrent"] },
+    { name: "js/file", requires: ["js/common", "js/torrent", "js/client"] },
+    { name: "js/file.view", requires: ["js/file"] },
 
-    { name: "js/app", requires: ["js/settings"] },
+    { name: "js/app", requires: ["js/settings", "js/siblings"] },
 
     { name: "conduit_deps", tagOnly: true,
-      requires: ["deps", "js/common", "js/client.view", "js/torrent.view", "js/app"] },
+      requires: ["deps", "js/common", "js/client.view", "js/torrent.view", "js/file.view", "js/app"] },
     { name: "compiled/conduit_deps" },
     { name: "web", requires: [conduit_deps] }, // standalone web app
     { name: "client", requires: [conduit_deps] }, // conduit main toolbar thing
     { name: "clients", requires: [conduit_deps] }, // clients gadget dropdown
     { name: "torrent", requires: [conduit_deps] },
     { name: "torrents", requires: [conduit_deps] },
+    { name: "files", requires: [conduit_deps] },
     { name: "add", requires: [conduit_deps] }, // add torrent gadget
     { name: "login", requires: [conduit_deps] }, // add torrent gadget
     { name: "pairing", requires: [conduit_deps] }, // pairing dialog+iframe

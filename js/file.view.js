@@ -1,55 +1,4 @@
-
-var AddTorrentView = Backbone.View.extend({
-    initialize: function(opts) {
-        this.template = _.template( $('#add_torrent_template').html() );
-        this.$el.html( this.template() );
-        var _this = this;
-        this.$('.add').click( function(evt) {
-            var formdata = {};
-            _.each( _this.$('.form').serializeArray(), function(d) {
-                formdata[d.name] = d.value;
-            });
-            _this.submit( formdata );
-        });
-        _.bindAll(this);
-    },
-    render: function() {
-        //this.$el.html( this.template() );
-    },
-    submit: function( formdata ) {
-        this.$('.spinner').html('working...');
-
-        var _this = this;
-        var client = clients.selected;
-        if (client && client.api) {
-            var url = formdata.url;
-
-            client.api.request(
-                '/gui/',
-                {action:'add-url'},
-                {s:url},
-                function(data) {
-                    _this.$('.spinner').html('done!');
-                    _this.$('input[name=url]').val('');
-                    _this.$el.fadeOut();
-                    setTimeout( _this.destroy, 1000 );
-                },
-                function(xhr, status, text) {
-                    _this.$('.spinner').html('error!');
-                    debugger;
-                }
-            );
-
-        }
-
-    },
-    destroy: function() {
-        this.$el.show();
-        this.$el.html('');
-    }
-});
-
-var TorrentView = Backbone.View.extend({
+var FileView = Backbone.View.extend({
     destroy: function() {
         this.unbind(); // does this actually do anything?
         //this.el.parentNode.removeChild( this.el ); // equivalent to this.remove()?
@@ -159,7 +108,7 @@ var TorrentView = Backbone.View.extend({
     }
 });
 
-var TorrentsView = Backbone.View.extend({
+var FilesView = Backbone.View.extend({
     initialize: function() {
         var _this = this;
 
@@ -192,40 +141,5 @@ var TorrentsView = Backbone.View.extend({
                 });
             }
         }
-    }
-});
-
-var ActiveTorrentView = TorrentView.extend({
-    initialize: function() {
-        this.template = _.template( $('#torrent_template').html() );
-        this.$el.html( this.template() );
-	$('#torrent_controls').show();
-        $('.default_container').hide();
-        var _this = this;
-
-/*
-        this.options.client.bind('setstatus', _.bind(function(status) {
-            // XXX -- when this view is destroyed, this function is still bound to the event... need a cleanup
-
-
-            // if a client goes offline, style this thing differently
-            if (status == 'available') {
-                // yay!
-            } else {
-                // frown :-(
-                console.log('active torrent view client status',status);
-                this.$('.bt_torrent_list').addClass('selected_torrent'); // want an "offline" class
-            }
-        }, this));
-*/
-
-        if (this.model) {
-            this.model.bind('change', function(model,opts) {
-                // console.log('active torrent change',_this.model.get('name'),_this.model.changedAttributes());
-                _this.render();
-            });
-            this.bind_action_events();
-        }
-        this.render();
     }
 });

@@ -1,0 +1,8 @@
+2011-04-23
+----------
+- prevent extra pairing dialog
+- use "SpacedExecution" for sending messages using StoreGlobalKey
+- check version before issuing pairing request
+- only show pairing dialog on main view when status is "available" (allows add remote)
+- update build script to put in version subfolder
+- start using changelog

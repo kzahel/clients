@@ -17,25 +17,27 @@ jQuery(document).ready( function() {
                 custom_track('pairing_iframe_allow');
                 //clients.add(client); // was already added on scan
                 
-                app.broadcast( { message: 'pairing accepted', id: client.id } );                
+                app.broadcast( { message: 'pairing accepted', id: client.id } );
                 // need to delay sending this because closefloatingwindow is not working??
                 setTimeout( function() {
                     BTCloseFloatingWindow();
-
                 }, 200);
             } else {
                 client.set_status('pairing denied');
                 client.save();
-                custom_track('pairing_iframe_deny');
-                console.error('pairing denied');
-                BTCloseFloatingWindow();
+
+                app.broadcast( { message: 'pairing denied', id: client.id } );
+                // need to delay sending this because closefloatingwindow is not working??
+                setTimeout( function() {
+                    BTCloseFloatingWindow();
+                }, 200);
             }
             // $('#pairing_view').html('');
             // jQuery(window).off('message', on_pair_response);
         }
 
         //var url = 'http://127.0.0.1:' + client.get('data').port + '/gui/pair';//?iframe=' + encodeURIComponent(window.location.href);
-        var url = 'http://127.0.0.1:' + client.get('data').port + '/gui/pair?iframe=' + 'foobar'; // &style is broken
+        var url = 'http://127.0.0.1:' + client.get('data').port + '/gui/pair?iframe=Control'; // &style is broken
 
         if (config.fake_pairing) {
             url = 'client_html/pairing.html';

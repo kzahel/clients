@@ -120,7 +120,12 @@ var ClientView = Backbone.View.extend({
 
         this.$('.computer_name').click( function(evt) {
             //console.log('click on client', _this, 'selected:',_this.model.get('selected'));
-            if (! _this.model.get('selected')) {
+
+            if (_this.model.get('status') == 'pairing denied') {
+                // clicking on this should try to pair
+                app.send_message( { recipient: 'client', command: 'pair', id: _this.model.id } );
+
+            } else if (! _this.model.get('selected')) {
                 _this.model.select();
             }
         });
@@ -209,17 +214,29 @@ var ActiveClientView = ClientView.extend( {
         this.template = _.template( $('#client_template').html() );
         this.$el.html( this.template() );
         var client = this.model;
+        var _this = this;
 
         this.$el.click( function(evt) {
-            if (client && client.get('type') == 'local' && client.running() && ! client.get('data').key) {
-                // re-check the status 
-                // XXX -- the logic to determine whether to show which dialog is terrible...
-                app.send_message( { recipient: 'client', command: 'pair', id: client.id }, {local:true} );
+            var pairing_allowed_statuses = ['available','running'];
+
+            if (client && client.get('type') == 'local') {
+                client.check_version( function() {
+                    if (! client.get('data').key &&
+                        _.contains(pairing_allowed_statuses, client.get('status'))) {
+                        app.send_message( { recipient: 'client', command: 'pair', id: client.id }, {local:true} );
+                    } else {
+                        _this.open_dropdown();
+                    }
+                });
             } else {
-                BTOpenGadget('clients.html', 286, 160, { openposition: 'offset:(25;30)' });
+                _this.open_dropdown();
             }
+
         });
         this.render();
+    },
+    open_dropdown: function() {
+        BTOpenGadget('clients.html', 286, 160, { openposition: 'offset:(25;30)' });
     }
 })
 
