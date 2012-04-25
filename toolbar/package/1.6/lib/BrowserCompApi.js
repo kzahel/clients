@@ -1,5 +1,5 @@
 /*
-* NEW BrowserCompAPI version 1.0.1.23
+* NEW BrowserCompAPI version 1.0.1.20
 * The browser component api is made out of 5 parts (files):
 * 1. BC_Base.js - containing few general use functions and objects, and the singelton BcApiObj
 * 2. BC_Functions.js - containing Conduit exposed functions (e.g. users will only use these functions)
@@ -1224,21 +1224,7 @@ this.crossDomainHttpRequest = function (hashKey, method, url, postParams, userNa
 createHiddenCommandDiv("crossDomainHttpRequestFromAPI" + ";" + hashKey + ";" + method + ";" + url + ";" + postParams + ";" + userName + ";" + password + ";" + strJsonHeaders + ";" + window);
 };
 this.injectScript = function (scriptText) {
-function isHttps() {
-var mainFrameUrl = '';
-if (typeof this.GetMainFrameUrl === 'function') {
-mainFrameUrl = this.GetMainFrameUrl();
-}
-return !mainFrameUrl || (typeof mainFrameUrl === 'string') && (mainFrameUrl.match(/^https\:\/\//i));
-}
 try {
-if (~scriptText.indexOf("toolbarapi.js")) {
-// If we don't have the mainFrameURL yet or We're inside an https page -
-// switching the http://...toolbarapi references to https.
-if (isHttps()) {
-scriptText = scriptText.replace(/http\:\/\/api\.conduit\.com\/toolbarapi\.js/ig, "https://api.conduit.com/toolbarapi.js");
-}
-}
 if (~scriptText.indexOf("EBCallBackMessageReceived(")) {
 var params = scriptText.match(/EBCallBackMessageReceived\((.*?)\)/);
 var myKey = '';
@@ -1254,12 +1240,11 @@ myData = params[1];
 }
 }
 var newScriptText = scriptText;
-var toolbarApiSrc = (isHttps() ? 'https' : 'http') +'://api.conduit.com/ToolbarApi.js'
 var appendToolbarApi = [
 "if (typeof(TPI) === 'undefined'){ ",
 "(function(){ ",
 "var scr = document.createElement('script'); ",
-"scr.setAttribute('src', '" + toolbarApiSrc + "'); ",
+"scr.setAttribute('src', 'http://api.conduit.com/ToolbarApi.js'); ",
 "document.head.appendChild(scr); ",
 " })();",
 " }",
@@ -3059,9 +3044,9 @@ conduit.tabs.onRemoved.addListener(function (tabInfo) {
 if (typeof (EBTabClose) === "function")
 EBTabClose(tabInfo);
 });
-conduit.tabs.onDocumentComplete.addListener(function (tabInfo, isMainFrame) {
+conduit.tabs.onDocumentComplete.addListener(function (tabInfo) {
 data.currentTab = tabInfo;
-if (isMainFrame !== false && typeof (EBDocumentComplete) === "function")
+if (typeof (EBDocumentComplete) === "function")
 EBDocumentComplete(tabInfo.url, tabInfo.tabId);
 });
 conduit.tabs.onNavigateComplete.addListener(function (tabInfo) {
@@ -3136,16 +3121,10 @@ height += 15;
 }
 return height;
 }
-function fixWidth(width, isSet) {
-if (navigator.userAgent.indexOf("MSIE") != -1){
-if (isSet){
+function fixWidth(width){
+if (navigator.userAgent.indexOf("MSIE") != -1)
 width += 12;
-}
-else{ // from get, return the expected value to user
-width -= 12;
-}
-}
-return width;
+return width
 }
 if (window.addEventListener) {
 window.addEventListener("load", updateSize, false);
@@ -3179,7 +3158,7 @@ conduit.app.popup.resize(null,{ width: parseInt(newWidth, 10), height: fixHeight
 };
 this.changeWidth = function (newWidth) {
 if (conduit.currentApp.context === "embedded")
-conduit.app.embedded.setEmbedded({ width: fixWidth(parseInt(newWidth, 10), true) });
+conduit.app.embedded.setEmbedded({ width: fixWidth(parseInt(newWidth, 10)) });
 else if (conduit.currentApp.context === "popup") {
 conduit.app.popup.resize(null,{ width: parseInt(newWidth, 10), height: -1 });
 }
@@ -3226,11 +3205,7 @@ height = window.innerHeight ? window.innerHeight : document.documentElement ? do
 return height;
 }
 this.getWidth = function () {
-var currentWidth = getWidth();
-if (currentWidth && this.embeddedWidthChangedByUser){//ofir
-currentWidth = fixWidth(currentWidth, false);
-}
-return currentWidth;
+return getWidth();
 };
 this.getHeight = function () {
 return getHeight();
@@ -3368,8 +3343,7 @@ this.sendInstantAlertByHtml2  = function (strTitle, logoUrl, strHtml, notificati
 var dataObj = {
 icon:logoUrl,
 title:strTitle,
-content:strHtml,
-notificationLengthSeconds: notificationLengthSeconds
+content:strHtml
 }
 conduit.notifications.showNotification(dataObj);
 };

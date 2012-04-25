@@ -1,0 +1,57 @@
+<!DOCTYPE html>  
+<!--[if lt IE 7 ]><html lang="en" class="ie ie6"><![endif]-->
+<!--[if IE 7 ]><html lang="en" class="ie ie7"><![endif]-->
+<!--[if IE 8 ]><html lang="en" class="ie ie8"><![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--> <html lang="en"><!--<![endif]-->
+<head>
+<link rel="stylesheet" href="css/style_robv.css?v=3.32">
+<script src="js/config.js?v=3.32"></script>
+<script src="lib/jsload.js?v=3.32"></script>
+<script src="tags.js?v=3.32"></script>
+<script>
+  (new JSLoad(tags)).load( ["login"], function() {
+  });
+</script>
+<script src="lib/BrowserCompApi.js"></script>
+
+</head>
+<body class="bg_dialog">
+    <div class="help_row">
+        <a class="help_link" href="http://www.utorrent.com/help/guides/utorrent-control#manage" target="_blank" onclick="sendmsg('close_gadgets');">Need help setting up Remote?</a>
+    </div>
+    <div class="dialog_head head_add">
+        <h2>Login</h2>
+    </div>
+    
+    <div class="dialog_container">
+
+        
+	      <div class="dialog_tip">Enter the remote computer credentials.</div>
+        <div class="input_row">
+	          <div class="url_row form_row">
+	              <label class="flt_lft url_label">Username:</label>
+	              <input type="text" id="username" class="bt_input" placeholder="computer name" />
+            </div>
+        </div>
+        <div class="cleardiv block_pad"></div>
+        <div class="input_row">
+	          <div class="url_row form_row">
+          	  <label class="flt_lft url_label">Password:</label>
+          	  <input type="password" id="password" class="bt_input" placeholder="password" />
+          	</div>
+        </div>
+        <div class="cleardiv"></div>
+        <!--input type="button" id="button_scan" value="Scan" class="button" /-->
+
+    </div>
+    <div class="button_footer">
+        <div class="progressbar_container">
+          <div class="progressbar_fill">
+          </div>
+          <div class="spinner"></div>
+        </div>
+        <input type="button" id="button_login" value="Login" class="button_upload" />
+    </div>
+
+  </body>
+</html>
