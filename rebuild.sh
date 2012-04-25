@@ -3,6 +3,16 @@ CURVER=1.6
 ./putinversion.py
 ./compile-javascript.sh
 ./package.sh
+
+if [ -h "toolbar" ];
+then
+ echo "symlink ok"
+else
+ echo "please clone "toolbar" repo
+ exit 1;
+fi
+
+
 mkdir -p toolbar/package/$CURVER
 mv package.zip toolbar/package/$CURVER
 cd toolbar/package/$CURVER
