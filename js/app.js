@@ -116,6 +116,9 @@ var App = Backbone.Model.extend( {
                     client.check_status();
                 } else if (my_type == 'torrent') {
                     BTReload(this);
+                } else if (my_type == 'web') {
+                    // simply set selected, create a new torrentsview...
+                    console.log('create new torrents view for that client...');
                 }
             } else if (msg.message == 'reset') {
                 BTReload(this);
@@ -287,7 +290,9 @@ var App = Backbone.Model.extend( {
         this.send_message( msg );
     },
     send_message: function(msg, opts) {
-        if (opts && opts.local) {
+        if (this.get('type') == 'web') {
+            this.handle_message(null, msg, opts);
+        } else if (opts && opts.local) {
             // there is no such thing as a "tab" only message.
             BTSendTabMessage(config.conduit_toolbar_message_key, JSON.stringify(msg), opts );
         } else {
@@ -297,7 +302,12 @@ var App = Backbone.Model.extend( {
     broadcast: function(msg) {
         // sends a message to all windows
         msg.type = 'broadcast';
-        BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
+        if (this.get('type') == 'web') {
+            // no conduit api -- simply trigger handle_message
+            this.handle_message(null, msg);
+        } else {
+            BTSendMessage(config.conduit_toolbar_message_key, JSON.stringify(msg) );
+        }
     }
     
 });
