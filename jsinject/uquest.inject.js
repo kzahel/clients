@@ -5,29 +5,26 @@ window.QuestModule = (function () {
     var _css_url = '';
     var _is_active = false;
     var _selector_new_link = 'a:not([data-uquest-processed])';
-//        _selector_direct_link : 'a[href$=\".torrent\"],a[href^=\"magnet:?xt=urn:btih\"]',
     var _css_uquest_link = 'utorrent-uquest-link';
     var _css_active_link_class = 'utorrent-uquest-active';
-    var _css_span_class = 'utorrent-uquest-span';
+    var _css_uquest = 'uquest';
 
     //private methods
     //public methods handlers section
     function _initialize(){
-        _css_url = QuestModuleInitSettings.css_inject_url;
-        _is_active = QuestModuleInitSettings.is_active;
+        _css_url = window.QuestModuleInitSettings.css_inject_url;
+        _is_active = window.QuestModuleInitSettings.is_active;
 
         _init_jQuery(function(){
             _init_css();
             _init_links();
             _init_event_handlers();
-            if(_is_active)
-                _set_state(_is_active);
-            debugger;
             _toolbar_callback('injection_initialized');
         });
     }
 
     function _set_state(active) {
+        debugger;
         _is_active = active;
         if(_is_active){
             _$('.' + _css_uquest_link).each(function(index, item){
@@ -35,7 +32,7 @@ window.QuestModule = (function () {
             })
         } else {
             _$('.' + _css_uquest_link).each(function(index, item){
-                _$(item).removeClass(_css_active_link_class).children('.' + _css_span_class).remove();
+                _$(item).removeClass(_css_active_link_class).children('.' + _css_uquest).remove();
             })
         }
     }
@@ -89,7 +86,7 @@ window.QuestModule = (function () {
 //                        console.log(''.concat('direct torrent link ', item.href, ' ', _$(item).text()));
                 _$(item).addClass(_css_uquest_link);
                 if(_is_active) _show_active_link(item);
-                //is contain torrent or download text, not exe and from the same origin?
+            //does contain torrent or download text, not exe and from the same origin?
             } else if (_$(item).text().match(/torrent|download/i) &&
                 !url_parts[0].match(/\.exe$|\.pdf$/i) &&
                 _is_same_origin(item)) {
@@ -128,15 +125,24 @@ window.QuestModule = (function () {
         var ver = _get_jQuery_version(_$);
         if(ver >= 170){
             _$(document).on('click', '.' + _css_active_link_class, this, _on_click);
+            _$(document).on('hover', '.' + _css_uquest, this, _on_mouse_hover);
             //_$(document).on('DOMSubtreeModified', 'body', this, init_links);
         } else if (ver >= 143) {
             _$(document).delegate('.' + _css_active_link_class, 'click', this, _on_click);
+            _$(document).delegate('.' + _css_uquest, 'hover', this, _on_mouse_hover);
             //_$('body').bind('DOMSubtreeModified', init_links);
         } else {
             debugger;
             assert(false);
             return;
         }
+/*
+        _$('.' + _css_uquest).hover(function(){
+            _$(this).find('.tip_content').show(10);
+        }, function(){
+            _$(this).find('.tip_content').hide(10);
+        })
+*/
     }
 
     //event handlers section
@@ -145,10 +151,27 @@ window.QuestModule = (function () {
         e.preventDefault();
     }
 
+    function _on_mouse_hover(e) {
+        if( e.type === 'mouseenter' ) {
+            _$(this).find('.tip_content').show(10);
+        } else {
+            _$(this).find('.tip_content').hide(10);
+        }
+    }
+
     //utils section
     function _show_active_link(item) {
-        var span = _$('<span>').addClass(_css_span_class).attr('title', 'Download torrent');
-        _$(item).addClass(_css_active_link_class).append(span);
+//        var span = _$('<span>').addClass(_css_span_class).attr('title', 'Download torrent');
+//        _$(item).addClass(_css_active_link_class).append(span);
+
+        var uquest = _$('<div>').addClass(_css_uquest)
+            .append(_$('<div>').addClass('uquest_highlight')
+                .append(_$('<div>').addClass('uquest_red')
+                    .append(_$('<div>').addClass('uquest_tip')
+                        .append(_$('<img>').addClass('dl_image').attr('align', 'top').attr('src', 'http://localhost/toolbar2/css/images/toolbar/dl_icon.png'))
+                        .append(_$('<div>').addClass('tip_content').html('<b>Download</b> Example link')))))
+            .append(_$('<div>').addClass('uquest_pointer_red'));
+        _$(item).addClass(_css_active_link_class).append(uquest);
     }
 
     function _get_jQuery_version(jQueryObj) {
