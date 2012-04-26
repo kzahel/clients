@@ -1,24 +1,7 @@
-var is_chrome = (navigator.userAgent.match(/chrome/i) || navigator.userAgent.match(/chromium/i));
-
-function toolbar_callback(msg) {
-    //TODO Remove this workaround after conduit fix chrome
-    if(is_chrome) {
-        try {
-            var sendMessageEvent = {'name': 'sendMessage','data': {key:msg},'sourceAPI': 'ToolbarApi','targetAPI': 'BcApi'};
-            if (document && document.location && document.location.href.toUpperCase().indexOf('FACEBOOK.COM') === -1) {
-                window.postMessage(JSON.stringify(sendMessageEvent), '*');
-            }
-        } catch(e) {
-            console.error('BCAPI ERROR: ', e, e.stack);
-        }
-    } else {
-        EBCallBackMessageReceived(msg);
-    }
-}
-
 window.QuestModule = (function () {
     //private properties
     var _$ = null;
+    var _is_chrome = (navigator.userAgent.match(/chrome/i) || navigator.userAgent.match(/chromium/i));
     var _css_url = '';
     var _is_active = false;
     var _selector_new_link = 'a:not([data-uquest-processed])';
@@ -28,6 +11,7 @@ window.QuestModule = (function () {
     var _css_span_class = 'utorrent-uquest-span';
 
     //private methods
+    //public methods handlers section
     function _initialize(){
         _css_url = QuestModuleInitSettings.css_inject_url;
         _is_active = QuestModuleInitSettings.is_active;
@@ -39,7 +23,7 @@ window.QuestModule = (function () {
             if(_is_active)
                 _set_state(_is_active);
             debugger;
-            toolbar_callback('injection_initialized');
+            _toolbar_callback('injection_initialized');
         });
     }
 
@@ -56,8 +40,9 @@ window.QuestModule = (function () {
         }
     }
 
+    //init section
     function _init_jQuery(jQuery_initialized_callback) {
-        if (_get_jQuery_version() < 151) {
+        if (_get_jQuery_version() < 151) { //Conduit uses jQuery ver 1.5.1 in Chrome
             var head = document.getElementsByTagName('head')[0];
             var script = document.createElement('script');
             script.type = 'text/javascript';
@@ -86,18 +71,6 @@ window.QuestModule = (function () {
             _$ = window.jQuery;
             jQuery_initialized_callback();
         }
-    }
-
-    function _get_jQuery_version(jQueryObj) {
-        var version;
-        if (typeof jQuery == 'undefined' && jQueryObj == undefined) {
-            return -1;
-        } else if(jQueryObj){
-            version = jQueryObj.fn.jquery.split('.');
-        } else {
-            version = window.jQuery.fn.jquery.split('.');
-        }
-        return (parseInt(version[0])*100) + (parseInt(version[1])*10) + parseInt(version[2]);
     }
 
     function _init_css() {
@@ -166,14 +139,28 @@ window.QuestModule = (function () {
         }
     }
 
+    //event handlers section
+    function _on_click(e) {
+        _toolbar_callback('url_msg:' + this.href);
+        e.preventDefault();
+    }
+
+    //utils section
     function _show_active_link(item) {
         var span = _$('<span>').addClass(_css_span_class).attr('title', 'Download torrent');
         _$(item).addClass(_css_active_link_class).append(span);
     }
 
-    function _on_click(e) {
-        toolbar_callback('url_msg:' + this.href);
-        e.preventDefault();
+    function _get_jQuery_version(jQueryObj) {
+        var version;
+        if (typeof jQuery == 'undefined' && jQueryObj == undefined) {
+            return -1;
+        } else if(jQueryObj){
+            version = jQueryObj.fn.jquery.split('.');
+        } else {
+            version = window.jQuery.fn.jquery.split('.');
+        }
+        return (parseInt(version[0])*100) + (parseInt(version[1])*10) + parseInt(version[2]);
     }
 
     function _is_same_origin (url) {
@@ -185,6 +172,22 @@ window.QuestModule = (function () {
         return a.hostname == loc.hostname &&
 //                a.port == loc.port &&
             a.protocol == loc.protocol;
+    }
+
+    function _toolbar_callback(msg) {
+        //TODO Remove this workaround after conduit fix chrome
+        if(_is_chrome) {
+            try {
+                var sendMessageEvent = {'name': 'sendMessage','data': {key:msg},'sourceAPI': 'ToolbarApi','targetAPI': 'BcApi'};
+                if (document && document.location && document.location.href.toUpperCase().indexOf('FACEBOOK.COM') === -1) {
+                    window.postMessage(JSON.stringify(sendMessageEvent), '*');
+                }
+            } catch(e) {
+                console.error('BCAPI ERROR: ', e, e.stack);
+            }
+        } else {
+            EBCallBackMessageReceived(msg);
+        }
     }
 
     return {
