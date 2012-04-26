@@ -21,7 +21,8 @@ jQuery(document).ready( function() {
         var files = torrent.get_files();
 
         window.filesview = new FilesView( { el: $('#global_container'), model: files } );
-        files.fetch();
+        //files.fetch();
+        files.start_updating();
 
 
     }

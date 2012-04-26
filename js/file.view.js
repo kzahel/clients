@@ -29,7 +29,7 @@ var FileView = Backbone.View.extend({
         var _this = this;
         this.bind_action_events();
         this.model.bind('change', function(m) {
-            // console.log('torrent change',_this.model.get('name'),_this.model.changedAttributes());
+            console.log('files change',_this.model.get('name'),_this.model.changedAttributes());
             _this.render();
         });
         this.$('.torrent_name').click( function(evt) {

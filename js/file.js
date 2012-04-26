@@ -80,36 +80,52 @@ var FileCollection = Backbone.Collection.extend({
             // torrent.trigger('removed');
         });
         this.updates = 0;
-/*
-        this.bind('add', _.bind(function(torrent) {
-            debugger;
-
-        },this));
-*/
-
+        this.updating = false;
+        this.next_update = null;
+        this.update_interval = 4000; // make it depend on # of files?
+    },
+    start_updating: function() {
+        if (this.updating) { return; }
+        this.updating = true;
+        this.do_update();
     },
     do_update: function() {
-        debugger;
+        var _this = this;
+        var cb = function() {
+            _this.next_update = setTimeout( function() {
+                _this.do_update();
+            }, _this.update_interval);
+        }
+
+        this.fetch( { success: cb,
+                      error: cb
+                    } );
+    },
+    reset: function(a,b,c) {
+        // don't reset on sync...
     },
     sync: function(operation, collection, opts) {
         if (operation == 'read') {
             this.torrent.collection.client.doreq(
                 { action: 'getfiles', hash: this.torrent.get('hash') },
                 function(data, status, xhr) {
+                    console.log('got getfiles update');
                     var hash = data.files[0];
                     var filedata = data.files[1];
                     for (var i=0; i<filedata.length; i++) {
-                        var file = new File( { id: i, data: filedata[i] } );
-                        if (this.updates > 0) {
-                            collection.get(i).update(data);
+                        if (collection.updates > 0) {
+                            collection.get(i).update(filedata[i]);
                         } else {
+                            var file = new File( { id: i, data: filedata[i] } );
                             collection.add(file);
                         }
                     }
-                    this.updates++;
+                    collection.updates++;
+                    if (opts && opts.success) { opts.success(); }
                 },
                 function(xhr, status, text) {
                     debugger;
+                    if (opts && opts.error) { opts.error(); }
                 });
         } else {
             debugger;
