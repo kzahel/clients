@@ -24,7 +24,6 @@ window.QuestModule = (function () {
     }
 
     function _set_state(active) {
-        debugger;
         _is_active = active;
         if(_is_active){
             _$('.' + _css_uquest_link).each(function(index, item){
