@@ -14,8 +14,7 @@
 </script>
 <script src="lib/BrowserCompApi.js"></script>
 
-</head>
-  <body class="bg_dialog">
+<script type="text/template" id="login_template">
     <div class="help_row">
       <a class="help_link" href="http://www.utorrent.com/help/guides/utorrent-control#manage" target="_blank" onclick="sendmsg('close_gadgets');">Need help setting up Remote?</a>
     </div>
@@ -52,5 +51,12 @@
       <input type="button" id="button_login" value="Login" class="button_upload" />
     </div>
 
+</script>
+
+
+
+</head>
+  <body class="bg_dialog">
+    <div id="login_view"></div>
   </body>
 </html>

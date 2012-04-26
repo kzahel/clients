@@ -540,13 +540,8 @@ var ClientCollection = Backbone.Collection.extend( {
         }
     },
     get_by_id: function(id) {
-        // XXX -- only have to call collection.get!
-        debugger;
-        for (var i=0; i<this.models.length;i++) {
-            if (this.models[i].id == id) {
-                return this.models[i];
-            }
-        }
+        // XXX remove this useless function
+        return this.get(id);
     },
     set_active: function(client, opts) {
         // backbone does not support .set() on collections :-( so we

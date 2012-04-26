@@ -1,5 +1,8 @@
 jQuery(document).ready( function() {
 
+    $('#login_view').html( $('#login_template').html() );
+
+
     window.clients = new ClientCollection;
     window.app = new App( { type: "login" } );
 
