@@ -43,6 +43,19 @@ var File = Backbone.Model.extend({
     },
     isCompleted: function() {
         return true;
+    },
+    get_url: function() {
+        var torrent = this.collection.torrent;
+        var client = torrent.collection.client;
+        if (client.get('type') == 'local') {
+            return 'http://127.0.0.1:' + client.get('data').port + '/proxy?sid=' + torrent.get('stream_id') + '&file=' + this.id + '&service=STREAMING' + client.get_auth_url_str();
+        }
+    },
+    download: function() {
+        var url = this.get_url();
+        if (url) {
+            window.open(url);
+        }
     }
 });
 

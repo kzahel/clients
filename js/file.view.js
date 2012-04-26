@@ -39,7 +39,7 @@ var FileView = Backbone.View.extend({
 
         this.$('.torrent_name').dblclick( function(evt) {
             // open up file view
-            app.send_message( { recipient: 'torrents', command: 'open_gadget', name: 'files', hash: _this.model.id, client: clients.selected.id  }, { local: true } );
+            _this.model.download();
         });
 
     },
@@ -53,12 +53,12 @@ var FileView = Backbone.View.extend({
             // remove from dom
             _this.destroy();
         });
-        //this.bind_events();
+        this.bind_events();
     },
     render: function() {
         if (this.model) {
 
-            var progress_width = Math.floor(this.model.get('progress')/10) + '%';
+            var progress_width = Math.floor(this.model.get('downloaded') / this.model.get('size') * 100) + '%';
 
             if (this.model.get('selected')) {
                 this.$('.bt_torrent_list').addClass('selected_torrent');
@@ -109,29 +109,10 @@ var FilesView = Backbone.View.extend({
         var _this = this;
 
         this.model.bind('add', function(t) {
-            console.log('add new torrent',t);
             if (! t.view) {
                 t.view = new FileView( { model: t } );
             }
-            _this.$el.prepend( t.view.render() );
+            _this.$el.append( t.view.render() );
         });
-
-    },
-    render: function() {
-        this.$el.html('');
-        var _this = this;
-        if (this.model && this.model.torrents) {
-            if (this.model.torrents.length == 0) {
-                $('#global_container').html( 'No torrents' );
-            } else {
-                this.model.torrents.each( function(t) {
-                    if (! t.view) {
-                        t.view = new TorrentView( { model: t } );
-                    }
-                    _this.$el.append( t.view.$el );
-                    t.view.bind_events();
-                });
-            }
-        }
     }
 });

@@ -75,6 +75,19 @@ var TorrentView = Backbone.View.extend({
             custom_track('stop_torrent');
             _this.model.doreq('stop');
         });
+
+        this.$('.torrent_name').dblclick( function(evt) {
+            // open up file view
+            var recip = app.get('type');
+            app.send_message( { recipient: recip, 
+                                command: 'open_gadget', 
+                                name: 'files', 
+                                hash: _this.model.id, 
+                                sid: _this.model.get('stream_id'), 
+                                client: clients.selected.id }, 
+                              { local: true } );
+        });
+
     },
     bind_events: function() {
         var _this = this;
@@ -87,12 +100,6 @@ var TorrentView = Backbone.View.extend({
             custom_track('select_torrent');
             _this.model.trigger('selected');
         });
-
-        this.$('.torrent_name').dblclick( function(evt) {
-            // open up file view
-            app.send_message( { recipient: 'torrents', command: 'open_gadget', name: 'files', hash: _this.model.id, client: clients.selected.id  }, { local: true } );
-        });
-
     },
     initialize: function(opts) {
         this.template = _.template( $('#torrent_template').html() );

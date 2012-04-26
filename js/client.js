@@ -301,6 +301,9 @@ var Client = Backbone.Model.extend({
                     },
                     error );
     },
+    get_auth_url_str: function() {
+        return '&pairing=' + this.get('data').key + '&token=' + this.get('data').key; // send token as the pairing key to save a roundtrip fetching the token
+    },
     doreq: function(params, success, error, opts) {
         var client = this;
         if (client.get('type') == 'local') {
@@ -313,7 +316,7 @@ var Client = Backbone.Model.extend({
             }  else {
                 var qs = params;
             }
-            var url = 'http://127.0.0.1:' + client.get('data').port + '/gui/?' + qs + '&pairing=' + client.get('data').key + '&token=' + client.get('data').key; // send token as the pairing key to save a roundtrip fetching the token
+            var url = 'http://127.0.0.1:' + client.get('data').port + '/gui/?' + qs + this.get_auth_url_str();
             jQuery.ajax({
                 url: url,
                 dataType: 'jsonp',

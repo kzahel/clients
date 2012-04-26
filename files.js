@@ -12,8 +12,10 @@ jQuery(document).ready( function() {
 
         var url_args = decode_url_arguments();
         var hash = url_args.hash;
+        var sid = url_args.sid;
         var d = [ hash ];
         var torrent = new Torrent( { id: d[0], data: d } );
+        torrent.set( {stream_id:sid} );
         var torrents = new TorrentCollection( [ torrent ], { client: client } );
 
         var files = torrent.get_files();
