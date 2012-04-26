@@ -6,6 +6,7 @@
     position:absolute;
     height:24px;
     width:24px;
+    line-height:13px;
     top:-26px;
     left:40%;
 }
@@ -35,7 +36,9 @@
     background:white;
     height:15px;
     font-family:arial;
+    font-weight:normal;
     font-size:12px;
+    text-transform:none;
     padding:1px 3px 0 3px;
     border-radius:9px;
     -moz-border-radius:9px;
@@ -46,8 +49,7 @@
 .tip_content {
     display:none;
     margin:0 6px 0 5px;
-    padding:5px 0 0 9px;
-    line-height:13px;
+    padding:7px 0 0 9px;
     position:relative;
     top:-19px;
     height:19px;

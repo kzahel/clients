@@ -1,84 +1,23 @@
-.utorrent-uquest-active {
-    position:relative;
-}
-.uquest {
-    cursor:default;
-    position:absolute;
-    height:24px;
-    width:24px;
-    top:-26px;
-    left:40%;
-}
 .uquest_highlight {
-    background:white;
-    position:absolute;
-    height:24px;
-    max-width:300px;
-    border-radius:12px;
-    -moz-border-radius:12px;
-    -webkit-border-radius:12px;
-    top:0px;left:0px;
+    background:transparent url('images/toolbar/dl_background_left.png') no-repeat 0 -1px;
+    top:-2px;
 }
 .uquest_red {
-    background:#cb1205;
-    height:16px;
-    border-radius:11px;
-    -moz-border-radius:11px;
-    -webkit-border-radius:11px;
-    white-space:nowrap;
-    min-width:17px\9;
-    max-width:300px;
-    margin:1px;
-    padding:3px;
+    background:transparent url('images/toolbar/dl_background_right.png') no-repeat right -1px;
+    height:18px;
 }
 .uquest_tip {
-    background:white;
-    height:15px;
-    font-family:arial;
-    font-size:12px;
-    padding:1px 3px 0 3px;
-    border-radius:9px;
-    -moz-border-radius:9px;
-    -webkit-border-radius:9px;
-    color:#333;
-    max-width:300px;
+    background:transparent;
 }
 .tip_content {
-    display:none;
-    margin:0 6px 0 5px;
-    padding:5px 0 0 9px;
-    line-height:13px;
-    position:relative;
-    top:-19px;
-    height:19px;
-    max-width:300px;
-    white-space:none;
-    overflow:hidden;
-    text-overflow:ellipsis;
-}
-.dl_image {
-    position:relative;top:2px;
-    top:3px\9;
-    height:12px;
-    width:10px;
-    z-index:1000;
+    background:url('images/toolbar/dl_background.png');
 }
 .uquest:before {
-    content: "";
-    position: absolute;
-    bottom: -8px;
-    left:-2px;
-    border-top: 13px solid white;
-    border-left: 14px solid transparent;
-    border-right: 13px solid transparent;
-    border-bottom: 0;
+    bottom: -7px;
 }
 .uquest_pointer_red {
-    content: "";
-    position: absolute;
-    bottom: -7px;
-    border-top: 11px solid #cb1205;
-    border-left: 12px solid transparent;
-    border-right: 11px solid transparent;
-    border-bottom: 0;
+    bottom: -6px;
+}
+.dl_image {
+    border-width: 0px;
 }
