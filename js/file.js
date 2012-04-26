@@ -44,11 +44,21 @@ var File = Backbone.Model.extend({
     isCompleted: function() {
         return true;
     },
+    get_filename: function() {
+        var parts = this.get('name').split('\\');
+        return parts[parts.length-1];
+    },
     get_url: function() {
         var torrent = this.collection.torrent;
         var client = torrent.collection.client;
         if (client.get('type') == 'local') {
             return 'http://127.0.0.1:' + client.get('data').port + '/proxy?sid=' + torrent.get('stream_id') + '&file=' + this.id + '&service=STREAMING' + client.get_auth_url_str();
+        } else {
+            if (true) {
+                // make the url represent the name of the file... ( may need to url encode ? )
+                var filename_option = '/' + this.get_filename();
+            }
+            return client.get('data').host + '/client/proxy'+filename_option+'?sid=' + torrent.get('stream_id') + '&file=' + this.id + '&service=STREAMING' + client.get_auth_url_str();
         }
     },
     download: function() {

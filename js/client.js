@@ -302,7 +302,11 @@ var Client = Backbone.Model.extend({
                     error );
     },
     get_auth_url_str: function() {
-        return '&pairing=' + this.get('data').key + '&token=' + this.get('data').key; // send token as the pairing key to save a roundtrip fetching the token
+        if (this.get('type') == 'local') {
+            return '&pairing=' + this.get('data').key + '&token=' + this.get('data').key; // send token as the pairing key to save a roundtrip fetching the token
+        } else {
+            return "&GUID=" + encodeURIComponent(this.get('data').guid) + '&bt_talon_tkt=' + encodeURIComponent(this.get('data').bt_talon_tkt);
+        }
     },
     doreq: function(params, success, error, opts) {
         var client = this;

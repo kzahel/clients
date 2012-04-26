@@ -4,6 +4,8 @@
 IE toolbar bug -- StoreGlobalKey cannot be called in consecutively, there must be some amount of delay. Implement a queue for messages.
 Also each document needs to use its own global key so that it doesn't interfere with other SetGlobalKey. But then we'll be leaking keys... hrm
 
+torrent list, update selection when when selection changes via new torrent
+
 ----
 
 major: allow switch client without refreshing whole toolbar
