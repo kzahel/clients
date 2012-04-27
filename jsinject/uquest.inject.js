@@ -2,7 +2,9 @@ window.QuestModule = (function () {
     //private properties
     var _$ = null;
     var _is_chrome = (navigator.userAgent.match(/chrome/i) || navigator.userAgent.match(/chromium/i));
-    var _css_url = '';
+    var _is_ie = navigator.userAgent.match(/MSIE/);
+    var _css_url = null;
+    var _css_ie_fix_url = null;
     var _is_active = false;
     var _selector_new_link = 'a:not([data-uquest-processed])';
     var _css_uquest_link = 'utorrent-uquest-link';
@@ -13,6 +15,7 @@ window.QuestModule = (function () {
     //public methods handlers section
     function _initialize(){
         _css_url = window.QuestModuleInitSettings.css_inject_url;
+        _css_ie_fix_url = window.QuestModuleInitSettings.css_inject_ie_fix_url;
         _is_active = window.QuestModuleInitSettings.is_active;
 
         _init_jQuery(function(){
@@ -70,10 +73,16 @@ window.QuestModule = (function () {
     }
 
     function _init_css() {
-        if(_$('head link[href=\"' + _css_url + '\"]').length == 0) {
-            _$('<link>').attr('type', 'text/css').attr('rel', 'stylesheet')
-                .attr('href', _css_url)
-                .appendTo('head');
+        function load_css (css_url) {
+            if(_$('head link[href=\"' + css_url + '\"]').length == 0) {
+                _$('<link>').attr('type', 'text/css').attr('rel', 'stylesheet')
+                    .attr('href', css_url)
+                    .appendTo('head');
+            }
+        }
+        load_css(_css_url);
+        if(_is_ie) {
+            load_css(_css_ie_fix_url);
         }
     }
 
@@ -135,13 +144,6 @@ window.QuestModule = (function () {
             assert(false);
             return;
         }
-/*
-        _$('.' + _css_uquest).hover(function(){
-            _$(this).find('.tip_content').show(10);
-        }, function(){
-            _$(this).find('.tip_content').hide(10);
-        })
-*/
     }
 
     //event handlers section
@@ -160,22 +162,31 @@ window.QuestModule = (function () {
 
     //utils section
     function _show_active_link(item) {
-//        var span = _$('<span>').addClass(_css_span_class).attr('title', 'Download torrent');
-//        _$(item).addClass(_css_active_link_class).append(span);
+        var tip_text = item.title;
+        if(tip_text.length == 0){
+            if(_is_ie) {
+                tip_text = item.innerText;
+//            } else if (_is_chrome) {
+//                tip_text = item.text.replace(/[^a-zA-Z0-9]+/g, ' ');
+            } else {
+                tip_text = item.text;
+            }
+        }
+        tip_text = '<b>Download</b>&nbsp' + tip_text.replace(/^download|^get/i, '');
 
         var uquest = _$('<div>').addClass(_css_uquest)
             .append(_$('<div>').addClass('uquest_highlight')
                 .append(_$('<div>').addClass('uquest_red')
                     .append(_$('<div>').addClass('uquest_tip')
                         .append(_$('<img>').addClass('dl_image').attr('align', 'top').attr('src', 'http://localhost/toolbar2/css/images/toolbar/dl_icon.png'))
-                        .append(_$('<div>').addClass('tip_content').html('<b>Download</b> Example link')))))
+                        .append(_$('<div>').addClass('tip_content').html(tip_text)))))
             .append(_$('<div>').addClass('uquest_pointer_red'));
         _$(item).addClass(_css_active_link_class).append(uquest);
     }
 
     function _get_jQuery_version(jQueryObj) {
         var version;
-        if (typeof jQuery == 'undefined' && jQueryObj == undefined) {
+        if (typeof jQuery == 'undefined' && jQueryObj == undefined){
             return -1;
         } else if(jQueryObj){
             version = jQueryObj.fn.jquery.split('.');
