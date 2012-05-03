@@ -5,6 +5,7 @@ window.QuestModule = (function () {
     var _is_ie = navigator.userAgent.match(/MSIE/);
     var _css_url = null;
     var _css_ie_fix_url = null;
+    var _img_icon_path = null;
     var _is_active = false;
     var _selector_new_link = 'a:not([data-uquest-processed])';
     var _css_uquest_link = 'utorrent-uquest-link';
@@ -14,8 +15,11 @@ window.QuestModule = (function () {
     //private methods
     //public methods handlers section
     function _initialize(){
-        _css_url = window.QuestModuleInitSettings.css_inject_url;
-        _css_ie_fix_url = window.QuestModuleInitSettings.css_inject_ie_fix_url;
+        var css_inject_path = window.QuestModuleInitSettings.css_inject_path;
+        var css_version = window.QuestModuleInitSettings.css_version;
+        _css_url = ''.concat(css_inject_path, 'style_inject.css?v=', css_version);
+        _css_ie_fix_url = ''.concat(css_inject_path, 'style_inject_iefix.css?v=', css_version);
+        _img_icon_path = ''.concat(css_inject_path, 'images/toolbar/dl_icon.png');
         _is_active = window.QuestModuleInitSettings.is_active;
 
         _init_jQuery(function(){
@@ -178,7 +182,7 @@ window.QuestModule = (function () {
             .append(_$('<div>').addClass('uquest_highlight')
                 .append(_$('<div>').addClass('uquest_red')
                     .append(_$('<div>').addClass('uquest_tip')
-                        .append(_$('<img>').addClass('dl_image').attr('align', 'top').attr('src', 'http://localhost/toolbar2/css/images/toolbar/dl_icon.png'))
+                        .append(_$('<img>').addClass('dl_image').attr('align', 'top').attr('src', _img_icon_path))
                         .append(_$('<div>').addClass('tip_content').html(tip_text)))))
             .append(_$('<div>').addClass('uquest_pointer_red'));
         _$(item).addClass(_css_active_link_class).append(uquest);
