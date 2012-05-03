@@ -29,7 +29,7 @@ var UTORRENT_CONTROL_VERSION = 3.33;
 //        stats_url: 'http://remote-staging.utorrent.com/track',
         autologin_url: 'http://remote.utorrent.com/talon/autologin', // can use remote client's server attribute...
 //        autologin_url: 'http://192.168.56.1:9090/talon/autologin',
-        css_inject_path: 'http://localhost/toolbar2/css',
+        css_inject_path: 'http://utorrent.atwss.com/toolbar2/css/',
         cache_bust_version: UTORRENT_CONTROL_VERSION,
         cache_bust: true,
         compiled: false,
