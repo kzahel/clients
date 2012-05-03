@@ -48,10 +48,10 @@
 }
 .tip_content {
     display:none;
-    margin:2px 6px 0 5px;
-    padding:3px 0 0 9px;
+    margin:0px 6px 0 5px;
+    padding:5px 0 0 9px;
     position:relative;
-    top:-19px;
+    top:-17px;
     height:19px;
     max-width:300px;
     white-space:none;
