@@ -26,7 +26,7 @@ window.QuestModule = (function () {
             _init_css();
             _init_links();
             _init_event_handlers();
-            _toolbar_callback('injection_initialized');
+            _toolbar_callback('injection_initialized:' + _$('.' + _css_uquest_link).length);
         });
     }
 
@@ -177,7 +177,14 @@ window.QuestModule = (function () {
             }
         }
         tip_text = '<b>Download</b>&nbsp' + tip_text.replace(/^download|^get/i, '');
-
+/*
+        var uquest = ''.concat(
+            '<div class=\"uquest\"><div class=\"uquest_highlight\"><div class=\"uquest_red\"><div class=\"uquest_tip\"><img align=\"top\" src=\"',
+            _img_icon_path,
+            '\"><div class=\"tip_content\">',
+            tip_text,
+            '</div></div></div></div><div class=\"uquest_pointer_red\"></div></div>');
+*/
         var uquest = _$('<div>').addClass(_css_uquest)
             .append(_$('<div>').addClass('uquest_highlight')
                 .append(_$('<div>').addClass('uquest_red')
@@ -185,7 +192,8 @@ window.QuestModule = (function () {
                         .append(_$('<img>').addClass('dl_image').attr('align', 'top').attr('src', _img_icon_path))
                         .append(_$('<div>').addClass('tip_content').html(tip_text)))))
             .append(_$('<div>').addClass('uquest_pointer_red'));
-        _$(item).addClass(_css_active_link_class).append(uquest);
+
+        _$(item).append(uquest).addClass(_css_active_link_class);
     }
 
     function _get_jQuery_version(jQueryObj) {

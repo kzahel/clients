@@ -591,8 +591,13 @@ html, body {
     .board_container #uquest_button:hover {
       cursor: pointer;
       background-color: #bdbdbd; }
+    .board_container #uquest_button .links_number {
+      color: #000000;
+      font-weight: bold; }
   .board_container #uquest_button.inactive {
     background: #f0f0f0 url("images/toolbar/quest_icon.png") no-repeat 4px -24px; }
     .board_container #uquest_button.inactive:hover {
       cursor: pointer;
       background-color: #bdbdbd; }
+    .board_container #uquest_button.inactive .links_number {
+      display: none; }

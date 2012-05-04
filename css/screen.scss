@@ -653,6 +653,10 @@ html, body {
 			cursor: pointer;
 			background-color: darken(#f0f0f0, 20%);
 		}
+		.links_number{
+			color: #000000;
+			font-weight: bold;
+        }
 	}
 	#uquest_button.inactive {
 		background: #f0f0f0 url('images/toolbar/quest_icon.png') no-repeat 4px -24px;
@@ -660,5 +664,8 @@ html, body {
 			cursor: pointer;
 			background-color: darken(#f0f0f0, 20%);
 		}
-	}
+    	.links_number{
+    		display: none;
+    	}
+    }
 }
