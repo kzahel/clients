@@ -1,11 +1,10 @@
-<!DOCTYPE html>  
+<!DOCTYPE html>
 <head>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script src="http://api.conduit.com/BrowserCompApi.js"></script>
 <script>
-    $(function(){
-//        alert(1);
-    });
+    var script_url = "uquest2.js?v=" + (new Date()).getTime();
+    document.write('<script src="' + script_url + '"><\/script>');
 </script>
 </head>
 
