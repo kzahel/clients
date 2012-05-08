@@ -26,7 +26,7 @@ window.QuestModule = (function () {
             _init_css();
             _init_links();
             _init_event_handlers();
-            _toolbar_callback('injection_initialized:' + _$('.' + _css_uquest_link).length);
+            _toolbar_callback('injection_initialized:0');
         });
     }
 
