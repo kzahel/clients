@@ -94,13 +94,13 @@ window.QuestModule = (function () {
         _$(_selector_new_link).each(function(index, item){
             var url_parts = item.href.split('?');
             //is direct link?
-            if(url_parts[0].match(/\.torrent$|^magnet\:/i)) {
+            if(url_parts[0].match(/[\.]torrent$|^magnet\:/i)) {
 //                        console.log(''.concat('direct torrent link ', item.href, ' ', _$(item).text()));
                 _$(item).addClass(_css_uquest_link);
                 if(_is_active) _show_active_link(item);
             //does contain torrent or download text, not exe and from the same origin?
             } else if (_$(item).text().match(/torrent|download/i) &&
-                !url_parts[0].match(/\.exe$|\.pdf$/i) &&
+                !url_parts[0].match(/[\.]exe$|[\.]pdf$/i) &&
                 _is_same_origin(item)) {
 //                        console.log(''.concat('before ajax ', item.href, ' ', _$(item).text()));
                 _$.ajax({
