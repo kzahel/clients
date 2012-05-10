@@ -40,8 +40,8 @@ var QuestView = Backbone.View.extend({
     },
     init_injection: function() {
         this._inject_script(this._script_init);
-        //TODO resolve injection on new incative tab with Conduit
-//        this.injection_initialized = true;
+        //TODO resolve injection on new incative tab with Conduit. Hint EBTabChange
+        //        this.injection_initialized = true;
     },
 
     _inject_script: function(script){
@@ -126,3 +126,9 @@ function EBCallBackMessageReceived(msg, data) {
         }
     }
 }
+
+/*
+function EBTabChange(tabid) {
+    window.QuestButtonView.init_injection();
+}
+*/
