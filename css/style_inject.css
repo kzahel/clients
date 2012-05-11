@@ -1,5 +1,6 @@
 .utorrent-uquest-active {
     position:relative;
+    display: inline-block;
 }
 .uquest {
     cursor:default;
