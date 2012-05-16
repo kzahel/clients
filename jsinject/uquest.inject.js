@@ -9,8 +9,11 @@ window.QuestModule = (function () {
     var _is_active = false;
     var _selector_new_link = 'a:not([data-uquest-processed])';
     var _css_uquest_link = 'utorrent-uquest-link';
-    var _css_active_link_class = 'utorrent-uquest-active';
+    var _selector_uquest_link = '.' + _css_uquest_link;
+    var _css_active_link = 'utorrent-uquest-active';
+    var _selector_active_link = '.' + _css_active_link;
     var _css_uquest = 'uquest';
+    var _selector_uquest = '.' + _css_uquest;
     var _attr_processed = 'data-uquest-processed';
 
     //private methods
@@ -34,12 +37,12 @@ window.QuestModule = (function () {
     function _set_state(active) {
         _is_active = active;
         if(_is_active){
-            _$('.' + _css_uquest_link).each(function(index, item){
+            _$(_selector_uquest_link).each(function(index, item){
                 _show_active_link(item);
             })
         } else {
-            _$('.' + _css_uquest_link).each(function(index, item){
-                _$(item).removeClass(_css_active_link_class).children('.' + _css_uquest).remove();
+            _$(_selector_uquest_link).each(function(index, item){
+                _$(item).removeClass(_css_active_link).children(_selector_uquest).remove();
             })
         }
     }
@@ -137,12 +140,12 @@ window.QuestModule = (function () {
         //for jQuery 1.4.3+ use 'delegate'
         var ver = _get_jQuery_version(_$);
         if(ver >= 170){
-            _$(document).on('click', '.' + _css_active_link_class, this, _on_click);
-            _$(document).on('hover', '.' + _css_uquest, this, _on_mouse_hover);
+            _$(document).on('click', _selector_active_link, this, _on_click);
+            _$(document).on('hover', _selector_uquest, this, _on_mouse_hover);
             _$(document).on('DOMSubtreeModified', 'body', this, _on_dom_modified);
         } else if (ver >= 143) {
-            _$(document).delegate('.' + _css_active_link_class, 'click', this, _on_click);
-            _$(document).delegate('.' + _css_uquest, 'hover', this, _on_mouse_hover);
+            _$(document).delegate(_selector_active_link, 'click', this, _on_click);
+            _$(document).delegate(_selector_uquest, 'hover', this, _on_mouse_hover);
             _$(document).delegate('body', 'DOMSubtreeModified', this, _on_dom_modified);
         } else {
             debugger;
@@ -179,8 +182,6 @@ window.QuestModule = (function () {
         if(tip_text.length == 0){
             if(_is_ie) {
                 tip_text = item.innerText;
-//            } else if (_is_chrome) {
-//                tip_text = item.text.replace(/[^a-zA-Z0-9]+/g, ' ');
             } else {
                 tip_text = item.text;
             }
@@ -202,7 +203,7 @@ window.QuestModule = (function () {
                         .append(_$('<div>').addClass('tip_content').html(tip_text)))))
             .append(_$('<div>').addClass('uquest_pointer_red'));
 
-        _$(item).append(uquest).addClass(_css_active_link_class);
+        _$(item).append(uquest).addClass(_css_active_link);
     }
 
     function _get_jQuery_version(jQueryObj) {
