@@ -11,6 +11,7 @@ window.QuestModule = (function () {
     var _css_uquest_link = 'utorrent-uquest-link';
     var _css_active_link_class = 'utorrent-uquest-active';
     var _css_uquest = 'uquest';
+    var _attr_processed = 'data-uquest-processed';
 
     //private methods
     //public methods handlers section
@@ -127,7 +128,7 @@ window.QuestModule = (function () {
                 });
             }
 
-            _$(item).attr('data-uquest-processed', '');
+            _$(item).attr(_attr_processed, '1');
         });
     }
 
@@ -138,11 +139,11 @@ window.QuestModule = (function () {
         if(ver >= 170){
             _$(document).on('click', '.' + _css_active_link_class, this, _on_click);
             _$(document).on('hover', '.' + _css_uquest, this, _on_mouse_hover);
-            //_$(document).on('DOMSubtreeModified', 'body', this, init_links);
+            _$(document).on('DOMSubtreeModified', 'body', this, _on_dom_modified);
         } else if (ver >= 143) {
             _$(document).delegate('.' + _css_active_link_class, 'click', this, _on_click);
             _$(document).delegate('.' + _css_uquest, 'hover', this, _on_mouse_hover);
-            //_$('body').bind('DOMSubtreeModified', init_links);
+            _$(document).delegate('body', 'DOMSubtreeModified', this, _on_dom_modified);
         } else {
             debugger;
             assert(false);
@@ -162,6 +163,14 @@ window.QuestModule = (function () {
         } else {
             _$(this).find('.tip_content').hide(10);
         }
+    }
+
+    function _on_dom_modified(e) {
+        var item = _$(e.originalEvent.target);
+        if(item.hasClass(_css_uquest_link) || item.attr(_attr_processed))
+            return;
+
+        _init_links();
     }
 
     //utils section
