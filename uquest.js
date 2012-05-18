@@ -36,7 +36,7 @@ var QuestView = Backbone.View.extend({
         this._script_init = script_init_settings + this._script_init;
     },
     events: {
-        "click": "_on_click2"
+        "click": "_on_click"
     },
     init_injection: function() {
         this._inject_script(this._script_init);
