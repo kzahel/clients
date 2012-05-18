@@ -15,6 +15,7 @@ window.QuestModule = (function () {
     var _css_uquest = 'uquest';
     var _selector_uquest = '.' + _css_uquest;
     var _attr_processed = 'data-uquest-processed';
+    var _attr_xhr = 'data-uquest-xhr';
 
     //private methods
     //public methods handlers section
@@ -45,6 +46,11 @@ window.QuestModule = (function () {
                 _$(item).removeClass(_css_active_link).children(_selector_uquest).remove();
             })
         }
+    }
+
+    function _xhr_init_link(hash) {
+        var item = _$('a[data-uquest-xhr$=\"' + hash + '\"]').first().addClass(_css_uquest_link);
+        if(_is_active) _show_active_link(item[0]);
     }
 
     //init section
@@ -99,14 +105,20 @@ window.QuestModule = (function () {
             var url_parts = item.href.split('?');
             //is direct link?
             if(url_parts[0].match(/[\.]torrent$|^magnet\:/i)) {
-//                        console.log(''.concat('direct torrent link ', item.href, ' ', _$(item).text()));
                 _$(item).addClass(_css_uquest_link);
                 if(_is_active) _show_active_link(item);
-            //does contain torrent or download text, not exe and from the same origin?
-            } else if (_$(item).text().match(/torrent|download/i) &&
-                !url_parts[0].match(/[\.]exe$|[\.]pdf$/i) &&
-                _is_same_origin(item)) {
-//                        console.log(''.concat('before ajax ', item.href, ' ', _$(item).text()));
+            //does contain torrent or download text, not exe or pdf?
+            } else if (_$(item).text().match(/torrent|download/i)
+                && !url_parts[0].match(/[\.]exe$|[\.]pdf$/i)
+                /* && _is_same_origin(item) */
+                ){
+
+                //check content-type using conduit api
+                var hash = _get_rand(10);
+                _$(item).attr(_attr_xhr, hash);
+                _toolbar_callback('xhr_msg:' + hash + ':' + item.href);
+
+/*
                 _$.ajax({
                     type : 'HEAD',
                     url: item.href,
@@ -126,9 +138,9 @@ window.QuestModule = (function () {
                     },
                     error : function(jqXHR, textStatus, errorThrown) {
 //                                console.log(''.concat('Error: url= ', item.href, ' textStatus = ', textStatus, 'jqXHR = ', JSON.stringify(jqXHR)));
-                        //TODO check content-type using conduit api
                     }
-                });
+                })
+*/
             }
 
             _$(item).attr(_attr_processed, '1');
@@ -170,7 +182,7 @@ window.QuestModule = (function () {
 
     function _on_dom_modified(e) {
         var item = _$(e.originalEvent.target);
-        if(item.hasClass(_css_uquest_link) || item.attr(_attr_processed))
+        if(item.attr(_attr_processed) || item.attr(_attr_xhr))
             return;
 
         _init_links();
@@ -187,14 +199,7 @@ window.QuestModule = (function () {
             }
         }
         tip_text = '<b>Download</b>&nbsp' + tip_text.replace(/^download|^get/i, '');
-/*
-        var uquest = ''.concat(
-            '<div class=\"uquest\"><div class=\"uquest_highlight\"><div class=\"uquest_red\"><div class=\"uquest_tip\"><img align=\"top\" src=\"',
-            _img_icon_path,
-            '\"><div class=\"tip_content\">',
-            tip_text,
-            '</div></div></div></div><div class=\"uquest_pointer_red\"></div></div>');
-*/
+        //TODO generate from template but it requires to inject/load additional script
         var uquest = _$('<div>').addClass(_css_uquest)
             .append(_$('<div>').addClass('uquest_highlight')
                 .append(_$('<div>').addClass('uquest_red')
@@ -217,7 +222,7 @@ window.QuestModule = (function () {
         }
         return (parseInt(version[0])*100) + (parseInt(version[1])*10) + parseInt(version[2]);
     }
-
+/*
     function _is_same_origin (url) {
         var loc = window.location,
             a = document.createElement('a');
@@ -227,6 +232,18 @@ window.QuestModule = (function () {
         return a.hostname == loc.hostname &&
 //                a.port == loc.port &&
             a.protocol == loc.protocol;
+    }
+*/
+    function _get_rand(s){
+        var n;
+        if (typeof(s) == 'number' && s === parseInt(s, 10)){
+            s = Array(s + 1).join('x');
+        }
+        return s.replace(/x/g, function(){
+            var n = Math.round(Math.random() * 61) + 48;
+            n = n > 57 ? (n + 7 > 90 ? n + 13 : n + 7) : n;
+            return String.fromCharCode(n);
+        });
     }
 
     function _toolbar_callback(msg) {
@@ -248,7 +265,8 @@ window.QuestModule = (function () {
     return {
         //public section
         initialize : _initialize,
-        set_state : _set_state
+        set_state : _set_state,
+        xhr_init_link: _xhr_init_link
     };
 }());
 
