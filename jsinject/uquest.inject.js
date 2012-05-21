@@ -102,12 +102,14 @@ window.QuestModule = (function () {
 
     function _init_links() {
         _$(_selector_new_link).each(function(index, item){
+            _$(item).attr(_attr_processed, '1');
+
             var url_parts = item.href.split('?');
             //is direct link?
             if(url_parts[0].match(/[\.]torrent$|^magnet\:/i)) {
                 _$(item).addClass(_css_uquest_link);
                 if(_is_active) _show_active_link(item);
-            //does contain torrent or download text, not exe or pdf?
+            //does link contain torrent or download text and not exe|pdf?
             } else if (_$(item).text().match(/torrent|download/i)
                 && !url_parts[0].match(/[\.]exe$|[\.]pdf$/i)
                 /* && _is_same_origin(item) */
@@ -116,7 +118,7 @@ window.QuestModule = (function () {
                 //check content-type using conduit api
                 var hash = _get_rand(10);
                 _$(item).attr(_attr_xhr, hash);
-                _toolbar_callback('xhr_msg:' + hash + ':' + item.href);
+                _toolbar_callback(''.concat('xhr_msg:', hash, ':', item.href));
 
 /*
                 _$.ajax({
@@ -142,8 +144,6 @@ window.QuestModule = (function () {
                 })
 */
             }
-
-            _$(item).attr(_attr_processed, '1');
         });
     }
 
@@ -182,7 +182,7 @@ window.QuestModule = (function () {
 
     function _on_dom_modified(e) {
         var item = _$(e.originalEvent.target);
-        if(item.attr(_attr_processed) || item.attr(_attr_xhr))
+        if(item.attr(_attr_processed))
             return;
 
         _init_links();
