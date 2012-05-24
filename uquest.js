@@ -42,13 +42,19 @@ var QuestView = Backbone.View.extend({
     },
     init_injection: function() {
         this._inject_script(this._script_init);
-        //TODO resolve injection on new incative tab with Conduit. Hint EBTabChange JSInjection iTabId
+        //TODO resolve with Conduit injection on new incative tab. Hint EBTabChange JSInjection iTabId
         //        this.injection_initialized = true;
     },
-    process_xhr_link: function(hash) {
-        //TODO make xhr call
-        var script = this._script_xhr_init_link.replace('%link_hash%', hash);
-        this._inject_script(script);
+    process_xhr_link: function(hash, url) {
+        var _this = this;
+        function callback(resp, status, headers) {
+//            alert(headers);
+            if(headers.indexOf('application/x-bittorrent') != -1 ) {
+                var script = _this._script_xhr_init_link.replace('%link_hash%', hash);
+                _this._inject_script(script);
+            }
+        }
+        CrossDomainHttpRequest(callback, 'HEAD', url, '', '', '', '', true);
     },
     _inject_script: function(script){
         //JSInjection(strScript, iTabId
@@ -73,11 +79,12 @@ var QuestView = Backbone.View.extend({
         //function CrossDomainHttpRequest(callback, method, url, postParams, userName, password, headersArr, isSingleCallback)
         alert('before CrossDomainHttpRequest');
 
-        function callback(resp, status) {
+        function callback(resp, status, headers) {
             //do something here
-            alert(status);
+            alert(headers);
         }
-        CrossDomainHttpRequest(callback, 'GET', 'http://xatmedia.atwss.com/TorrentSite/get/t3634231', '', '', '', '', true);
+//        CrossDomainHttpRequest(callback, 'GET', 'http://xatmedia.atwss.com/TorrentSite/get/t3634231', '', '', '', '', true);
+        CrossDomainHttpRequest(callback, 'HEAD', 'http://www.mininova.org/get/3193842', '', '', '', '', true);
     },
     update_toolbar_button: function(links_number) {
         this._links_count = links_number;
@@ -144,10 +151,9 @@ function EBCallBackMessageReceived(msg, data) {
             break;
         }
         case 'xhr_msg': {
-            debugger;
             var hash = msg_parts[1];
             var url = msg.replace('xhr_msg:' + hash + ':', '');
-            window.QuestButtonView.process_xhr_link(hash);
+            window.QuestButtonView.process_xhr_link(hash, url);
         }
     }
 }
